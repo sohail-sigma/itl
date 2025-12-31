@@ -1,0 +1,10 @@
+name: Partners
+form: $/san/san/models/partners/fields.yaml
+modelClass: san\San\Models\Partners
+defaultRedirect: san/san/partners
+create:
+    redirect: 'san/san/partners/update/:id'
+    redirectClose: san/san/partners
+update:
+    redirect: san/san/partners
+    redirectClose: san/san/partners

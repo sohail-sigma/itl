@@ -1,0 +1,7 @@
+export:
+   # useList: true
+   title: Export campaign1
+   modelClass: San\San\Models\ExportCampaign1
+   list: $/san/san/models/campaign1/columns.yaml
+   fileName: campaign1.csv 
+   redirect: san/san/campaign1

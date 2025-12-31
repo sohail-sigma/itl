@@ -1,0 +1,5 @@
+columns:
+    location:
+        label: Location
+        type: text
+        searchable: true

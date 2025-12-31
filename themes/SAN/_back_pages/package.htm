@@ -1,0 +1,930 @@
+title = "package"
+url = "/package/:slug"
+layout = "default"
+is_hidden = 0
+
+[builderDetails]
+modelClass = "san\San\Models\Packages"
+identifierValue = "{{ :slug }}"
+modelKeyColumn = "slug"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+
+[apiFunction]
+==
+<?php
+function getsortedMonth($monthList = [])
+    {
+        $sortedNameList = array();
+        $monthNumberList = array();
+        $maxLength = count($monthList);
+        for($i = 0; $i < $maxLength; $i++)
+        {
+            $monthnumber = date('m',strtotime($monthList[$i]));
+            array_push($monthNumberList,$monthnumber);	
+        }
+        sort($monthNumberList);
+        for($j = 0; $j < $maxLength; $j++)
+        {	
+            $monthNum  = $monthNumberList[$j];
+            $dateObj   = DateTime::createFromFormat('!m', $monthNum);
+            $monthName = $dateObj->format('F');
+            array_push($sortedNameList,$monthName);
+        }
+        return $sortedNameList;
+
+    }
+
+    public function onGetAllExp()
+	{
+		$exps = array();
+		$monthss = array();
+		$singleexps = array();
+		if(post('package') != 'any'){
+			$s_pack = san\San\Models\Packages::where('countries', 'like', '%' . post('package') . '%')->get();
+			foreach($s_pack as $all_p){
+				$pack = san\San\Models\Packages::find($all_p->id);
+				foreach($pack->destinations as $adestinations){
+				$singleexps['title'] = $adestinations->title;
+				$singleexps['slug'] = $adestinations->slug;
+				$exps[] = $singleexps;
+				}
+				if($all_p->months != 0){
+				foreach ($all_p->months as $month) {
+					$monthss[] = $month;
+				}
+				}
+			}
+			$monthss = array_values(array_unique($monthss));
+			$monthss = $this->getsortedMonth($monthss);
+			
+			$exps = array_map("unserialize", array_unique(array_map("serialize", $exps)));
+			$this['allmonths'] = $monthss;
+			$this['allexp'] = $exps;
+		}elseif (post('package') == 'any') {
+			$all_pack = san\San\Models\Destinations::get();
+			foreach($all_pack as $all_p){
+				$singleexps['title'] = $all_p->title;
+				$singleexps['slug'] = $all_p->slug;
+				$exps[] = $singleexps;
+			}
+			$months= [
+						'1' => 'January',
+						'2' => 'February',
+						'3' => 'March',
+						'4' => 'April',
+						'5' => 'May',
+						'6' => 'Jun',
+						'7' => 'July',
+						'8' => 'August',
+						'9' => 'September',
+						'10' => 'October',
+						'11' => 'November',
+						'12' => 'December'
+					];
+			$exps = array_map("unserialize", array_unique(array_map("serialize", $exps)));
+			$this['allmonths'] = $months;
+			$this['allexp'] = $exps;
+		}
+	}
+    
+    public function onChangeExp()
+    {
+        
+        $pkgs = array();
+        $pkgs_m = array();
+        $monthss = array();
+        $singleexps = array();
+        $singleexps_m = array();
+        $this['allpackages'] = array();
+            if(post('package_change') == 'no' ){
+                if(post('experience') != 'any' && post('month') != 'any')
+                {
+                    $all_pack = san\San\Models\Packages::where('status', '1')->get();
+                    $cList = array();
+                    $cListFinal = array();
+                    foreach($all_pack as $all_p){
+                        $pack = san\San\Models\Packages::find($all_p->id);
+                        foreach($pack->destinations as $adestinations){
+                            if($adestinations->slug == post('experience')){
+                                if($pack->months){
+                                    foreach ($pack->months as $single_month) {
+                                        if($single_month == post('month')){
+                                            foreach($pack->countries as $countries){
+                                                $cname = ltrim($countries['country']);
+                                                $isInArray = in_array($cname, array_column($cListFinal, 'country'));
+                                                if(!$isInArray){
+                                                    $cList['country'] = $cname;
+                                                    $cList['slug'] = $cname;
+                                                    $cListFinal[] = $cList;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    $this['allpackages'] = $cListFinal;
+                }
+                
+                if(post('experience') != 'any' && post('month') == 'any')
+                {
+                    $all_pack = san\San\Models\Packages::where('status', '1')->get();
+                    $cList = array();
+                    $cListFinal = array();
+                    foreach($all_pack as $all_p){
+                        $pack = san\San\Models\Packages::find($all_p->id);
+                        foreach($pack->destinations as $adestinations){
+                            if($adestinations->slug == post('experience')){
+                        foreach($pack->countries as $countries){
+                            $cname = ltrim($countries['country']);
+                            $isInArray = in_array($cname, array_column($cListFinal, 'country'));
+                            if(!$isInArray){
+                            $cList['country'] = $cname;
+                            $cList['slug'] = $cname;
+                            $cListFinal[] = $cList;
+                            }
+                        }
+                            }
+                        }
+                    }
+                    $this['allpackages'] = $cListFinal;
+                }if(post('experience') == 'any' && post('month') != 'any')
+                {
+                    $all_pack = san\San\Models\Packages::where('status', '1')->get();
+                    foreach($all_pack as $all_p){
+                        $pack = san\San\Models\Packages::find($all_p->id);
+                        if($pack->months){
+                            foreach ($pack->months as $single_month) {
+                                if($single_month == post('month')){
+                                    foreach($pack->countries as $countries){
+                            $cname = ltrim($countries['country']);
+                            $isInArray = in_array($cname, array_column($cListFinal, 'country'));
+                            if(!$isInArray){
+                                $cList['country'] = $cname;
+                                $cList['slug'] = $cname;
+                                $cListFinal[] = $cList;
+                            }
+                            }
+                                }
+                            }
+                        }
+                    }
+                    $this['allpackages'] = $cListFinal;
+                }elseif (post('experience') == 'any') {
+                $cList = array();
+                $cListFinal = array();
+                    $all_pack = san\San\Models\Packages::where('status', '1')->get();
+                    foreach($all_pack as $all_p){
+                        foreach($all_p->countries as $countries){
+                    $cname = ltrim($countries['country']);
+                    $isInArray = in_array($cname, array_column($cListFinal, 'country'));
+                    if(!$isInArray){
+                        $cList['country'] = $cname;
+                        $cList['slug'] = $all_p->slug;
+                        $cListFinal[] = $cList;
+                    }
+                    }
+                    }
+                    $this['allpackages'] = $cListFinal;
+                }
+            }else{
+                exit();
+            }
+    }
+    
+    function onEnd(){
+        $packageList = array();
+        if(post('exp_slug') != ''){
+            $this['c_package'] = post('package_id');
+            $this['dest_slug'] = post('exp_slug');
+            $single_destination = San\San\Models\Destinations::where('slug', post('exp_slug'))->get();
+            $this['expTitle'] = $single_destination[0]->title;
+            foreach ($single_destination[0]->packages as $singlepackage) {
+                if($singlepackage->status == 1){
+                    $packageList[] = $singlepackage;
+                }
+            }
+            $this['package_List'] = $packageList;
+        }else{
+            $s_slug = $this->builderDetails->record->active(1)->get();
+            $single_pacage = San\San\Models\Packages::where('slug', $this->builderDetails->record->slug)->get();
+            $this['package_List'] = $single_pacage;
+
+            $all_destination = San\San\Models\Destinations::where('status', '1')->get();
+            foreach ($all_destination as $destination) {
+                foreach ($destination->packages as $packag) {
+                if($packag->status == 1 AND $packag->slug == $this->builderDetails->record->slug ){
+                    $this['expTitle'] = $destination->title;
+                }
+            }
+            }
+
+        }
+        if(!@$_GET['preview'] || !Session::get('_token')){
+            $page=$this->builderDetails->record->active(1)->get();
+            if(!count($page)){
+                $this->setStatusCode(404);
+                return $this->controller->run('404');
+            }
+        }
+        if($metadata=$this->builderDetails->record['meta_title']) $this->page->meta_title = $metadata;
+        if($metadata=$this->builderDetails->record['meta_desc']) $this->page->meta_description = $metadata;
+        if($metadata=$this->builderDetails->record['meta_image']) $this->page->og_image = $metadata->getThumb(1200,630);
+    }
+
+    function onSubmitEnquiryForm()
+    {
+        $data = post();
+        $rules = [
+            'pacage' => 'required',
+            'experiences' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required',
+            'nationality' => 'required',
+            'country' => 'required',
+            'city' => 'required',
+            'no_adults' => 'required',
+            'departure_from' => 'required',
+            'when_start' => 'required',
+            'how_long' => 'required|numeric|min:1',
+        ];
+        
+        $errorMessages = [
+            'pacage.required' => 'Please select package',
+            'experiences.required' => 'Please select experiences',
+            'first_name.required' => 'Enter your first name',
+            'last_name.required' => 'Enter your last name',
+            'email.required' => 'Enter your email',
+            'phone.required' => 'Enter your phone number',
+            'city.required' => 'Enter your city name',
+            'nationality.required' => 'Select nationality',
+            'country.required' => 'Select country',
+            'no_adults.required' => 'Enter number of adults',
+            'departure_from.required' => 'Enter departure date',
+            'when_start.required' => 'This feild is required',
+            'how_long.required' => 'Enter number of days',
+            'how_long.min' => 'Days must be greater then 1',
+            'how_long.numeric' => 'Not valid days',
+        ];
+
+        $validation = Validator::make($data, $rules, $errorMessages);
+
+        if ($validation->fails()) {
+            throw new ValidationException($validation);
+        }else{
+            $input = Input::all();
+        
+            $enq = new  san\San\Models\PackageEnquiry;
+            $enq->pacage = $input['pacage'];
+            $enq->experiences = $input['experiences'];
+            $enq->first_name = $input['first_name'];
+            $enq->last_name = $input['last_name'];
+            $enq->email = $input['email'];
+            $enq->phone = $input['phone'];
+            $enq->city = $input['city'];
+            $enq->nationality = $input['nationality'];
+            $enq->country = $input['country'];
+            $enq->no_adults = $input['no_adults'];
+            $enq->no_children = $input['no_children'];
+            $enq->departure_from = $input['departure_from'];
+            $enq->when_start = $input['when_start'];
+            $enq->how_long = $input['how_long'];
+            $enq->remarks_comments = $input['remarks_comments'];
+            $enq->created_at = date("Y-m-d h:i:s a");
+
+            $enq->save();
+            if(isset($input['newsletter'])){
+                $is_already = san\San\Models\Newsletter::where('email', $input['email'])->get();
+                if(count($is_already) == 0){
+                    $news_letter = new  san\San\Models\Newsletter;
+                    $news_letter->email = $input['email'];
+                    $news_letter->fulll_name = $input['first_name']." ".$input['last_name'];
+                    $news_letter->save();
+                }
+            }
+
+            $vars = [
+                'name' => $input['first_name']." ".$input['last_name'],
+                'package_name' => $input['pacage'],
+                'experiences' => $input['experiences'],
+                'email' => $input['email'],
+                'nationality' => $input['nationality'],
+                'country' => $input['country'],
+                'phone' => $input['phone'],
+                'city' => $input['city'],
+                'no_adults' => $input['no_adults'],
+                'no_children' => $input['no_children'],
+                'departure_from' => $input['departure_from'],
+                'when_start' => $input['when_start'],
+                'how_long' => $input['how_long'],
+                'remarks_comments' => $input['remarks_comments'],
+            ];
+            // print_r($vars);die;
+            Mail::send('package_temp', $vars, function($message) {
+                $enqmails = san\San\Models\EnquiryEmails::where('id', '14')->first();
+                $message->to($enqmails['content_2'], 'Package query');
+                $message->subject('Package query');
+            });
+
+			Mail::send('user_confirmation_email', $vars, function ($message) {$message->to($_POST['email']);});
+            Flash::success('Submitted successfully!');
+            unset($_POST);
+        }
+
+        Flash::success('Jobs done!');
+    }
+    function onSubmitNewsletterForm()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = post();
+    
+            $rules = [
+                    'full_name' => 'required',
+                    'email' => 'required|email|unique:san_san_newsletter'
+                ];
+                $errorMessages = [
+                    'email.required' => 'Please enter your email',
+                    'email.unique' => 'Email already exist',
+                    'full_name.required' => 'Please enter your full name'
+                ];
+    
+            $validation = Validator::make($data, $rules, $errorMessages);
+    
+            if ($validation->fails()) {
+                throw new ValidationException($validation);
+            }else{
+                $input = Input::all();
+                $careers = new  san\San\Models\Newsletter;
+                $careers->fulll_name = $input['full_name'];
+                $careers->email = $input['email'];
+                $careers->save();
+                Flash::success('Submitted successfully!');
+                unset($_POST);
+            }
+        }
+    }
+?>
+==
+<div class="banner-slider package-carousel">
+    <div class="slider-inner">
+        <div id="carouselExampleIndicators" class="carousel slide" data-interval="false" >
+            <ol class="carousel-indicators">
+                {% set dcount = 0 %}
+                {% for s_package in package_List %}
+                    <li data-target="#carouselExampleIndicators" data-slide-to="{{dcount}}" {% if c_package == s_package.id %} class="active" {% endif %}></li>
+                    {% set dcount = dcount + 1 %}
+                {% endfor %}
+            </ol>
+            <div class="carousel-inner">
+                {% set count = 1 %}
+                {% for s_package in package_List %}
+                    <div class="carousel-item  {% if c_package == s_package.id %} active  {% endif %} {% if c_package is null %} active  {% endif %}">
+                        <section class="hero_single version_2 full" data-aos="zoom-in" data-aos-duration="2000">
+                            <div class="wrapper" style="background-image: url({{s_package.banner.path}});">
+                                <div class="container position-relative h-100">
+                                    <div class="banner_title">
+                                        <div class="banner_text">
+                                            <h1>{{expTitle}}</h1>
+                                            <h5>{{s_package.caption_new}}</h5>
+                                            <span class="line"><em></em></span>
+                        
+                                            {% if(s_package.video_iframe) %}
+                                            <div style="padding-bottom:3%;"></div>
+                                            <div class="play-btn">
+                                                <span><img src="/themes/SAN/assets/images/play-btn.svg"></span>
+                                                Play Video
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        {% partial 'site/innerform.htm' %}
+                        <div class="bg_color_1 container package-detail" data-aos="fade-up" data-aos-duration="2000">
+                            <!-- /carousel -->
+                            <div class="" data-aos="fade-up">
+                                {% if(s_package.caption)%}
+                                <div class="main_title_2 mt-5">
+                                    <h2>{{s_package.caption}}</h2>
+                                    <span><em></em></span>
+                                </div>
+                                <span class="populardetails font-size-medium"><strong>{{s_package.sub_caption|raw}}</strong></span><br/><br/>
+                                {% endif %}
+                                {% if(s_package.brief)%}
+                                <div class="top-overview  text-center">{{s_package.brief|raw}}</div>
+                                {% else %}
+                                <div class="top-overview text-center">{{ s_package.content|length > 300 ? s_package.content|slice(0,
+                                    300) ~ '...' : s_package.content }}</div>
+                                {% endif %}
+                                <div id="overview" data-aos="fade-up">
+                                    <div class="main_title_2 mt-5  mb-3">
+                                        <h2>{{s_package.caption_new}}</h2>
+                                        <p>{{s_package.sub_title}}</p>
+                                    </div>
+                                    <div class="facilities mb-3 roundedbg text-center">
+                                        {% if s_package.hotel_stay %}
+                                        <span data-toggle="tooltip" title="Hotel Stay" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/hotel_stay.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.domestic_flights %}
+                                        <span data-toggle="tooltip" title="Domestic Flights" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/domestic_flights.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.breakfast_meals %}
+                                        <span data-toggle="tooltip" title="Breakfast/Meals" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/breakfast_meals.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.airport_transfers %}
+                                        <span data-toggle="tooltip" title="Airport Transfers" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/airport_transfers.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.site_seeing %}
+                                        <span data-toggle="tooltip" title="Sightseeing" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/site_seeing.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.city_coach_tour %}
+                                        <span data-toggle="tooltip" title="City Tour/Coach Tour" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/city_coach_tour.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.tour_guide %}
+                                        <span data-toggle="tooltip" title="Tour Guide" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/tour_guide.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.train_tickets %}
+                                        <span data-toggle="tooltip" title="Train Tickets" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/train_tickets.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.entrance_fee_pass %}
+                                        <span data-toggle="tooltip" title="Entrance Fee/ Pass" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/entrance_fee_pass.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.cruising %}
+                                        <span data-toggle="tooltip" title="Cruising" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/cruising.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.entertainment %}
+                                        <span data-toggle="tooltip" title="Entertainment" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/entertainment.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.sailing %}
+                                        <span data-toggle="tooltip" title="Sailing" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/sailing.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.hiking_walking_tour %}
+                                        <span data-toggle="tooltip" title="Hiking/Walking Tour" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/hiking_walking_tour.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.speed_boat %}
+                                        <span data-toggle="tooltip" title="Speed Boat Transfers" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/speed_boat.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.wellness %}
+                                        <span data-toggle="tooltip" title="Wellness" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/wellness.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.camping %}
+                                        <span data-toggle="tooltip" title="Camping" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/camping.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.canyoning %}
+                                        <span data-toggle="tooltip" title="Canyoning" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/canyoning.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.campervan %}
+                                        <span data-toggle="tooltip" title="Campervan" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/campervan.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.para_gliding %}
+                                        <span data-toggle="tooltip" title="Para Gliding" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/para_gliding.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.bike_ride %}
+                                        <span data-toggle="tooltip" title="Bike Ride" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/bike_ride.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.diving %}
+                                        <span data-toggle="tooltip" title="Diving" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/diving.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.scooter_ride %}
+                                        <span data-toggle="tooltip" title="Scooter Ride" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/scooter_ride.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.zip_line %}
+                                        <span data-toggle="tooltip" title="Zip line" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/zip_line.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.horse_ride %}
+                                        <span data-toggle="tooltip" title="Horse Ride" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/horse_ride.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.cooking_class %}
+                                        <span data-toggle="tooltip" title="Cooking Class" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/cooking_class.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        {% if s_package.shopping_tour %}
+                                        <span data-toggle="tooltip" title="Shopping Tour" class=" mb-4 roundedbg text-centeright">
+                                            <img width="18" height="18" src="{{ 'assets/img/svg/shopping_tour.png'|theme }}" />
+                                        </span>
+                                        {% endif %}
+                                        
+                                        {% if s_package.others %}
+                                        {% for record in s_package.others %}
+                                        <span data-toggle="tooltip" title="{{record.title}}"><img width="18" height="18"
+                                                src="{{record.icon|media}}" /></span>
+                                        {% endfor %}
+                                        {% endif %}
+                        
+                                    </div>
+                                    <p class="country_list mb-5" style="margin-bottom:1rem !important;">
+                                        {% if s_package.cities %}
+                                            {% set ccount = 1 %}
+                                            {% for scity in s_package.cities %}
+                                                {{scity.city}}
+                                                {% if ccount < s_package.cities|length %}
+                                                | 
+                                                {% endif %}
+                                                {% set ccount = ccount + 1 %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </p>
+                                    
+
+                                    {% set pack_price = 0 %}
+                                    {% set currencyCode = 0 %}
+                                    {% if s_package.price %}
+                                        {% for Precord in s_package.price %}
+                                            {% if Precord.currency == user_currency_code %}
+                                                {% set currencyCode = Precord.currency|upper %}
+                                            {% endif %}
+                                        {% endfor %}
+
+                                        {% if currencyCode=="0" %}
+                                            {% set currencyCode = 'USD' %}
+                                        {% endif %}
+                                        {% for Precord in s_package.price %}
+                                            {% if Precord.currency|upper == currencyCode|upper %}
+                                                {% set pack_price = Precord.price %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    <div class="new-days-design">{{s_package.days}} DAYS FROM <span>{{currencyCode}} {{pack_price|number_format }}*</span></div>
+                                    {% if(s_package.days != "") %}
+                                    {# <p class="country_list mb-5" style=" text-align: center;">{{s_package.days}} DAYS FROM</p> #}
+                                    {% endif %}
+                                    <div class="table-responsive d-none">
+                                        <div class="wrapper-package">
+                                            <div class="packagePrice light text-center">
+                                                {% set price = 0 %}
+                                                {% if s_package.price %}
+                                                {% for record in s_package.price %}
+                                                {% if record.currency == apiFunction.getCurrentCurrency() %}
+                                                {% set currencyCode = record.currency|upper %}
+                                                {% endif %}
+                                                {% endfor %}
+                        
+                                                {% if currencyCode=="" %}
+                                                {% set currencyCode = 'USD' %}
+                                                {% endif %}
+                        
+                                                {% for record in s_package.price %}
+                                                {% if record.currency|upper == currencyCode|upper %}
+                                                {% set price = record.price %}
+                                                {% endif %}
+                                                {% endfor %}
+                                                {% endif %}
+                        
+                                                <h3><span class="pr-3 ">{% if s_package.night %} {{s_package.night}}
+                                                        NIGHTS / {% endif %}{% if s_package.days %} {{s_package.days}}
+                                                        DAYS {% endif %}</span>| <strong class="pl-3">{{currencyCode}} {{price}}*</strong></h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                        
+
+                                    
+
+                                    {# <div class="table-responsive">
+                                        <div class="wrapper-package">
+                                            <div class="light text-center">
+                                                <table class="w-100" style="border: solid 1px #09577c;">
+                                                    <thead class="packagePrice light">
+                                                        <th class="text-uppercase">{{currencyCode}}</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td> {{pack_price|number_format }}*</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div> #}
+                        
+                                </div>
+                                <div class="mbottom50" id="packageboxes">
+                                    <div class="packageboxes mt-5" data-aos="fade-up">
+                                        <div class="row no-gutters">
+                                            {% if(s_package.dates[0].from != '') %}
+                                            <div class="col-md-6">
+                                                <div class="packageboxes-content">
+                                                    <div class="packageboxes-title">
+                                                        <h2 class="mt-0">TOUR DATES</h2>
+                                                        <span><em></em></span>
+                                                    </div>
+                                                    <div class="packageboxes-detail">
+                                                        <ul>
+                                                            {% if s_package.dates != NULL  %}
+                                                                {% for record in s_package.dates %}
+                                                                    {% if record.from != null  %}
+                                                                        <li>{{record.from|date("d M") }} - {{record.to|date("d M Y") }}</li>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            {% endif %}
+                                                        </ul>
+                        
+                                                        {% if s_package.nearest_airport %}
+                                                        {% set acount = 1 %}
+                                                        <p><strong><i>Nearest Airports:</i></strong><br />
+                                                            {% for airports in s_package.nearest_airport %}
+                                                            {{airports.airport}}{% if acount < s_package.nearest_airport|length %}, {% endif %}
+                                                            {% set acount = acount + 1 %}
+                                                            {% endfor %}
+                                                        </p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 d-none d-md-block  mb-4">
+                                                {% if(s_package.date_image) %}
+                                                <figure class="package-figure cut-left"
+                                                    style="background-image:url({{s_package.date_image.getThumb(525,525,{'mode':'crop'})}})">
+                                                </figure>
+                                                {% else %}
+                                                <figure class="package-figure"
+                                                    style="background-image:url('/themes/SAN/assets/img/logo.jpg')">
+                                                </figure>
+                                                {% endif %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% if s_package.content %}
+                                    <div class="packageboxes mt-5" data-aos="fade-up">
+                                        <div class="row no-gutters">
+                                            <div class="col-md-6 mb-4">
+                                                {% if(s_package.overview_image) %}
+                                                <figure class="package-figure"
+                                                    style="background-image:url({{s_package.overview_image.getThumb(525,525,{'mode':'crop'})}})">
+                                                </figure>
+                                                {% else %}
+                                                <figure class="package-figure"
+                                                    style="background-image:url('/themes/SAN/assets/img/logo.jpg')">
+                                                </figure>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="packageboxes-content">
+                                                    <div class="packageboxes-title">
+                                                        <h2 class="mt-0">OVERVIEW</h2>
+                                                        <span><em></em></span>
+                                                    </div>
+                                                    <div class="packageboxes-detail">
+                                                        {{ s_package.content|raw }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% if s_package.inclusions or s_package.exclusions %}
+                                    <div class="packageboxes mt-5" data-aos="fade-up">
+                                        <div class="row no-gutters">
+                                            <div class="col-md-6 mb-4">
+                                                {% if(s_package.inclusions_image) %}
+                                                <figure class="package-figure"
+                                                    style="background-image:url({{s_package.inclusions_image.getThumb(525,525,{'mode':'crop'})}})">
+                                                </figure>
+                                                {% else %}
+                                                <figure class="package-figure"
+                                                    style="background-image:url('/themes/SAN/assets/img/logo.jpg')">
+                                                </figure>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="packageboxes-content">
+                                                    <div class="packageboxes-detail">
+                                                        {% if s_package.inclusions %}
+                                                        <h2 class="mt-0">INCLUSIONS</h2>
+                                                        <span><em></em></span>
+                                                        <ul class="numbers">
+                                                            {% for record in s_package.inclusions %}
+                                                            <li><span>&ndash; </span>{{record.point}}</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                        {% endif %}
+                        
+                                                        {% if s_package.exclusions %}
+                                                        <p style="font-size: 18px;">EXCLUSIONS</p>
+                                                        <ul class="numbers">
+                                                            {% for record in s_package.exclusions %}
+                                                                {% if record.point != "" %}
+                                                                    <li><span>&ndash; </span>{{record.point}}</li>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </ul>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                        
+                                </div>
+                        
+                                <div class="itinarary-conditions">
+                                    <div class="container">
+                        
+                                        <div class="ic-box">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="custom-accordions">
+                                                        <button class="text-link itinerary_btn">ITINERARY</button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="custom-accordions-desc itinerary_desc" style="display: none;">
+                                                        {% set idcount = 1 %}
+                                                        {% set collapsid = 1 %}
+                                                        {% for itinerary in s_package.itineraries %}
+                                                        <div class="custom-accord">
+                        
+                                                            <div class="accordion">
+                                                                <div class="accordion-item">
+                                                                    <h2 class="c-accordion-title">
+                                                                        <span class="ca-text-link" id="package_acc_{{idcount}}">
+                                                                            {{itinerary.title }}
+                                                                        </span>
+                                                                    </h2>
+                                                                    <div class="c-accordion-desc">
+                                                                        <div class="c-accord-desc-inner package_acc_{{idcount}}"
+                                                                            id="collapse_{{collapsid}}">
+                                                                            {{itinerary.desc | raw }}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- <div class="day-count">
+                                                                <h3>{{itinerary.title }}</h3>
+                                                            </div>
+                                                            <div class="day-activity">
+                                                                {{itinerary.desc | raw }}
+                                                            </div> -->
+                                                        </div>
+                                                        {% set collapsid = collapsid +1 %}
+                                                        {% set idcount = idcount +1 %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                        
+                                        <div class="ic-box">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="custom-accordions">
+                                                        <button class="text-link conditions_btn">Conditions</button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="custom-accordions-desc">
+                                                        <div class="custom-accord conditions_desc" style="display: none;">
+                                                            <div class="custom-accordions-desc">
+                                                                {{ s_package.conditions|raw }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                        
+                                    </div>
+                                </div>
+                        
+                                <div class="makeenquiry mtop75 mbottom50">
+                                    <div style="border-bottom: 1px solid #aaa;" class="pb-5 mb-5">
+                                        <a href="#enquiry-popup" class=" open-popup-link btn btn-lm packenquiry enquiry-in mb-5">MAKE AN
+                                            ENQUIRY</a>
+                                        {{ s_package.enquiry_desc|raw }}
+                        
+                                    </div>
+                        
+                                    {{ s_package.contact_desc|raw }}
+                        
+                        
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div> 
+                    </div>
+                    {% set count = 2 %}
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+            </div>
+    
+    </div>
+    </div>
+
+
+
+<div id="enquiry-popup" class="white-popup mfp-hide">
+    {% partial 'site/packageenquiryform' %}
+</div>
+<div id="after-submit-popup" class="white-popup mfp-hide">
+    <div id="sign-in-dialog" class="zoom-anim-dialog">
+        <div class="modalbody">
+            <div class="small-dialog-header">
+                <h3><img src="/themes/SAN/assets/images/mail.svg" class="img-fluid mail"
+                        alt="">Successfully sent</h3>
+            </div>
+        </div>
+        <div style="padding: 80px 10px;">
+            <h4>Form has been submitted successfully!</h4>
+        </div>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+    </div>
+</div>
+
+<style>
+    .hidedays {
+        display: none !important;
+    }
+
+    .showdays {
+        display: unset !important;
+    }
+</style>
+<script>
+
+    $(document).ready(function () {
+        $(".itinerary_btn").click(function () {
+            $(".itinerary_desc").slideToggle(800, 'linear');
+        });
+
+        $(".conditions_btn").click(function () {
+            $(".conditions_desc").slideToggle(800, 'linear');
+        });
+    });
+
+    $('.open-popup-link').magnificPopup({
+        type: 'inline',
+        showCloseBtn: true,
+        callbacks: {
+            open: function () {
+                $('#sign-in-dialog').append($('.mfp-close'))
+            },
+        },
+        midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+    });
+</script>

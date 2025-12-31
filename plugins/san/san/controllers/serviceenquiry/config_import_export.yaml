@@ -1,0 +1,7 @@
+export:
+    # useList: true
+    title: Export Enquiry
+    modelClass: San\San\Models\ExportSEModel
+    list: $/san/san/models/serviceenquiry/columns.yaml
+    fileName: enquiry.csv 
+    redirect: san/san/serviceenquiry

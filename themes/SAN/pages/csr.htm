@@ -1,0 +1,38 @@
+title = "CSR"
+url = "/csr"
+layout = "default"
+is_hidden = 0
+
+[builderDetails]
+modelClass = "san\San\Models\Csr"
+identifierValue = 8
+modelKeyColumn = "id"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+==
+<?php
+    function onEnd(){
+        if($metadata=$this->builderDetails->record['meta_title']) $this->page->meta_title = $metadata;
+        if($metadata=$this->builderDetails->record['meta_desc']) $this->page->meta_description = $metadata;
+        if($metadata=$this->builderDetails->record['meta_image']) $this->page->og_image = $metadata->getThumb(1200,630);
+    }
+?>
+==
+<section class="hero_single version_2">
+    <div class="wrapper" style="background-image: url({{builderDetails.record.banner.path}});">
+        <div class="container">
+            <h1 class="UniSansLight">{{builderDetails.record.title}}</h1>
+            <span class="line"><em></em></span>
+            <div  style="margin-bottom:100px;"></div>
+        </div>
+    </div>
+</section>
+
+<div class="clearfix"></div>
+<div class="bg_color_1 container py-5 " data-aos="fade-up">
+    <div class="information">
+        <div class="color-light text-center"> {{builderDetails.record.content_1|raw}}</div>
+    </div>
+   
+
+</div>

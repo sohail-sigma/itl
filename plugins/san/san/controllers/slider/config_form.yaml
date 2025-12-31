@@ -1,0 +1,10 @@
+name: Slider
+modelClass: san\San\Models\Slider
+form: $/san/san/models/slider/fields.yaml
+defaultRedirect: san/san/slider
+create:
+    redirect: san/san/slider
+    redirectClose: san/san/slider
+update:
+    redirect: san/san/slider
+    redirectClose: san/san/slider

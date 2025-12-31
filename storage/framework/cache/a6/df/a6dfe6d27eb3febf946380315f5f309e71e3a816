@@ -1,0 +1,1644 @@
+1767162277a:1:{s:14:"experience.htm";a:15:{s:8:"fileName";s:14:"experience.htm";s:7:"content";s:35818:"title = "Experience"
+url = "/experience/:slug?"
+layout = "default"
+is_hidden = 0
+
+[apiFunction]
+
+[builderList destinationsList]
+modelClass = "san\San\Models\Destinations"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+
+[builderList packagesList]
+modelClass = "san\San\Models\Packages"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+
+[builderList themesList]
+modelClass = "san\San\Models\Themes"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+
+[builderDetails pageDetails]
+modelClass = "san\San\Models\Destinations"
+identifierValue = "{{ :slug }}"
+modelKeyColumn = "slug"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+
+[builderDetails]
+modelClass = "san\San\Models\Destinationpage"
+identifierValue = 5
+modelKeyColumn = "id"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+==
+<?php
+function onSubmitNewsletterForm()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = post();
+    
+            $rules = [
+                    'full_name' => 'required',
+                    'email' => 'required|email|unique:san_san_newsletter'
+                ];
+                $errorMessages = [
+                    'email.required' => 'Please enter your email',
+                    'email.unique' => 'Email already exist',
+                    'full_name.required' => 'Please enter your full name'
+                ];
+    
+            $validation = Validator::make($data, $rules, $errorMessages);
+    
+            if ($validation->fails()) {
+                throw new ValidationException($validation);
+            }else{
+                $input = Input::all();
+                $careers = new  san\San\Models\Newsletter;
+                $careers->fulll_name = $input['full_name'];
+                $careers->email = $input['email'];
+                $careers->save();
+                Flash::success('Submitted successfully!');
+                unset($_POST);
+            }
+        }
+    }
+    
+    use San\San\Models\Countries;
+    use San\San\Models\Packages;
+    use San\San\Models\Themes;
+    function onEnd(){
+       if((!@$_GET['preview'] || !Session::get('_token')) && $this->pageDetails->record){
+           $page=$this->pageDetails->record->active(1)->where('slug',$this->pageDetails->record['slug'])->get();
+           if(!count($page)){
+               $this->setStatusCode(404);
+               return $this->controller->run('404');
+           }
+       }
+       if($metadata=$this->pageDetails->record['meta_title']) $this->page->meta_title = $metadata;
+       if($metadata=$this->pageDetails->record['meta_desc']) $this->page->meta_description = $metadata;
+       if($metadata=$this->pageDetails->record['meta_image']) $this->page->og_image = $metadata->getThumb(1200,630);
+       $themesid = [];
+       $countiresid=[];
+       $this['exps']=[];
+       $exps=[];
+       $this['slug'] = Request::segment(2); 
+       $destinations=[];
+       $packages=[];
+       foreach ($this->destinationsList->records as $k=>$record){
+           if($record['slug']==$this['slug']){
+               $this['cd']=$k;
+           }
+           $destinations[$k]=[
+               'sub_title'=>$record['sub_title'],
+               'name'=>$record['title'],
+               'description'=>$record['content'],
+               'image'=>$record['image']?$record['image']->getThumb(540,320,'crop'):"",
+               'subs'=>[]
+           ];
+           $countries=Countries::select('id','title','brief','slug')->where('destination_id',$record['id'])->where('status',1)->get();
+           foreach($countries as $country){
+               $countiresid[$country->id] = $country->title;
+               $destinations[$k]['subs'][]=[
+                   'name'=>$country->title,
+                   'brief'=>substr(strip_tags($country->brief), 0, 110),
+                   'id'=>$country->id,
+                   'slug'=>$country->slug,
+                   'image'=>$country->banner?$country->banner->getThumb(200,200,'crop'):""
+               ];
+           }
+       }
+       if ($this['slug'] && $countiresid) {
+               $themesid = [];
+               foreach($countiresid as $countryId){
+                   $packages=Packages::select('theme_id')->where('countries', 'like', '%'.$countryId.'%')->where('status',1)->get();
+                   if ($packages) {
+                       foreach ($packages as $package) {
+                           $themesid[$package['theme_id']] = $package['theme_id'];
+                       }
+                   }
+               }
+               
+               if ($themesid) {
+                   $themes=Packages::whereIn('theme_id',$themesid)->where('status',1)->get();
+                   foreach ($themes as $theme) {
+                       $exps[] = [
+                           'title'=>$theme->title,
+                           'image'=>$theme->banner?$theme->banner->getThumb(583,583,'crop'):"",
+                           'content'=>$theme->content
+                       ];
+                   }
+               }
+               
+              $this['exps']= $exps;
+       }
+       $this['destination']=$destinations;
+   
+       $themes=[];
+       foreach ($this->themesList->records as $k=>$record){
+           $themes[$k]=[
+               'name'=>$record['title'],
+               'sub_title'=>$record['sub_title'],
+               'description'=>$record['content'],
+               'image'=>$record['banner']? $record['banner']->getThumb(540,320,'crop'):"",
+               'video'=>$record['video'],
+               'subs'=>[]
+           ];
+           $packages=Packages::select('id','title','days','night','price','slug')->where('theme_id',$record['id'])->where('status',1)->get();
+           foreach($packages as $item){
+               $themes[$k]['subs'][]=[
+                   'name'=>$item->title,
+                   'nights'=>$item->night,
+                   'price'=>$item->price,
+                   'days'=>$item->days,
+                   'brief'=>substr(strip_tags($item->brief), 0, 110),
+                   'id'=>$item->id,
+                   'slug'=>$item->slug,
+                   'image'=>$item->banner? $item->banner->getThumb(200,200,'crop'):""
+               ];
+           }
+       }
+       $this['themes']=$themes;
+   
+       foreach ($this->packagesList->records as $k=>$record){
+           $packages[$k]=[
+               'name'=>$record['title'],
+               'brief'=>$record['brief'],
+               'days'=>$record['days'],
+               'price'=>$record['price'],
+               'slug'=>$record['slug'],
+               'subs'=>[]
+           ];
+       }
+       $this['packages']=$packages;
+   }
+?>
+==
+<section class="hero_single version_2 full">
+   <div class="wrapper"
+      style="background-image: url({{slug ? pageDetails.record.banner.path : builderDetails.record.banner.path}});">
+      <div class="container position-relative h-100">
+         <div class="banner_title">
+            <div class="banner_text">
+               <p>DISCOVER OUR</p>
+               <h1 class="UniSansLight">HOLIDAY DEALS</h1>
+               <span class="line"><em></em></span>
+               <div style="padding-bottom:3%;"></div>
+               <div class="play-btn" data-toggle="modal" data-target="#video_pop">
+                    <span><img src="/themes/SAN/assets/images/play-btn.svg"></span> Play Video
+                </div>
+            </div>
+         </div>
+         <div class="banner_search">
+            {% partial 'site/searchform.htm' %}
+         </div>
+      </div>
+   </div>
+</section>
+<!-- /hero_single -->
+<div class="clearfix"></div>
+<div class="container">
+   <div class="main_title_2 destinations-tab {% if apiFunction.isMobile %} mobile {% else %} mb-0 {% endif %}" style="display: none;">
+      <div class="btn-group mb-2 themes_button dincondensedBold">
+         <a href="{{url('destinations')}}/{{destinationsList.records[0].slug}}" data-noscroll="1"
+            class="btn btn-sm {% if slug %}active{% endif %}" style="line-height:1.1"> Destinations </a>
+         <a href="{{url('destinations')}}" class="btn btn-sm {% if slug=="" %}active{% endif %}" data-noscroll="1"
+         style="line-height:1.1"> Themes </a>
+      </div>
+   </div>
+</div>
+{% if apiFunction.isMobile != true %}
+<div class="bg_color_1 container-fluid">
+   <div class="container">
+      <div id="carrosalwrapper">
+         <div id="carouselround" data-ca="0"> </div>
+         <div class="nextprevbuttons mbottom50">
+            <span id="prev"><img src="{{ 'assets/images/left.svg'|theme }}"></span>
+            <span id="next"><img src="{{ 'assets/images/right.svg'|theme }}"></span>
+         </div>
+      </div>
+   </div>
+</div>
+{% else %}
+<div class="mainslide container">
+   <div id="reccomended" class="owl-carousel owl-theme">
+      {% for record in destinationsList.recors %}
+      <div class="item" id="{{record.id}}">
+         <div class="box_grid">
+            <figure>
+               <div class="title">
+                  <div class="img"
+                     style="background-image:url({{record.image.getThumb(540,320,{'mode':'crop'})}})"></div>
+                  <div class="dark_bg" background="{{ 'assets/images/bg.png'|theme }}"></div>
+                  <div class="set">
+                     <a class="locpin"><img src="{{ 'assets/images/location.png'|theme }}"></a>
+                     <small>{{record.name}}</small>
+                     <strong><em></em></strong>
+                  </div>
+               </div>
+            </figure>
+         </div>
+      </div>
+      <!-- /item -->
+      {% endfor %}
+   </div>
+   <div class="d-none d-md-block owl-nav">
+      <div class="hs_owl-prev" style="left:-5px;"><img src="{{ 'assets/images/prev.svg'|theme }}"></div>
+      <div class="hs_owl-next" style="right:-5px;"><img src="{{ 'assets/images/next.svg'|theme }}"></div>
+   </div>
+</div>
+{% endif %}
+<div class="clearfix"></div>
+<div class="bg_color_1 container">
+   <div class="slidedive">
+      <div class="main_title_2 sub_title mt-3">
+         <h2 class="mt-0"></h2>
+         <span><em></em></span>
+      </div>
+      <div class="description">
+         <p class="populardetails"></p>
+      </div>
+      <div class="video-element"></div>
+      <div class="main_title_2 mt-5">
+         <h2>Packages</h2>
+         <span><em></em></span>
+      </div>
+      <div class="our_ser_pos">
+         <div id="homeservice" class="owl-carousel center owl-theme">
+         </div>
+         <div class="owl-nav">
+            <div class="hs_owl-prev" onclick="itl.hs_owl.trigger('prev.owl.carousel');"><img
+               src="{{ 'assets/images/prev.svg'|theme }}"></div>
+            <div class="hs_owl-next" onclick="itl.hs_owl.trigger('next.owl.carousel');"><img
+               src="{{ 'assets/images/next.svg'|theme }}"></div>
+         </div>
+      </div>
+   </div>
+   <!-- /package_item -->
+   <div class="clearfix"></div>
+</div>
+<!-- /container -->
+<script type="text/javascript">
+   var cr = {
+       cl: '{{ slug?"destinations":"themes" }}',
+       img: {
+           themes: [],
+           destinations: []
+       },
+       w: 0,
+       cd: {{ cd?cd:0}},
+   cs: 3 + {{ cd ? cd : 0 }},
+   baseurl: '{{ url(' / ') }}',
+       int: function() {
+           {% if apiFunction.isMobile != true %}
+           img = cr.img[cr.cl];
+           if ($('#carrosalwrapper .item').length) {
+               for (i = 0 + cr.cd; i < 4 + cr.cd; i++) {
+                   $('#carrosalwrapper .item').eq(i).css({ 'background-image': 'url(' + cr.baseurl + 'img/' + img[i].image + ')' });
+                   $('#carrosalwrapper .item').eq(i).find('span').html(img[i].name);
+               }
+           } else {
+               for (i = 0 + cr.cd; i < 4 + cr.cd; i++) {
+                   $('#carouselround').prepend('<div class="item" onclick="cr.click(this)" ><div class="title"><span></span><em></em></div></div>');
+                   cr.setdata(0, i);
+               }
+           }
+           {% endif %}
+       },
+   btnclick: function(a, ele) {
+       cr.cl = a;
+       $('.btn-group.themes_button').find('.btn').removeClass('active');
+       $(ele).addClass('active');
+       cr.int();
+       setTimeout(function () {
+           cr.set();
+       }, 300);
+   },
+   click: function(a) {
+       i = $('#carrosalwrapper .item').index(a);
+       if (i == 0 || i == 2) {
+           corrosalmove(i);
+       }
+   },
+   setdata: function(ele, i) {
+       img = cr.img[cr.cl][i];
+       if (img) $('#carrosalwrapper .item').eq(ele).attr('id', i).css({ 'background-image': 'url(' + img.image }).find('span').html(img.name);
+   },
+   set: function () {
+       cr.w = $('#carrosalwrapper #carouselround').width();
+       $('#carrosalwrapper #carouselround').height(cr.w * .43);
+       $('#carrosalwrapper .item').css({ height: cr.w * .36, opacity: 1 })
+       $('#carrosalwrapper .item').eq(0).css({ width: cr.w * .6, left: 250 - (cr.w * .6), top: cr.w * .05, transform: 'scale(.8)' });
+       $('#carrosalwrapper .item').eq(1).css({ width: cr.w * .6, left: cr.w * .2, top: cr.w * .05, transform: 'scale(.6)' });
+       $('#carrosalwrapper .item').eq(2).css({ width: cr.w * .6, left: 250 + cr.w - (cr.w * .48), top: cr.w * .05, transform: 'scale(.8)' });
+       $('#carrosalwrapper .item').eq(3).css({ width: cr.w * .6, left: cr.w * .2, top: cr.w * .05, transform: 'scale(1)' });
+       {% if apiFunction.isMobile %}
+       id = $('#reccomended').find('.owl-item.active.center').find('.item').attr('id');
+       {% else %}
+       id = $('#carrosalwrapper .item').eq(3).attr('id');
+       {% endif %}
+   
+   
+       if (id) {
+           img = cr.img[cr.cl][id];
+           if (img) {
+               $('.slidedive').fadeOut(500, function () {
+                   $('.sub_title h2').html(img.sub_title);
+                   $('.description p').html(img.description);
+                   if (img.video) {
+                       $('.video-element').html('<div class="mt-4 embed-responsive embed-responsive-42by24"><iframe width="100%" src="https://www.youtube.com/embed/' + img.video + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>')
+                   } else {
+                       $('.video-element').html('');
+                   }
+                   $('.slidedive').fadeIn(500);
+               })
+               elements = "";
+               var nos = $('#homeservice .item').length;
+               for (i = 0; i < nos; i++) {
+                   if (itl.hs_owl) itl.hs_owl.trigger('remove.owl.carousel', i).trigger('refresh.owl.carousel');
+               }
+               subs = img.subs;
+               if (subs.length) {
+                   subcount = Math.ceil(subs.length / 2);
+                   $j = 0;
+                   for (i = 0; i < subcount; i++) {
+                       elements = '<div class="item">';
+                       sub = subs[$j]; $j++;
+                       var price = "";
+   
+                       if (sub) {
+                           if (sub.price && sub.price.price) {
+                               price = '<em>' + sub.price.currency + ' ' + sub.price.price + '*</em>';
+                           }
+                           if (cr.cl == 'themes') {
+                               elements += '<div class="col-xl-12 col-lg-12 col-md-12 nopadding"> <div class=" theme d-flex grid_item sub_item"><div class="w-100">  <figure style="background-image:url(' + sub.image + '); height:100%">  </figure>  </div> <div class="corporateBG w-100 ">  <figure><div class="details"><div class="details-sub"><h3>' + sub.name + '</h3><span>' + sub.days + ' Days | ' + sub.nights + ' Nights</span> ' + price + ' <a href="' + (cr.baseurl + (cr.cl == 'destinations' ? 'countries' : 'package') + '/' + sub.slug) + '"><em>MORE</em></a></div></div></figure> </div> </div> </div>';
+                           } else {
+                               elements += '<div class="col-xl-12 col-lg-12 col-md-12 nopadding"> <div class="d-flex grid_item sub_item"><div class="w-100">  <figure style="background-image:url(' + sub.image + '); height:100%">  </figure>  </div> <div class="corporateBG w-100 ">  <figure><div class="details"><h4>Experience</h4><h3>' + sub.name + '</h3><span>' + sub.brief + '...</span> <a href="' + (cr.baseurl + (cr.cl == 'destinations' ? 'countries' : 'package') + '/' + sub.slug) + '"><em>Learn more</em></a></div></figure> </div> </div> </div>';
+                           }
+                       }
+                       sub = subs[$j]; $j++;
+                       price = "";
+                       if (sub) {
+                           if (sub.price && sub.price.price) {
+                               price = '<em>' + sub.price.currency + ' ' + sub.price.price + '*</em>';
+                           }
+                           if (cr.cl == 'themes') {
+                               elements += '<div class="col-xl-12 col-lg-12 col-md-12 nopadding"> <div class=" theme d-flex grid_item sub_item"> <div class="corporateBG w-100 ">  <figure><div class="details"><div class="details-sub"><h3>' + sub.name + '</h3><span>' + sub.days + ' Days | ' + sub.nights + ' Nights</span> ' + price + ' <a href="' + (cr.baseurl + (cr.cl == 'destinations' ? 'countries' : 'package') + '/' + sub.slug) + '"><em>MORE</em></a></div></div></figure> </div> <div class="w-100">  <figure style="background-image:url(' + cr.baseurl + 'img/' + sub.image + '); height:100%">  </figure>  </div> </div> </div>';
+                           } else {
+                               elements += '<div class="col-xl-12 col-lg-12 col-md-12 nopadding"> <div class="d-flex grid_item sub_item"> <div class="corporateBG w-100 ">  <figure><div class="details"><h4>Experience</h4><h3>' + sub.name + '</h3><span>' + sub.brief + '...</span> <a href="' + (cr.baseurl + (cr.cl == 'destinations' ? 'countries' : 'package') + '/' + sub.slug) + '"><em>Learn more</em></a></div></figure> </div> <div class="w-100">  <figure style="background-image:url(' + cr.baseurl + 'img/' + sub.image + '); height:100%">  </figure>  </div> </div> </div>';
+                           }
+                       }
+                       elements += '</div>';
+   
+                       itl.hs_owl.trigger('add.owl.carousel', [elements]).trigger('refresh.owl.carousel');
+                   }
+               } else {
+                   if (itl.hs_owl) itl.hs_owl.trigger('remove.owl.carousel', i).trigger('refresh.owl.carousel');
+               }
+           }
+       }
+   }
+   }
+   
+   {% if slug %}
+   cr.img.destinations = {{ destination | json_encode | raw }};
+   {% endif %}
+   {% if slug == "" %}
+   cr.img.themes = {{ themes | json_encode | raw }};
+   {% endif %}
+   
+   
+   
+   
+   {% if apiFunction.isMobile %}
+   
+   {% else %}
+   $('#prev').click(function () {
+       corrosalmove(0);
+   })
+   $('#next').click(function () {
+       corrosalmove(2);
+   })
+   
+   function corrosalmove(i) {
+       img = cr.img[cr.cl];
+       if (i == 0) {
+           cr.cs = ($('#carrosalwrapper .item').eq(0).attr('id') * 1) - 1;
+           if (cr.cs < 0) {
+               cr.cs = img.length - 1;
+           }
+           cr.setdata(1, cr.cs);
+           $('#carrosalwrapper #carouselround').append($('#carrosalwrapper .item').eq(0));
+   
+       }
+       if (i == 2) {
+           cr.cs = ($('#carrosalwrapper .item').eq(2).attr('id') * 1) + 1;
+           if (cr.cs > img.length - 1) {
+               cr.cs = 0;
+           }
+           cr.setdata(1, cr.cs);
+           $('#carrosalwrapper #carouselround').prepend($('#carrosalwrapper .item').eq(3));
+   
+       }
+       cr.set();
+   }
+   $(document).ready(function () {
+       cr.int();
+       setTimeout(function () {
+           cr.set();
+       }, 300);
+   })
+   $(window).resize(function () {
+       cr.set();
+   });
+   {% endif %}
+</script>
+{% if apiFunction.isMobile != true %}
+<style>
+   #carrosalwrapper #carouselround {
+   position: relative;
+   height: 500px;
+   width: 100%;
+   overflow: hidden;
+   }
+   #carrosalwrapper .item {
+   opacity: 0;
+   width: 600px;
+   height: 400px;
+   position: absolute;
+   transition-duration: .5s;
+   transition-timing-function: ease-out;
+   transform: translate(0, 0);
+   background: center;
+   background-size: cover;
+   border-radius: 0;
+   }
+   #carrosalwrapper .item .title {
+   opacity: 0;
+   background: rgba(0, 0, 0, .3);
+   height: 100%;
+   text-transform: uppercase;
+   cursor: pointer;
+   }
+   #carrosalwrapper .item:nth-child(1) {
+   z-index: 1;
+   }
+   #carrosalwrapper .item:nth-child(2) {
+   z-index: 0;
+   opacity: 0
+   }
+   #carrosalwrapper .item:nth-child(3) {
+   z-index: 3;
+   }
+   #carrosalwrapper .item:nth-child(4) {
+   z-index: 4;
+   }
+   #carrosalwrapper .item:nth-child(4) .title {
+   opacity: 1;
+   }
+</style>
+{% endif %}
+{% if packagesList.records|length %}
+<div class="destination-packages mt-5" style="display: none">
+   <div class="container">
+      <div class="row">
+         <div class="col-10 col-md-6">
+            <div class="section">
+               <div class="leftwhite"></div>
+               <h4>#trending</h4>
+               <h2></h2>
+               <em></em>
+               <p></p>
+               <div class="price">
+                  <h5></h5>
+                  <h3></h3>
+                  <a class="more">Lern More</a>
+               </div>
+               <div class="navigation">
+                  <a class="prev" onclick="dp.click(0)"><img src="{{ 'assets/images/prev.svg'|theme }}"></a>
+                  <a class="next" onclick="dp.click(1)"><img src="{{ 'assets/images/next.svg'|theme }}"></a>
+               </div>
+            </div>
+         </div>
+         <div class="col-2 col-md-6"></div>
+      </div>
+   </div>
+</div>
+<script>
+   var dp = {
+       baseurl: '{{url("/")}}',
+       current: 0,
+       data: {{ packages| json_encode | raw }},
+   put: function() {
+       data = dp.data[dp.current];
+       ele = $('.destination-packages');
+       w = ele.find('.section').offset().left;
+       ele.find('h2').html(data.name);
+       ele.find('p').html(data.brief);
+       ele.find('h5').html(data.days + ' Days From');
+       ele.find('h3').html(data.price);
+       ele.find('a.more').attr('href', dp.baseurl + 'package/' + data.slug);
+       $('.leftwhite').css({ width: w, left: -w });
+       ele.css({ 'background-image': 'url(' + data.image + ')' });
+   },
+   click: function(a) {
+       if (a) {
+           dp.current++;
+       } else {
+           dp.current++;
+       }
+       if (dp.current > dp.data.length - 1) {
+           dp.current = 0;
+       } else if (dp.current < 0) {
+           dp.current = dp.data.length - 1;
+       }
+   
+       dp.put();
+   }
+   }
+   $(document).ready(function () {
+       dp.put();
+   })
+</script>
+{% endif %}
+<div class="container">
+   <div class=" mt-5 pb-5" id="experiences">
+      {% if exps %}
+      <div class="main_title_2 ">
+         <h2>MOST UNUSUAL EXPERIENCES </h2>
+         <span><em></em></span>
+      </div>
+      <div class="mb-5 experienc-box{% if apiFunction.isMobile %}-mobile{% endif %} ">
+         {% if apiFunction.isMobile %}
+         {% for exp in exps %}
+         <div class="experienc-set {% if j==0 %}active current{% endif %}">
+            <div class="experienc-figer">
+               <div class="img" style="background-image:url({{exp.image}})"></div>
+               <a class="title">
+                  <h3>{{exp.title}}<em></em></h3>
+               </a>
+            </div>
+            <div class="experienc-content">
+               <div class="experienc-content-in UniSansLight">exp.content</div>
+            </div>
+         </div>
+         {% endfor %}
+         {% else %}
+         {% set expcount = ((exps|length) /2)| round(0, 'ceil') %}
+         {% if expcount %}
+         {% set j = 0 %}
+         {% for i in 0..1 %}
+         <div class="experienc-set {% if j==0 %}active current{% endif %}">
+            {% if exps[j] %}
+            {% set exp = exps[j] %}
+            {% set j = j+1 %}
+            <div class="experienc-left">
+               <div class="experienc-figer">
+                  <div class="img" style="background-image:url({{exp.image}}); ?>)"></div>
+                  <a class="title">
+                     <h3>{{exp.title}} <em></em></h3>
+                  </a>
+               </div>
+            </div>
+            {% endif %}
+            {% if exps[j] %}
+            {% set exp = exps[j] %}
+            {% set j = j+1 %}
+            <div class="experienc-right">
+               <div class="experienc-figer">
+                  <div class="img" style="background-image:url({{exp.image}})"></div>
+                  <a class="title">
+                     <h3>{{exp.title}}<em></em></h3>
+                  </a>
+               </div>
+            </div>
+            {% endif %}
+         </div>
+         {% endfor %}
+         {% endif %}
+         {% endif %}
+         <div class="morelessbar morebar">
+            <div class="expcorner leftcorner"></div>
+            <a class="addexp" onclick="expslide(1);"><img src="{{ 'assets/images/add.svg'|theme }}"
+               class="img-fluid" alt=""></a>
+            <div class="expcorner rightcorner"></div>
+         </div>
+      </div>
+      <script>
+         function expslide(type, ele) {
+             toele = "";
+             $('.experienc-set').each(function () {
+                 if (!toele) {
+                     ele = $(this);
+                     if (ele.hasClass('current')) {
+                         if (ele.hasClass('active') && !ele.hasClass('current')) {
+                             toele = ele;
+                         } else {
+                             if (type == 1) {
+                                 toele = ele.next();
+                             } else {
+                                 toele = ele.prev();
+                             }
+                         }
+                     }
+                     if ($(toele).length && toele.hasClass('experienc-set')) {
+                         $('.experienc-set').removeClass('current');
+                         $(toele).addClass('active');
+                         $(toele).addClass('current');
+                     }
+                 }
+                 index = $('.experienc-set').index(toele);
+                 if ($('.experienc-set').length == index + 1) {
+                     $('.morebar').addClass('d-none');
+                 } else {
+                     $('.morebar').removeClass('d-none');
+                 }
+         
+             })
+         }
+      </script>
+      {% endif %}
+   </div>
+</div>
+<section class="other-experiences">
+   <div class="container">
+      <div class="row">
+         <div class="col-md-12">
+            <div class=" my-5 pb-4" id="experiences">
+               <div class="main_title_2 ">
+                  <h2>Other EXPERIENCES </h2>
+                  <span><em></em></span>
+               </div>
+               <div class="experienc-box">
+
+                  <div class="experience-item">
+                      <div class="experienc-set active current">
+                         <div class="experienc-left">
+                            <div class="experienc-figer">
+                               <div class="img" style="background-image:url(storage/app/resized/07/expo_1_583_583_crop.jpeg)"></div>
+                               <div class="title">
+                                  <h3>Summer Experience <em></em></h3>
+                               </div>
+                            </div>
+                         </div>
+                         <div class="experienc-right">
+                            <div class="experienc-figer">
+                               <div class="img" style="background-image:url(storage/app/resized/07/expo_1_583_583_crop.jpeg)"></div>
+                               <div class="title">
+                                  <h3>Summer Experience<em></em></h3>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                      <div class="morelessbar morebar">
+                         <div class="expcorner leftcorner"></div>
+                         <a class="addexp" onclick="expslide(1);">
+                            <img src="themes/SAN/assets/images/add.svg" class="img-fluid" alt="">
+                            <img src="themes/SAN/assets/images/minus.svg" class="img-fluid more-exp" alt="">
+                         </a>
+                         <div class="expcorner rightcorner"></div>
+                      </div>
+                      <div class="experienc-set toggle-exp">
+                         <div class="experienc-left">
+                            <div class="experienc-figer">
+                               <div class="img" style="background-image:url(storage/app/resized/07/expo_1_583_583_crop.jpeg)"></div>
+                               <div class="title">
+                                  <h3>Summer Experience <em></em></h3>
+                               </div>
+                            </div>
+                         </div>
+                         <div class="experienc-right">
+                            <div class="experienc-figer">
+                               <div class="img" style="background-image:url(storage/app/resized/07/expo_1_583_583_crop.jpeg)"></div>
+                               <div class="title">
+                                  <h3>Summer Experience<em></em></h3>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                      
+                  </div>
+                  
+                  <!--   <div class="experienc-set ">
+                     </div> -->
+                  
+
+                  
+               </div>
+               <div class="other-exp-descr pt-5 text-center">
+                      <p>Our tailor made holidays allow you the freedom to design your own holiday at some of our favourite destinations.
+You’ll have the flexibility to create a holiday with the pace, duration and activities to suit you. </p>
+                  </div>
+               <script>
+                function expslide(type,ele){
+                    jQuery('.morebar').toggleClass('clicked');
+                    jQuery('.experienc-set.toggle-exp').toggleClass('current active');
+                }
+                  // function expslide(type,ele){
+                  //     toele="";
+                  //     if(ele){
+                  //     toele =$(ele).closest('.experienc-set');
+                  //     if($(toele).length && toele.hasClass('experienc-set')){ 
+                  //             if(!$(toele).hasClass('open')){
+                  //                 $('.experienc-set').removeClass('current');
+                  //                 $('.experienc-set').removeClass('open');
+                  //                 $(toele).addClass('active');
+                  //                 $(toele).addClass('open');
+                  //                 $(toele).addClass('current');
+                  //             }else{
+                  //                 $(toele).removeClass('open');
+                  //                 $(toele).removeClass('current');
+                  //             }
+                  //         }  
+                  //     }else{
+                  //         $('.experienc-set').each(function(){                        
+                  //             if(!toele){
+                  //                 ele=$(this);                            
+                  //                     if(ele.hasClass('current')){
+                  //                         if(ele.hasClass('active') && !ele.hasClass('open')){
+                  //                             toele=ele;
+                  //                         }else{
+                  //                             if(type==1){
+                  //                                 toele=ele.next();
+                  //                             }else{
+                  //                                 toele=ele.prev();
+                  //                             }  
+                  //                         }
+                  //                     } 
+                  //                     if($(toele).length && toele.hasClass('experienc-set')){ 
+                  //                         $('.experienc-set').removeClass('current');
+                  //                         $('.experienc-set').removeClass('open');
+                  //                         $(toele).addClass('active');
+                  //                         $(toele).addClass('open');
+                  //                         $(toele).addClass('current');
+                  //                     }                             
+                  //             }
+                  //             index=$('.experienc-set').index(toele);
+                  //             if($('.experienc-set').length==index+1){
+                  //                 $('.morebar').addClass('');
+                  //             }else{
+                  //                 $('.morebar').removeClass('d-none');
+                  //             } 
+                              
+                  //         })
+                  //     }
+                  // }
+               </script> 
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+
+<!-- POPUP -->
+<div class="modal fade" id="video_pop" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+         <div class="modal-dialog modal-lg" role="document">
+           <div class="modal-content">
+             <div class="modal-body">        
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                   </button>        
+                   <!-- 16:9 aspect ratio -->
+                   <div class="embed-responsive embed-responsive-16by9">
+                     <iframe width="713" height="401" src="https://www.youtube.com/embed/D0UnqGm_miA" title="Dummy Video For Website" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                   </div>                
+             </div>        
+           </div>
+        </div>
+</div>
+
+<script type="text/javascript">
+    $('.experienc-box').owlCarousel({
+        loop:true,
+        margin:10,
+        dots: false,
+        nav:true,
+        responsiveClass:true,
+        responsive:{
+            0:{
+                items:1,
+                nav:false
+            },
+            600:{
+                items:1,
+                nav:false
+            },
+            1000:{
+                items:1,
+                nav:true,
+                loop:false
+            }
+        }
+    })
+</script>";s:5:"mtime";i:1748001349;s:6:"markup";s:28732:"<section class="hero_single version_2 full">
+   <div class="wrapper"
+      style="background-image: url({{slug ? pageDetails.record.banner.path : builderDetails.record.banner.path}});">
+      <div class="container position-relative h-100">
+         <div class="banner_title">
+            <div class="banner_text">
+               <p>DISCOVER OUR</p>
+               <h1 class="UniSansLight">HOLIDAY DEALS</h1>
+               <span class="line"><em></em></span>
+               <div style="padding-bottom:3%;"></div>
+               <div class="play-btn" data-toggle="modal" data-target="#video_pop">
+                    <span><img src="/themes/SAN/assets/images/play-btn.svg"></span> Play Video
+                </div>
+            </div>
+         </div>
+         <div class="banner_search">
+            {% partial 'site/searchform.htm' %}
+         </div>
+      </div>
+   </div>
+</section>
+<!-- /hero_single -->
+<div class="clearfix"></div>
+<div class="container">
+   <div class="main_title_2 destinations-tab {% if apiFunction.isMobile %} mobile {% else %} mb-0 {% endif %}" style="display: none;">
+      <div class="btn-group mb-2 themes_button dincondensedBold">
+         <a href="{{url('destinations')}}/{{destinationsList.records[0].slug}}" data-noscroll="1"
+            class="btn btn-sm {% if slug %}active{% endif %}" style="line-height:1.1"> Destinations </a>
+         <a href="{{url('destinations')}}" class="btn btn-sm {% if slug=="" %}active{% endif %}" data-noscroll="1"
+         style="line-height:1.1"> Themes </a>
+      </div>
+   </div>
+</div>
+{% if apiFunction.isMobile != true %}
+<div class="bg_color_1 container-fluid">
+   <div class="container">
+      <div id="carrosalwrapper">
+         <div id="carouselround" data-ca="0"> </div>
+         <div class="nextprevbuttons mbottom50">
+            <span id="prev"><img src="{{ 'assets/images/left.svg'|theme }}"></span>
+            <span id="next"><img src="{{ 'assets/images/right.svg'|theme }}"></span>
+         </div>
+      </div>
+   </div>
+</div>
+{% else %}
+<div class="mainslide container">
+   <div id="reccomended" class="owl-carousel owl-theme">
+      {% for record in destinationsList.recors %}
+      <div class="item" id="{{record.id}}">
+         <div class="box_grid">
+            <figure>
+               <div class="title">
+                  <div class="img"
+                     style="background-image:url({{record.image.getThumb(540,320,{'mode':'crop'})}})"></div>
+                  <div class="dark_bg" background="{{ 'assets/images/bg.png'|theme }}"></div>
+                  <div class="set">
+                     <a class="locpin"><img src="{{ 'assets/images/location.png'|theme }}"></a>
+                     <small>{{record.name}}</small>
+                     <strong><em></em></strong>
+                  </div>
+               </div>
+            </figure>
+         </div>
+      </div>
+      <!-- /item -->
+      {% endfor %}
+   </div>
+   <div class="d-none d-md-block owl-nav">
+      <div class="hs_owl-prev" style="left:-5px;"><img src="{{ 'assets/images/prev.svg'|theme }}"></div>
+      <div class="hs_owl-next" style="right:-5px;"><img src="{{ 'assets/images/next.svg'|theme }}"></div>
+   </div>
+</div>
+{% endif %}
+<div class="clearfix"></div>
+<div class="bg_color_1 container">
+   <div class="slidedive">
+      <div class="main_title_2 sub_title mt-3">
+         <h2 class="mt-0"></h2>
+         <span><em></em></span>
+      </div>
+      <div class="description">
+         <p class="populardetails"></p>
+      </div>
+      <div class="video-element"></div>
+      <div class="main_title_2 mt-5">
+         <h2>Packages</h2>
+         <span><em></em></span>
+      </div>
+      <div class="our_ser_pos">
+         <div id="homeservice" class="owl-carousel center owl-theme">
+         </div>
+         <div class="owl-nav">
+            <div class="hs_owl-prev" onclick="itl.hs_owl.trigger('prev.owl.carousel');"><img
+               src="{{ 'assets/images/prev.svg'|theme }}"></div>
+            <div class="hs_owl-next" onclick="itl.hs_owl.trigger('next.owl.carousel');"><img
+               src="{{ 'assets/images/next.svg'|theme }}"></div>
+         </div>
+      </div>
+   </div>
+   <!-- /package_item -->
+   <div class="clearfix"></div>
+</div>
+<!-- /container -->
+<script type="text/javascript">
+   var cr = {
+       cl: '{{ slug?"destinations":"themes" }}',
+       img: {
+           themes: [],
+           destinations: []
+       },
+       w: 0,
+       cd: {{ cd?cd:0}},
+   cs: 3 + {{ cd ? cd : 0 }},
+   baseurl: '{{ url(' / ') }}',
+       int: function() {
+           {% if apiFunction.isMobile != true %}
+           img = cr.img[cr.cl];
+           if ($('#carrosalwrapper .item').length) {
+               for (i = 0 + cr.cd; i < 4 + cr.cd; i++) {
+                   $('#carrosalwrapper .item').eq(i).css({ 'background-image': 'url(' + cr.baseurl + 'img/' + img[i].image + ')' });
+                   $('#carrosalwrapper .item').eq(i).find('span').html(img[i].name);
+               }
+           } else {
+               for (i = 0 + cr.cd; i < 4 + cr.cd; i++) {
+                   $('#carouselround').prepend('<div class="item" onclick="cr.click(this)" ><div class="title"><span></span><em></em></div></div>');
+                   cr.setdata(0, i);
+               }
+           }
+           {% endif %}
+       },
+   btnclick: function(a, ele) {
+       cr.cl = a;
+       $('.btn-group.themes_button').find('.btn').removeClass('active');
+       $(ele).addClass('active');
+       cr.int();
+       setTimeout(function () {
+           cr.set();
+       }, 300);
+   },
+   click: function(a) {
+       i = $('#carrosalwrapper .item').index(a);
+       if (i == 0 || i == 2) {
+           corrosalmove(i);
+       }
+   },
+   setdata: function(ele, i) {
+       img = cr.img[cr.cl][i];
+       if (img) $('#carrosalwrapper .item').eq(ele).attr('id', i).css({ 'background-image': 'url(' + img.image }).find('span').html(img.name);
+   },
+   set: function () {
+       cr.w = $('#carrosalwrapper #carouselround').width();
+       $('#carrosalwrapper #carouselround').height(cr.w * .43);
+       $('#carrosalwrapper .item').css({ height: cr.w * .36, opacity: 1 })
+       $('#carrosalwrapper .item').eq(0).css({ width: cr.w * .6, left: 250 - (cr.w * .6), top: cr.w * .05, transform: 'scale(.8)' });
+       $('#carrosalwrapper .item').eq(1).css({ width: cr.w * .6, left: cr.w * .2, top: cr.w * .05, transform: 'scale(.6)' });
+       $('#carrosalwrapper .item').eq(2).css({ width: cr.w * .6, left: 250 + cr.w - (cr.w * .48), top: cr.w * .05, transform: 'scale(.8)' });
+       $('#carrosalwrapper .item').eq(3).css({ width: cr.w * .6, left: cr.w * .2, top: cr.w * .05, transform: 'scale(1)' });
+       {% if apiFunction.isMobile %}
+       id = $('#reccomended').find('.owl-item.active.center').find('.item').attr('id');
+       {% else %}
+       id = $('#carrosalwrapper .item').eq(3).attr('id');
+       {% endif %}
+   
+   
+       if (id) {
+           img = cr.img[cr.cl][id];
+           if (img) {
+               $('.slidedive').fadeOut(500, function () {
+                   $('.sub_title h2').html(img.sub_title);
+                   $('.description p').html(img.description);
+                   if (img.video) {
+                       $('.video-element').html('<div class="mt-4 embed-responsive embed-responsive-42by24"><iframe width="100%" src="https://www.youtube.com/embed/' + img.video + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>')
+                   } else {
+                       $('.video-element').html('');
+                   }
+                   $('.slidedive').fadeIn(500);
+               })
+               elements = "";
+               var nos = $('#homeservice .item').length;
+               for (i = 0; i < nos; i++) {
+                   if (itl.hs_owl) itl.hs_owl.trigger('remove.owl.carousel', i).trigger('refresh.owl.carousel');
+               }
+               subs = img.subs;
+               if (subs.length) {
+                   subcount = Math.ceil(subs.length / 2);
+                   $j = 0;
+                   for (i = 0; i < subcount; i++) {
+                       elements = '<div class="item">';
+                       sub = subs[$j]; $j++;
+                       var price = "";
+   
+                       if (sub) {
+                           if (sub.price && sub.price.price) {
+                               price = '<em>' + sub.price.currency + ' ' + sub.price.price + '*</em>';
+                           }
+                           if (cr.cl == 'themes') {
+                               elements += '<div class="col-xl-12 col-lg-12 col-md-12 nopadding"> <div class=" theme d-flex grid_item sub_item"><div class="w-100">  <figure style="background-image:url(' + sub.image + '); height:100%">  </figure>  </div> <div class="corporateBG w-100 ">  <figure><div class="details"><div class="details-sub"><h3>' + sub.name + '</h3><span>' + sub.days + ' Days | ' + sub.nights + ' Nights</span> ' + price + ' <a href="' + (cr.baseurl + (cr.cl == 'destinations' ? 'countries' : 'package') + '/' + sub.slug) + '"><em>MORE</em></a></div></div></figure> </div> </div> </div>';
+                           } else {
+                               elements += '<div class="col-xl-12 col-lg-12 col-md-12 nopadding"> <div class="d-flex grid_item sub_item"><div class="w-100">  <figure style="background-image:url(' + sub.image + '); height:100%">  </figure>  </div> <div class="corporateBG w-100 ">  <figure><div class="details"><h4>Experience</h4><h3>' + sub.name + '</h3><span>' + sub.brief + '...</span> <a href="' + (cr.baseurl + (cr.cl == 'destinations' ? 'countries' : 'package') + '/' + sub.slug) + '"><em>Learn more</em></a></div></figure> </div> </div> </div>';
+                           }
+                       }
+                       sub = subs[$j]; $j++;
+                       price = "";
+                       if (sub) {
+                           if (sub.price && sub.price.price) {
+                               price = '<em>' + sub.price.currency + ' ' + sub.price.price + '*</em>';
+                           }
+                           if (cr.cl == 'themes') {
+                               elements += '<div class="col-xl-12 col-lg-12 col-md-12 nopadding"> <div class=" theme d-flex grid_item sub_item"> <div class="corporateBG w-100 ">  <figure><div class="details"><div class="details-sub"><h3>' + sub.name + '</h3><span>' + sub.days + ' Days | ' + sub.nights + ' Nights</span> ' + price + ' <a href="' + (cr.baseurl + (cr.cl == 'destinations' ? 'countries' : 'package') + '/' + sub.slug) + '"><em>MORE</em></a></div></div></figure> </div> <div class="w-100">  <figure style="background-image:url(' + cr.baseurl + 'img/' + sub.image + '); height:100%">  </figure>  </div> </div> </div>';
+                           } else {
+                               elements += '<div class="col-xl-12 col-lg-12 col-md-12 nopadding"> <div class="d-flex grid_item sub_item"> <div class="corporateBG w-100 ">  <figure><div class="details"><h4>Experience</h4><h3>' + sub.name + '</h3><span>' + sub.brief + '...</span> <a href="' + (cr.baseurl + (cr.cl == 'destinations' ? 'countries' : 'package') + '/' + sub.slug) + '"><em>Learn more</em></a></div></figure> </div> <div class="w-100">  <figure style="background-image:url(' + cr.baseurl + 'img/' + sub.image + '); height:100%">  </figure>  </div> </div> </div>';
+                           }
+                       }
+                       elements += '</div>';
+   
+                       itl.hs_owl.trigger('add.owl.carousel', [elements]).trigger('refresh.owl.carousel');
+                   }
+               } else {
+                   if (itl.hs_owl) itl.hs_owl.trigger('remove.owl.carousel', i).trigger('refresh.owl.carousel');
+               }
+           }
+       }
+   }
+   }
+   
+   {% if slug %}
+   cr.img.destinations = {{ destination | json_encode | raw }};
+   {% endif %}
+   {% if slug == "" %}
+   cr.img.themes = {{ themes | json_encode | raw }};
+   {% endif %}
+   
+   
+   
+   
+   {% if apiFunction.isMobile %}
+   
+   {% else %}
+   $('#prev').click(function () {
+       corrosalmove(0);
+   })
+   $('#next').click(function () {
+       corrosalmove(2);
+   })
+   
+   function corrosalmove(i) {
+       img = cr.img[cr.cl];
+       if (i == 0) {
+           cr.cs = ($('#carrosalwrapper .item').eq(0).attr('id') * 1) - 1;
+           if (cr.cs < 0) {
+               cr.cs = img.length - 1;
+           }
+           cr.setdata(1, cr.cs);
+           $('#carrosalwrapper #carouselround').append($('#carrosalwrapper .item').eq(0));
+   
+       }
+       if (i == 2) {
+           cr.cs = ($('#carrosalwrapper .item').eq(2).attr('id') * 1) + 1;
+           if (cr.cs > img.length - 1) {
+               cr.cs = 0;
+           }
+           cr.setdata(1, cr.cs);
+           $('#carrosalwrapper #carouselround').prepend($('#carrosalwrapper .item').eq(3));
+   
+       }
+       cr.set();
+   }
+   $(document).ready(function () {
+       cr.int();
+       setTimeout(function () {
+           cr.set();
+       }, 300);
+   })
+   $(window).resize(function () {
+       cr.set();
+   });
+   {% endif %}
+</script>
+{% if apiFunction.isMobile != true %}
+<style>
+   #carrosalwrapper #carouselround {
+   position: relative;
+   height: 500px;
+   width: 100%;
+   overflow: hidden;
+   }
+   #carrosalwrapper .item {
+   opacity: 0;
+   width: 600px;
+   height: 400px;
+   position: absolute;
+   transition-duration: .5s;
+   transition-timing-function: ease-out;
+   transform: translate(0, 0);
+   background: center;
+   background-size: cover;
+   border-radius: 0;
+   }
+   #carrosalwrapper .item .title {
+   opacity: 0;
+   background: rgba(0, 0, 0, .3);
+   height: 100%;
+   text-transform: uppercase;
+   cursor: pointer;
+   }
+   #carrosalwrapper .item:nth-child(1) {
+   z-index: 1;
+   }
+   #carrosalwrapper .item:nth-child(2) {
+   z-index: 0;
+   opacity: 0
+   }
+   #carrosalwrapper .item:nth-child(3) {
+   z-index: 3;
+   }
+   #carrosalwrapper .item:nth-child(4) {
+   z-index: 4;
+   }
+   #carrosalwrapper .item:nth-child(4) .title {
+   opacity: 1;
+   }
+</style>
+{% endif %}
+{% if packagesList.records|length %}
+<div class="destination-packages mt-5" style="display: none">
+   <div class="container">
+      <div class="row">
+         <div class="col-10 col-md-6">
+            <div class="section">
+               <div class="leftwhite"></div>
+               <h4>#trending</h4>
+               <h2></h2>
+               <em></em>
+               <p></p>
+               <div class="price">
+                  <h5></h5>
+                  <h3></h3>
+                  <a class="more">Lern More</a>
+               </div>
+               <div class="navigation">
+                  <a class="prev" onclick="dp.click(0)"><img src="{{ 'assets/images/prev.svg'|theme }}"></a>
+                  <a class="next" onclick="dp.click(1)"><img src="{{ 'assets/images/next.svg'|theme }}"></a>
+               </div>
+            </div>
+         </div>
+         <div class="col-2 col-md-6"></div>
+      </div>
+   </div>
+</div>
+<script>
+   var dp = {
+       baseurl: '{{url("/")}}',
+       current: 0,
+       data: {{ packages| json_encode | raw }},
+   put: function() {
+       data = dp.data[dp.current];
+       ele = $('.destination-packages');
+       w = ele.find('.section').offset().left;
+       ele.find('h2').html(data.name);
+       ele.find('p').html(data.brief);
+       ele.find('h5').html(data.days + ' Days From');
+       ele.find('h3').html(data.price);
+       ele.find('a.more').attr('href', dp.baseurl + 'package/' + data.slug);
+       $('.leftwhite').css({ width: w, left: -w });
+       ele.css({ 'background-image': 'url(' + data.image + ')' });
+   },
+   click: function(a) {
+       if (a) {
+           dp.current++;
+       } else {
+           dp.current++;
+       }
+       if (dp.current > dp.data.length - 1) {
+           dp.current = 0;
+       } else if (dp.current < 0) {
+           dp.current = dp.data.length - 1;
+       }
+   
+       dp.put();
+   }
+   }
+   $(document).ready(function () {
+       dp.put();
+   })
+</script>
+{% endif %}
+<div class="container">
+   <div class=" mt-5 pb-5" id="experiences">
+      {% if exps %}
+      <div class="main_title_2 ">
+         <h2>MOST UNUSUAL EXPERIENCES </h2>
+         <span><em></em></span>
+      </div>
+      <div class="mb-5 experienc-box{% if apiFunction.isMobile %}-mobile{% endif %} ">
+         {% if apiFunction.isMobile %}
+         {% for exp in exps %}
+         <div class="experienc-set {% if j==0 %}active current{% endif %}">
+            <div class="experienc-figer">
+               <div class="img" style="background-image:url({{exp.image}})"></div>
+               <a class="title">
+                  <h3>{{exp.title}}<em></em></h3>
+               </a>
+            </div>
+            <div class="experienc-content">
+               <div class="experienc-content-in UniSansLight">exp.content</div>
+            </div>
+         </div>
+         {% endfor %}
+         {% else %}
+         {% set expcount = ((exps|length) /2)| round(0, 'ceil') %}
+         {% if expcount %}
+         {% set j = 0 %}
+         {% for i in 0..1 %}
+         <div class="experienc-set {% if j==0 %}active current{% endif %}">
+            {% if exps[j] %}
+            {% set exp = exps[j] %}
+            {% set j = j+1 %}
+            <div class="experienc-left">
+               <div class="experienc-figer">
+                  <div class="img" style="background-image:url({{exp.image}}); ?>)"></div>
+                  <a class="title">
+                     <h3>{{exp.title}} <em></em></h3>
+                  </a>
+               </div>
+            </div>
+            {% endif %}
+            {% if exps[j] %}
+            {% set exp = exps[j] %}
+            {% set j = j+1 %}
+            <div class="experienc-right">
+               <div class="experienc-figer">
+                  <div class="img" style="background-image:url({{exp.image}})"></div>
+                  <a class="title">
+                     <h3>{{exp.title}}<em></em></h3>
+                  </a>
+               </div>
+            </div>
+            {% endif %}
+         </div>
+         {% endfor %}
+         {% endif %}
+         {% endif %}
+         <div class="morelessbar morebar">
+            <div class="expcorner leftcorner"></div>
+            <a class="addexp" onclick="expslide(1);"><img src="{{ 'assets/images/add.svg'|theme }}"
+               class="img-fluid" alt=""></a>
+            <div class="expcorner rightcorner"></div>
+         </div>
+      </div>
+      <script>
+         function expslide(type, ele) {
+             toele = "";
+             $('.experienc-set').each(function () {
+                 if (!toele) {
+                     ele = $(this);
+                     if (ele.hasClass('current')) {
+                         if (ele.hasClass('active') && !ele.hasClass('current')) {
+                             toele = ele;
+                         } else {
+                             if (type == 1) {
+                                 toele = ele.next();
+                             } else {
+                                 toele = ele.prev();
+                             }
+                         }
+                     }
+                     if ($(toele).length && toele.hasClass('experienc-set')) {
+                         $('.experienc-set').removeClass('current');
+                         $(toele).addClass('active');
+                         $(toele).addClass('current');
+                     }
+                 }
+                 index = $('.experienc-set').index(toele);
+                 if ($('.experienc-set').length == index + 1) {
+                     $('.morebar').addClass('d-none');
+                 } else {
+                     $('.morebar').removeClass('d-none');
+                 }
+         
+             })
+         }
+      </script>
+      {% endif %}
+   </div>
+</div>
+<section class="other-experiences">
+   <div class="container">
+      <div class="row">
+         <div class="col-md-12">
+            <div class=" my-5 pb-4" id="experiences">
+               <div class="main_title_2 ">
+                  <h2>Other EXPERIENCES </h2>
+                  <span><em></em></span>
+               </div>
+               <div class="experienc-box">
+
+                  <div class="experience-item">
+                      <div class="experienc-set active current">
+                         <div class="experienc-left">
+                            <div class="experienc-figer">
+                               <div class="img" style="background-image:url(storage/app/resized/07/expo_1_583_583_crop.jpeg)"></div>
+                               <div class="title">
+                                  <h3>Summer Experience <em></em></h3>
+                               </div>
+                            </div>
+                         </div>
+                         <div class="experienc-right">
+                            <div class="experienc-figer">
+                               <div class="img" style="background-image:url(storage/app/resized/07/expo_1_583_583_crop.jpeg)"></div>
+                               <div class="title">
+                                  <h3>Summer Experience<em></em></h3>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                      <div class="morelessbar morebar">
+                         <div class="expcorner leftcorner"></div>
+                         <a class="addexp" onclick="expslide(1);">
+                            <img src="themes/SAN/assets/images/add.svg" class="img-fluid" alt="">
+                            <img src="themes/SAN/assets/images/minus.svg" class="img-fluid more-exp" alt="">
+                         </a>
+                         <div class="expcorner rightcorner"></div>
+                      </div>
+                      <div class="experienc-set toggle-exp">
+                         <div class="experienc-left">
+                            <div class="experienc-figer">
+                               <div class="img" style="background-image:url(storage/app/resized/07/expo_1_583_583_crop.jpeg)"></div>
+                               <div class="title">
+                                  <h3>Summer Experience <em></em></h3>
+                               </div>
+                            </div>
+                         </div>
+                         <div class="experienc-right">
+                            <div class="experienc-figer">
+                               <div class="img" style="background-image:url(storage/app/resized/07/expo_1_583_583_crop.jpeg)"></div>
+                               <div class="title">
+                                  <h3>Summer Experience<em></em></h3>
+                               </div>
+                            </div>
+                         </div>
+                      </div>
+                      
+                  </div>
+                  
+                  <!--   <div class="experienc-set ">
+                     </div> -->
+                  
+
+                  
+               </div>
+               <div class="other-exp-descr pt-5 text-center">
+                      <p>Our tailor made holidays allow you the freedom to design your own holiday at some of our favourite destinations.
+You’ll have the flexibility to create a holiday with the pace, duration and activities to suit you. </p>
+                  </div>
+               <script>
+                function expslide(type,ele){
+                    jQuery('.morebar').toggleClass('clicked');
+                    jQuery('.experienc-set.toggle-exp').toggleClass('current active');
+                }
+                  // function expslide(type,ele){
+                  //     toele="";
+                  //     if(ele){
+                  //     toele =$(ele).closest('.experienc-set');
+                  //     if($(toele).length && toele.hasClass('experienc-set')){ 
+                  //             if(!$(toele).hasClass('open')){
+                  //                 $('.experienc-set').removeClass('current');
+                  //                 $('.experienc-set').removeClass('open');
+                  //                 $(toele).addClass('active');
+                  //                 $(toele).addClass('open');
+                  //                 $(toele).addClass('current');
+                  //             }else{
+                  //                 $(toele).removeClass('open');
+                  //                 $(toele).removeClass('current');
+                  //             }
+                  //         }  
+                  //     }else{
+                  //         $('.experienc-set').each(function(){                        
+                  //             if(!toele){
+                  //                 ele=$(this);                            
+                  //                     if(ele.hasClass('current')){
+                  //                         if(ele.hasClass('active') && !ele.hasClass('open')){
+                  //                             toele=ele;
+                  //                         }else{
+                  //                             if(type==1){
+                  //                                 toele=ele.next();
+                  //                             }else{
+                  //                                 toele=ele.prev();
+                  //                             }  
+                  //                         }
+                  //                     } 
+                  //                     if($(toele).length && toele.hasClass('experienc-set')){ 
+                  //                         $('.experienc-set').removeClass('current');
+                  //                         $('.experienc-set').removeClass('open');
+                  //                         $(toele).addClass('active');
+                  //                         $(toele).addClass('open');
+                  //                         $(toele).addClass('current');
+                  //                     }                             
+                  //             }
+                  //             index=$('.experienc-set').index(toele);
+                  //             if($('.experienc-set').length==index+1){
+                  //                 $('.morebar').addClass('');
+                  //             }else{
+                  //                 $('.morebar').removeClass('d-none');
+                  //             } 
+                              
+                  //         })
+                  //     }
+                  // }
+               </script> 
+            </div>
+         </div>
+      </div>
+   </div>
+</section>
+
+<!-- POPUP -->
+<div class="modal fade" id="video_pop" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+         <div class="modal-dialog modal-lg" role="document">
+           <div class="modal-content">
+             <div class="modal-body">        
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                     <span aria-hidden="true">&times;</span>
+                   </button>        
+                   <!-- 16:9 aspect ratio -->
+                   <div class="embed-responsive embed-responsive-16by9">
+                     <iframe width="713" height="401" src="https://www.youtube.com/embed/D0UnqGm_miA" title="Dummy Video For Website" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                   </div>                
+             </div>        
+           </div>
+        </div>
+</div>
+
+<script type="text/javascript">
+    $('.experienc-box').owlCarousel({
+        loop:true,
+        margin:10,
+        dots: false,
+        nav:true,
+        responsiveClass:true,
+        responsive:{
+            0:{
+                items:1,
+                nav:false
+            },
+            600:{
+                items:1,
+                nav:false
+            },
+            1000:{
+                items:1,
+                nav:true,
+                loop:false
+            }
+        }
+    })
+</script>";s:4:"code";s:5890:"function onSubmitNewsletterForm()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = post();
+    
+            $rules = [
+                    'full_name' => 'required',
+                    'email' => 'required|email|unique:san_san_newsletter'
+                ];
+                $errorMessages = [
+                    'email.required' => 'Please enter your email',
+                    'email.unique' => 'Email already exist',
+                    'full_name.required' => 'Please enter your full name'
+                ];
+    
+            $validation = Validator::make($data, $rules, $errorMessages);
+    
+            if ($validation->fails()) {
+                throw new ValidationException($validation);
+            }else{
+                $input = Input::all();
+                $careers = new  san\San\Models\Newsletter;
+                $careers->fulll_name = $input['full_name'];
+                $careers->email = $input['email'];
+                $careers->save();
+                Flash::success('Submitted successfully!');
+                unset($_POST);
+            }
+        }
+    }
+    
+    use San\San\Models\Countries;
+    use San\San\Models\Packages;
+    use San\San\Models\Themes;
+    function onEnd(){
+       if((!@$_GET['preview'] || !Session::get('_token')) && $this->pageDetails->record){
+           $page=$this->pageDetails->record->active(1)->where('slug',$this->pageDetails->record['slug'])->get();
+           if(!count($page)){
+               $this->setStatusCode(404);
+               return $this->controller->run('404');
+           }
+       }
+       if($metadata=$this->pageDetails->record['meta_title']) $this->page->meta_title = $metadata;
+       if($metadata=$this->pageDetails->record['meta_desc']) $this->page->meta_description = $metadata;
+       if($metadata=$this->pageDetails->record['meta_image']) $this->page->og_image = $metadata->getThumb(1200,630);
+       $themesid = [];
+       $countiresid=[];
+       $this['exps']=[];
+       $exps=[];
+       $this['slug'] = Request::segment(2); 
+       $destinations=[];
+       $packages=[];
+       foreach ($this->destinationsList->records as $k=>$record){
+           if($record['slug']==$this['slug']){
+               $this['cd']=$k;
+           }
+           $destinations[$k]=[
+               'sub_title'=>$record['sub_title'],
+               'name'=>$record['title'],
+               'description'=>$record['content'],
+               'image'=>$record['image']?$record['image']->getThumb(540,320,'crop'):"",
+               'subs'=>[]
+           ];
+           $countries=Countries::select('id','title','brief','slug')->where('destination_id',$record['id'])->where('status',1)->get();
+           foreach($countries as $country){
+               $countiresid[$country->id] = $country->title;
+               $destinations[$k]['subs'][]=[
+                   'name'=>$country->title,
+                   'brief'=>substr(strip_tags($country->brief), 0, 110),
+                   'id'=>$country->id,
+                   'slug'=>$country->slug,
+                   'image'=>$country->banner?$country->banner->getThumb(200,200,'crop'):""
+               ];
+           }
+       }
+       if ($this['slug'] && $countiresid) {
+               $themesid = [];
+               foreach($countiresid as $countryId){
+                   $packages=Packages::select('theme_id')->where('countries', 'like', '%'.$countryId.'%')->where('status',1)->get();
+                   if ($packages) {
+                       foreach ($packages as $package) {
+                           $themesid[$package['theme_id']] = $package['theme_id'];
+                       }
+                   }
+               }
+               
+               if ($themesid) {
+                   $themes=Packages::whereIn('theme_id',$themesid)->where('status',1)->get();
+                   foreach ($themes as $theme) {
+                       $exps[] = [
+                           'title'=>$theme->title,
+                           'image'=>$theme->banner?$theme->banner->getThumb(583,583,'crop'):"",
+                           'content'=>$theme->content
+                       ];
+                   }
+               }
+               
+              $this['exps']= $exps;
+       }
+       $this['destination']=$destinations;
+   
+       $themes=[];
+       foreach ($this->themesList->records as $k=>$record){
+           $themes[$k]=[
+               'name'=>$record['title'],
+               'sub_title'=>$record['sub_title'],
+               'description'=>$record['content'],
+               'image'=>$record['banner']? $record['banner']->getThumb(540,320,'crop'):"",
+               'video'=>$record['video'],
+               'subs'=>[]
+           ];
+           $packages=Packages::select('id','title','days','night','price','slug')->where('theme_id',$record['id'])->where('status',1)->get();
+           foreach($packages as $item){
+               $themes[$k]['subs'][]=[
+                   'name'=>$item->title,
+                   'nights'=>$item->night,
+                   'price'=>$item->price,
+                   'days'=>$item->days,
+                   'brief'=>substr(strip_tags($item->brief), 0, 110),
+                   'id'=>$item->id,
+                   'slug'=>$item->slug,
+                   'image'=>$item->banner? $item->banner->getThumb(200,200,'crop'):""
+               ];
+           }
+       }
+       $this['themes']=$themes;
+   
+       foreach ($this->packagesList->records as $k=>$record){
+           $packages[$k]=[
+               'name'=>$record['title'],
+               'brief'=>$record['brief'],
+               'days'=>$record['days'],
+               'price'=>$record['price'],
+               'slug'=>$record['slug'],
+               'subs'=>[]
+           ];
+       }
+       $this['packages']=$packages;
+   }";s:5:"title";s:10:"Experience";s:3:"url";s:18:"/experience/:slug?";s:6:"layout";s:7:"default";s:9:"is_hidden";s:1:"0";s:11:"apiFunction";a:0:{}s:28:"builderList destinationsList";a:8:{s:10:"modelClass";s:27:"san\San\Models\Destinations";s:5:"scope";s:1:"-";s:10:"scopeValue";s:12:"{{ :scope }}";s:13:"displayColumn";s:5:"title";s:16:"noRecordsMessage";s:16:"No records found";s:11:"detailsPage";s:1:"-";s:19:"detailsUrlParameter";s:2:"id";s:10:"pageNumber";s:11:"{{ :page }}";}s:24:"builderList packagesList";a:8:{s:10:"modelClass";s:23:"san\San\Models\Packages";s:5:"scope";s:1:"-";s:10:"scopeValue";s:12:"{{ :scope }}";s:13:"displayColumn";s:5:"title";s:16:"noRecordsMessage";s:16:"No records found";s:11:"detailsPage";s:1:"-";s:19:"detailsUrlParameter";s:2:"id";s:10:"pageNumber";s:11:"{{ :page }}";}s:22:"builderList themesList";a:8:{s:10:"modelClass";s:21:"san\San\Models\Themes";s:5:"scope";s:1:"-";s:10:"scopeValue";s:12:"{{ :scope }}";s:13:"displayColumn";s:5:"title";s:16:"noRecordsMessage";s:16:"No records found";s:11:"detailsPage";s:1:"-";s:19:"detailsUrlParameter";s:2:"id";s:10:"pageNumber";s:11:"{{ :page }}";}s:26:"builderDetails pageDetails";a:5:{s:10:"modelClass";s:27:"san\San\Models\Destinations";s:15:"identifierValue";s:11:"{{ :slug }}";s:14:"modelKeyColumn";s:4:"slug";s:13:"displayColumn";s:5:"title";s:15:"notFoundMessage";s:16:"Record not found";}s:14:"builderDetails";a:5:{s:10:"modelClass";s:30:"san\San\Models\Destinationpage";s:15:"identifierValue";s:1:"5";s:14:"modelKeyColumn";s:2:"id";s:13:"displayColumn";s:5:"title";s:15:"notFoundMessage";s:16:"Record not found";}}}

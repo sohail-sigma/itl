@@ -1,0 +1,69 @@
+columns:
+    pacage:
+        label: Package
+        type: text
+        searchable: true
+    experiences:
+        label: experiences
+        type: text
+        searchable: true
+    first_name:
+        label: 'First Name'
+        type: text
+        searchable: true
+    last_name:
+        label: 'Last Name'
+        type: text
+        searchable: true
+    email:
+        label: Email
+        type: text
+        searchable: true
+    phone:
+        label: Phone
+        type: text
+        searchable: true
+    country:
+        label: Country
+        type: text
+        searchable: true
+    city:
+        label: City
+        type: text
+        searchable: true
+    nationality:
+        label: Nationality
+        type: text
+        searchable: true
+    no_adults:
+        label: 'No Of Adults'
+        type: number
+        searchable: true
+    no_children:
+        label: 'No Of Children'
+        type: number
+        searchable: true
+    departure_from:
+        label: Departure
+        type: text
+        searchable: true
+    when_start:
+        label: When
+        type: text
+        searchable: true
+    how_long:
+        label: 'No Of Days'
+        type: text
+        searchable: true
+    created_at:
+        label: 'Submitted On'
+        type: datetime
+        searchable: true
+    remarks_comments:
+        label: Remarks/Comments
+        type: text
+        searchable: true
+    no_traveller:
+        label: Traveller
+        type: number
+        searchable: true

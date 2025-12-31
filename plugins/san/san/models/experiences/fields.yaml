@@ -1,0 +1,74 @@
+fields:
+    title:
+        label: 'Banner Title'
+        span: auto
+        type: text
+    slug:
+        label: Slug
+        span: auto
+        preset:
+            field: title
+            type: slug
+        type: text
+    sub_title:
+        label: 'Sub TItle'
+        span: auto
+        type: text
+    status:
+        label: Status
+        span: auto
+        type: switch
+    exp_banner:
+        label: 'Banner (1920 x 680 px)'
+        mode: image
+        imageWidth: '200'
+        imageHeight: '150'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload
+    exp_image:
+        label: 'Main Image (1200 x 630 px)'
+        mode: image
+        imageWidth: '100'
+        imageHeight: '100'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload
+tabs:
+    fields:
+        content:
+            label: Description
+            size: ''
+            span: full
+            type: richeditor
+            tab: Content
+        meta_title:
+            label: 'Meta Title'
+            span: auto
+            type: text
+            tab: SEO
+        meta_desc:
+            label: 'Meta Description'
+            size: ''
+            span: auto
+            type: textarea
+            tab: SEO
+        meta_image:
+            label: 'Meta Image (1200 x 630 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            comment: 'jpg/png The recommended size for a lowdown OG image is 1200×630 pixels'
+            tab: SEO

@@ -1,0 +1,34 @@
+columns:
+    fulll_name:
+        label: 'Personal Detail'
+        type: partial
+        searchable: false
+        sortable: false
+        path: ~/plugins/san/san/models/careers/_p_details_column.html
+    careerpositions_id:
+        label: Position
+        type: text
+        searchable: true
+        sortable: true
+    all_questions:
+        label: Questions
+        type: partial
+        searchable: false
+        sortable: false
+        path: ~/plugins/san/san/models/careers/_questions_column.html
+    subquestions:
+        label: 'Subquestions'
+        type: partial
+        searchable: false
+        sortable: false
+        path: ~/plugins/san/san/models/careers/_subquestions_column.html
+    user_cv:
+        label: CV
+        type: partial
+        searchable: false
+        sortable: false
+        path: ~/plugins/san/san/models/careers/_banner_column.html
+    created_at:
+        label: 'Submitted On'
+        type: datetime
+        searchable: false

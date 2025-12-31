@@ -1,0 +1,70 @@
+fields:
+    title:
+        label: Title
+        span: left
+        type: text
+ 
+    destination_email:
+        label: 'Destination Email'
+        span: right
+        type: text
+ 
+    questionnaires:
+        label: 'Add Questionnaire'
+        prompt: 'Add new question'
+        style: collapsed
+        span: full
+        type: repeater
+        form:
+            fields:
+                question:
+                    label: Question
+                    span: full
+                    type: text
+ 
+    subquestions:
+        label: 'Add Subquestions'
+        prompt: 'Add new subquestion'
+        style: collapsed
+        span: full
+        type: repeater
+        form:
+            fields:
+                parent_question:
+                    label: 'Parent Question'
+                    type: text
+                    comment: 'Enter the exact question text (e.g., "Do you have GCC experience?")'
+                    span: full
+                subquestion_text:
+                    label: 'Subquestion Text'
+                    type: text
+                    span: full
+                subquestion_type:
+                    label: 'Subquestion Type'
+                    type: dropdown
+                    options:
+                        Text: Text
+                        Dropdown: Dropdown
+                    span: full
+                subquestion_options:
+                    label: 'Options (for Dropdown type)'
+                    type: text
+                    comment: 'Comma-separated values (e.g., Option1, Option2)'
+                    trigger:
+                        action: show
+                        field: subquestion_type
+                        condition: value[Dropdown]
+                    span: full
+                condition:
+                    label: 'Status'
+                    type: dropdown
+                    options:
+                        Yes: Enable
+                        No: Disable
+                    span: full
+ 
+    description:
+        label: 'Position Description'
+        size: large
+        span: full
+        type: richeditor

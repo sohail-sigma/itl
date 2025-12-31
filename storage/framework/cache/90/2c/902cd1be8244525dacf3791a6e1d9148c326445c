@@ -1,0 +1,995 @@
+1767162277a:1:{s:13:"news-blog.htm";a:12:{s:8:"fileName";s:13:"news-blog.htm";s:7:"content";s:22881:"title = "News & Blog"
+url = "/news-blog"
+layout = "default"
+is_hidden = 0
+
+[builderDetails]
+modelClass = "san\San\Models\NewsPage"
+identifierValue = 12
+modelKeyColumn = "id"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+
+[blogCategories]
+slug = "{{ :slug }}"
+displayEmpty = 1
+categoryPage = "news-blog"
+
+[blogTags]
+results = 5
+orderBy = "created_at"
+direction = "desc"
+==
+<?php
+function onSubmitNewsletterForm()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = post();
+
+        $rules = [
+            'full_name' => 'required',
+            'email' => 'required|unique:san_san_newsletter'
+        ];
+        $errorMessages = [
+            'email.required' => 'Please enter your email',
+            'email.unique' => 'Email already exist',
+            'full_name.required' => 'Please enter your full name'
+        ];
+
+        $validation = Validator::make($data, $rules, $errorMessages);
+
+        if ($validation->fails()) {
+            throw new ValidationException($validation);
+        } else {
+            $input = Input::all();
+            $careers = new  san\San\Models\Newsletter;
+            $careers->fulll_name = $input['full_name'];
+            $careers->email = $input['email'];
+            $careers->save();
+            Flash::success('Submitted successfully!');
+            unset($_POST);
+        }
+    }
+}
+function onStart()
+{
+
+    $this['linksorder'] = san\San\Models\BlogshareLinks::orderBy('sort_order', 'ASC')->get();
+    $this['isPopUp'] = false;
+    if (isset($_GET['id'])) {
+        $this['blogid'] = $_GET['id'];
+        $allPosts = Winter\Blog\Models\Post::Where('id', $_GET['id'])->where('published', '1')->get();
+        if ($allPosts) {
+            foreach ($allPosts as $post) {
+                $this['popupslug'] = $post['slug'];
+            }
+        }
+    }
+
+    $this['current_category_name'] = 'News';
+    $this['per_page_limit'] = 5;
+    $this['current_tag_name'] = null;
+    $all_cate_ids = [];
+    $all_tag_ids = [];
+
+    $this['allTags'] = Db::table('bedard_blogtags_tags')->orderBy('id', 'DESC')->get();
+    $this['allCategory'] = Db::table('winter_blog_categories')->orderBy('id', 'DESC')->get();
+    if (isset($_GET['category'])) {
+        $this['get_category_id'] = $_GET['category'];
+    } else {
+        $this['get_category_id'] = 0;
+    }
+
+    if (isset($_GET['tag'])) {
+        $this['get_tag_id'] = $_GET['tag'];
+    } else {
+        $this['get_tag_id'] = 0;
+    }
+    $cate_ids = Db::table('winter_blog_posts_categories')->where('category_id', $this['get_category_id'])->get();
+    $tag_ids = Db::table('bedard_blogtags_post_tag')->where('tag_id', $this['get_tag_id'])->get();
+    foreach ($cate_ids as $cate_id) {
+        $all_cate_ids[] = $cate_id->post_id;
+    }
+    foreach ($tag_ids as $tag_id) {
+        $all_tag_ids[] = $tag_id->post_id;
+    }
+    $f_arr = array_intersect($all_cate_ids, $all_tag_ids);
+    if ($this['get_category_id'] != 0 && $this['get_tag_id'] != 0) {
+        $this['allPosts'] = Winter\Blog\Models\Post::WhereIn('id', $f_arr)->Where('published', '1')->orderBy('published_at', 'desc')->paginate($this['per_page_limit']);
+    } elseif ($this['get_category_id'] != 0 && $this['get_tag_id'] == 0) {
+        $this['allPosts'] = Winter\Blog\Models\Post::WhereIn('id', $all_cate_ids)->Where('published', '1')->orderBy('published_at', 'desc')->paginate($this['per_page_limit']);
+    } elseif ($this['get_category_id'] == 0 && $this['get_tag_id'] != 0) {
+        $this['allPosts'] = Winter\Blog\Models\Post::WhereIn('id', $all_tag_ids)->Where('published', '1')->orderBy('published_at', 'desc')->paginate($this['per_page_limit']);
+    } else {
+        $this['allPosts'] = Winter\Blog\Models\Post::Where('published', '1')->orderBy('published_at', 'desc')->paginate($this['per_page_limit']);
+    }
+}
+
+
+function onGetBlogDetail()
+{
+    $data = post();
+    $allPosts = Winter\Blog\Models\Post::Where('slug', $data['slug'])->Where('published', '1')->get();
+    $categoryName = "";
+    foreach ($allPosts as $post) {
+        $this['blogCountry'] = $post['country'];
+        $this['blogDate'] = date($post['published_at']);
+        $this['blogTitle'] = $post['title'];
+        $this['blogDesc'] = $post['content_html'];
+
+        $cCount = 1;
+        $tcCount = count($post['categories']);
+        foreach ($post['categories'] as $cname) {
+            $categoryName .= $cname['name'];
+            if ($cCount < $tcCount) {
+                $categoryName .= ', ';
+            }
+            $cCount = $cCount + 1;
+        }
+
+        $allImages = array();
+        foreach ($post['featured_images'] as $images) {
+            $allImages[] = $images['path'];
+        }
+    }
+    $this['allImages'] = $allImages;
+    $this['blogCategory'] = $categoryName;
+}
+?>
+==
+{% framework extras %}
+
+{% set blog_tags = blogTags.records %}
+{% set myposts = allPosts.records %}
+
+<div class="banner-slider only_desktop">
+    <div class="slider-inner">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-caption d-md-block">
+                    <h1>News & Blogs</h1>
+                    <span class="line"><em></em></span>
+                </div>
+                {% if(builderDetails.record.banner_type == 'image') %}
+                {% set scount = 1 %}
+                {% for bannerslider in builderDetails.record.banner_image %}
+                <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}">
+                    <div class="banner-image">
+                        <img class="d-block w-100" src="{{bannerslider.path}}" alt="First slide">
+
+                    </div>
+                </div>
+                {% set scount = scount + 1 %}
+                {% endfor %}
+                {% elseif(builderDetails.record.banner_type == 'video') %}
+                {% set scount = 1 %}
+                {% for banneriframe in builderDetails.record.banner_iframe %}
+                {% set v_dur = banneriframe.video_duration * 1000 %}
+                <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}" data-interval="{{v_dur}}">
+                    <div class="banner-iframe">
+                        <iframe width="770" height="433" src="https://www.youtube.com/embed/{{ banneriframe.iframe[17:] }}?showinfo=0&playlist={{ banneriframe.iframe[17:] }}&loop=1&autoplay=1&controls=0&mute=1" title="{{cdestinations_List[0].title}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+                    </div>
+                </div>
+                {% set scount = scount + 1 %}
+                {% endfor %}
+                {% endif %}
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="banner-slider only_mob">
+    <div class="slider-inner">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-caption d-md-block">
+                    <h1>{{builderDetails.record.title}}</h1>
+                    <span class="line"><em></em></span>
+                </div>
+                {% set scount = 1 %}
+                {% for bannerslider in builderDetails.record.mob_banner_image %}
+                <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}">
+                    <div class="banner-image">
+                        <img class="d-block w-100" src="{{bannerslider.path}}" alt="">
+
+                    </div>
+                </div>
+                {% set scount = scount + 1 %}
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<section class="news-listing">
+    <div class="container">
+        <div class="row">
+            {% if allPosts|length > 0 %}
+            {% for post in allPosts %}
+            <div class="col-lg-4 col-md-6 cust-padd">
+                <div class="news-box">
+                    <div class="news-image">
+                        <img src="{{post.post_thumnail.path}}">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-publish-date">
+                            {% set dateTime = date(post.published_at) %}
+                            {{ dateTime | date('d') }} <span class="month">{{ dateTime | date('M') }}</span>
+                        </div>
+                        <div class="news-title">
+                            <a href="{{ post.url }}/detail/{{ post.slug }}" class="blog-details" data-slug="{{ post.slug }}">
+                                <h2>{{post.title}}</h2>
+                            </a>
+                        </div>
+                        <div class="news-desc">
+                            <p>{{ post.excerpt }}</p>
+                        </div>
+                        <div class="news-desc-excerpt">
+                            <a href="{{ post.url }}/detail/{{ post.slug }}">more...</a>
+                        </div>
+                    </div>
+                    <div id="{{post.slug}}" class="transportation-popup white-popup mfp-hide nb-dtl-popup">
+                        <section class="hero_single inner">
+                            <div class="inner-slider owl-carousel owl-theme">
+                                {% for record in post.featured_images %}
+                                <div class="item">
+                                    <img src="{{record.path}}">
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                        <div class="news-detail" style="background-color: #fff;">
+                            <div class="container">
+                                <div class="row">
+                                    <!-- <div class="col-md-2">
+                                        <div class="blog-title">
+                                            <h2>{{blogCategory}}</h2>
+                                        </div>
+                                    </div> -->
+                                    <div class="col-md-12">
+                                        <div class="blog-date">
+                                            <span class="country">{{post.country}}</span>
+                                            {% set dateTime = date(post.published_at) %}
+                                            <span class="date">{{ dateTime | date('d M Y') }}</span>
+                                        </div>
+                                        <div class="blog-title">
+                                            <h1>{{post.title}}</h1>
+                                            {{post.content_html|raw}}
+                                        </div>
+
+                                        <div class="blog-share">
+                                            <ul class="nav">
+                                                {% for lo in linksorder %}
+                                                {% if lo.title == "linkedin" %}
+                                                <li>
+                                                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ '' | page }}&title=ITLWorld" target="_blank"><img src="/themes/SAN/assets/images/linkedin.svg"></a>
+                                                </li>
+                                                {% endif %}
+                                                {% if lo.title == "twitter" %}
+                                                <li>
+                                                    <a href="https://twitter.com/intent/tweet?url={{ '' | page }}" target="_blank">
+                                                        <img src="/themes/SAN/assets/images/twitter.svg">
+                                                    </a>
+                                                </li>
+                                                {% endif %}
+                                                {% if lo.title == "facebook" %}
+                                                <li>
+                                                    <a href="http://www.facebook.com/share.php?u={{ '' | page }}" target="_blank"> <img src="/themes/SAN/assets/images/facebook.svg"></a>
+                                                </li>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-lg-4 col-md-6 cust-padd">
+                <div class="news-title">
+                    <h2>No Record Found</h2>
+                </div>
+            </div>
+            {% endif %}
+            <div class="col-lg-4 col-md-6 cust-padd news-pagination">
+                <div class="news-pagination">
+                    <div class="filters-nav">
+                        <form action="" method="GET" class="newsform">
+                            <div class="news-categories">
+                                <select name="category" class="form-control category">
+                                    <option value="0">All News and Blogs</option>
+                                    {% for category in allCategory %}
+                                    <option value="{{category.id}}" {% if (category.id==get_category_id) %} selected {%
+                                        endif %}>{{category.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="news-year">
+                                <select name="tag" class="form-control tag">
+                                    <option value="0">All</option>
+                                    {% for tags in allTags %}
+                                    <option value="{{tags.id}}" {% if (tags.id==get_tag_id) %} selected {% endif %}>
+                                        {{tags.name}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                        </form>
+                    </div>
+                </div>
+                <ul class="filters-nav">
+                    <li>
+                        <a href="">
+                            {{ current_category_name }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                            {{ current_tag_name }}
+                        </a>
+                    </li>
+                </ul>
+                <div class="desc">
+
+                </div>
+                {{ category }}
+                {% set tpages = allPosts.total/per_page_limit %}
+                {% set totalpages = tpages|round(0, 'ceil')%}
+                {% if allPosts.total > per_page_limit %}
+                <form action="" method="GET" class="paginationform">
+                    <ul class="pagination">
+                        <input type="hidden" name="category" value="{{p_category}}">
+                        <input type="hidden" name="tag" value="{{p_tags}}">
+                        {% set cslug = '' %}
+                        {% set tslug = '' %}
+                        {% set aslug = '' %}
+                        {% if get_category_id != 0 %}
+                        {% set cslug = 'category='~get_category_id %}
+                        {% endif %}
+                        {% if get_tag_id != 0 %}
+                        {% set tslug = 'tag='~get_tag_id %}
+                        {% endif %}
+                        {% if get_category_id != 0   %}
+                        {% if get_tag_id != 0  %}
+                        {% set aslug = '&' %}
+                        {% endif %}
+                        {% endif %}
+
+                        {% if allPosts.currentPage != 1 %}
+                        <li class="first">
+                            <a href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}page=1" class="paginationbtn">First <img
+                                    src="/themes/SAN/assets/images/pagination-arrow.png"><img
+                                    src="/themes/SAN/assets/images/pagination-arrow.png"></a>
+                        </li>
+                        {% endif %}
+
+                        {% if(allPosts.currentPage != 1 ) %}
+
+                        {% if((allPosts.currentPage == allPosts.lastPage) and (totalpages > 2)) %}
+                        <li class="page"><a href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}page={{allPosts.currentPage-2}}"
+                                class="paginationbtn">{{allPosts.currentPage
+                                - 2}}</a></li>
+                        {% endif %}
+
+                        <li class="page"><a href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}&page={{allPosts.currentPage-1}}"
+                                class="paginationbtn">{{allPosts.currentPage -
+                                1}} </a></li>
+                        {% endif %}
+
+
+
+                        <li class="page current"><a href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}page={{allPosts.currentPage}}"
+                                class="paginationbtn">{{allPosts.currentPage}}</a></li>
+
+                        {% if(allPosts.currentPage != allPosts.lastPage ) %} <li class="page"><a
+                                href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}&page={{allPosts.currentPage+1}}" class="paginationbtn">{{allPosts.currentPage
+                                + 1}}</a></li>
+                        {% endif %}
+
+
+
+
+                        {% if(allPosts.currentPage != allPosts.lastPage ) %}
+                        <li class="last">
+                            <a href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}page={{allPosts.lastPage}}" class="paginationbtn">Last <img
+                                    src="/themes/SAN/assets/images/pagination-arrow.png"><img
+                                    src="/themes/SAN/assets/images/pagination-arrow.png"></a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<input type="hidden" id="popupslug" value="{{popupslug}}">
+<!-- <a href="#transportation-popup" class="open-popup-link"></a> -->
+
+
+<!-- <div id="transportation-popup" class="white-popup mfp-hide" style="width: 60%;margin-left: 20%;margin-top: 5%;margin-bottom: 5%;">
+    <div id="myDiv"></div>
+</div> -->
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.open-popup-link').magnificPopup({
+            type: 'inline',
+            showCloseBtn: true,
+            callbacks: {
+                open: function() {
+                    $('#sign-in-dialog').append($('.mfp-close'))
+                },
+            },
+            midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+        });
+
+        // $('.blog-details').click(function(){
+        //     $('#popupslug').val($(this).data("slug"));
+        //     blogslug = $('#popupslug').val();
+        //     if(blogslug !=""){
+        //         $.request('onGetBlogDetail', {
+        //             update: {'site/singlenews' : '#myDiv'},
+        //             data: {'slug' : blogslug},
+        //             complete: function() {
+        //                 $(".open-popup-link").click();
+        //             },
+        //         });
+        //         $('.inner-slider').owlCarousel('refresh');
+
+        //         setTimeout(
+        //         function() 
+        //         {
+        //             var $owl = $('.inner-slider').owlCarousel({
+        //                 items: 1,
+        //                 loop:true,
+        //                 dots:false
+        //             });
+        //             $('.inner-slider').owlCarousel('refresh');
+        //         }, 2000);
+        //     }
+        // });
+
+        $('.category').on('change', function() {
+            $('.newsform').submit();
+        });
+        $('.tag').on('change', function() {
+            $('.newsform').submit();
+        });
+        $('.paginationbtn').click(function() {
+            $('.paginationform').submit();
+        });
+    });
+
+    $('.news-pagination select').focus(function() {
+        $(this).parent().addClass('focussed');
+    })
+    $('.news-pagination select').blur(function() {
+        $(this).parent().removeClass('focussed');
+    })
+    $('.news-pagination select').on('change', function() {
+        $(this).parent().removeClass('focussed');
+    });
+</script>
+
+
+{% if blogid %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        blogslug = $('#popupslug').val();
+        if (blogslug != "") {
+
+            $("." + blogslug).click();
+
+        }
+    });
+</script>
+{% endif %}";s:5:"mtime";i:1745930842;s:6:"markup";s:18024:"{% framework extras %}
+
+{% set blog_tags = blogTags.records %}
+{% set myposts = allPosts.records %}
+
+<div class="banner-slider only_desktop">
+    <div class="slider-inner">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-caption d-md-block">
+                    <h1>News & Blogs</h1>
+                    <span class="line"><em></em></span>
+                </div>
+                {% if(builderDetails.record.banner_type == 'image') %}
+                {% set scount = 1 %}
+                {% for bannerslider in builderDetails.record.banner_image %}
+                <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}">
+                    <div class="banner-image">
+                        <img class="d-block w-100" src="{{bannerslider.path}}" alt="First slide">
+
+                    </div>
+                </div>
+                {% set scount = scount + 1 %}
+                {% endfor %}
+                {% elseif(builderDetails.record.banner_type == 'video') %}
+                {% set scount = 1 %}
+                {% for banneriframe in builderDetails.record.banner_iframe %}
+                {% set v_dur = banneriframe.video_duration * 1000 %}
+                <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}" data-interval="{{v_dur}}">
+                    <div class="banner-iframe">
+                        <iframe width="770" height="433" src="https://www.youtube.com/embed/{{ banneriframe.iframe[17:] }}?showinfo=0&playlist={{ banneriframe.iframe[17:] }}&loop=1&autoplay=1&controls=0&mute=1" title="{{cdestinations_List[0].title}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+                    </div>
+                </div>
+                {% set scount = scount + 1 %}
+                {% endfor %}
+                {% endif %}
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="banner-slider only_mob">
+    <div class="slider-inner">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-caption d-md-block">
+                    <h1>{{builderDetails.record.title}}</h1>
+                    <span class="line"><em></em></span>
+                </div>
+                {% set scount = 1 %}
+                {% for bannerslider in builderDetails.record.mob_banner_image %}
+                <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}">
+                    <div class="banner-image">
+                        <img class="d-block w-100" src="{{bannerslider.path}}" alt="">
+
+                    </div>
+                </div>
+                {% set scount = scount + 1 %}
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<section class="news-listing">
+    <div class="container">
+        <div class="row">
+            {% if allPosts|length > 0 %}
+            {% for post in allPosts %}
+            <div class="col-lg-4 col-md-6 cust-padd">
+                <div class="news-box">
+                    <div class="news-image">
+                        <img src="{{post.post_thumnail.path}}">
+                    </div>
+                    <div class="news-content">
+                        <div class="news-publish-date">
+                            {% set dateTime = date(post.published_at) %}
+                            {{ dateTime | date('d') }} <span class="month">{{ dateTime | date('M') }}</span>
+                        </div>
+                        <div class="news-title">
+                            <a href="{{ post.url }}/detail/{{ post.slug }}" class="blog-details" data-slug="{{ post.slug }}">
+                                <h2>{{post.title}}</h2>
+                            </a>
+                        </div>
+                        <div class="news-desc">
+                            <p>{{ post.excerpt }}</p>
+                        </div>
+                        <div class="news-desc-excerpt">
+                            <a href="{{ post.url }}/detail/{{ post.slug }}">more...</a>
+                        </div>
+                    </div>
+                    <div id="{{post.slug}}" class="transportation-popup white-popup mfp-hide nb-dtl-popup">
+                        <section class="hero_single inner">
+                            <div class="inner-slider owl-carousel owl-theme">
+                                {% for record in post.featured_images %}
+                                <div class="item">
+                                    <img src="{{record.path}}">
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                        <div class="news-detail" style="background-color: #fff;">
+                            <div class="container">
+                                <div class="row">
+                                    <!-- <div class="col-md-2">
+                                        <div class="blog-title">
+                                            <h2>{{blogCategory}}</h2>
+                                        </div>
+                                    </div> -->
+                                    <div class="col-md-12">
+                                        <div class="blog-date">
+                                            <span class="country">{{post.country}}</span>
+                                            {% set dateTime = date(post.published_at) %}
+                                            <span class="date">{{ dateTime | date('d M Y') }}</span>
+                                        </div>
+                                        <div class="blog-title">
+                                            <h1>{{post.title}}</h1>
+                                            {{post.content_html|raw}}
+                                        </div>
+
+                                        <div class="blog-share">
+                                            <ul class="nav">
+                                                {% for lo in linksorder %}
+                                                {% if lo.title == "linkedin" %}
+                                                <li>
+                                                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ '' | page }}&title=ITLWorld" target="_blank"><img src="/themes/SAN/assets/images/linkedin.svg"></a>
+                                                </li>
+                                                {% endif %}
+                                                {% if lo.title == "twitter" %}
+                                                <li>
+                                                    <a href="https://twitter.com/intent/tweet?url={{ '' | page }}" target="_blank">
+                                                        <img src="/themes/SAN/assets/images/twitter.svg">
+                                                    </a>
+                                                </li>
+                                                {% endif %}
+                                                {% if lo.title == "facebook" %}
+                                                <li>
+                                                    <a href="http://www.facebook.com/share.php?u={{ '' | page }}" target="_blank"> <img src="/themes/SAN/assets/images/facebook.svg"></a>
+                                                </li>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-lg-4 col-md-6 cust-padd">
+                <div class="news-title">
+                    <h2>No Record Found</h2>
+                </div>
+            </div>
+            {% endif %}
+            <div class="col-lg-4 col-md-6 cust-padd news-pagination">
+                <div class="news-pagination">
+                    <div class="filters-nav">
+                        <form action="" method="GET" class="newsform">
+                            <div class="news-categories">
+                                <select name="category" class="form-control category">
+                                    <option value="0">All News and Blogs</option>
+                                    {% for category in allCategory %}
+                                    <option value="{{category.id}}" {% if (category.id==get_category_id) %} selected {%
+                                        endif %}>{{category.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="news-year">
+                                <select name="tag" class="form-control tag">
+                                    <option value="0">All</option>
+                                    {% for tags in allTags %}
+                                    <option value="{{tags.id}}" {% if (tags.id==get_tag_id) %} selected {% endif %}>
+                                        {{tags.name}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                        </form>
+                    </div>
+                </div>
+                <ul class="filters-nav">
+                    <li>
+                        <a href="">
+                            {{ current_category_name }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                            {{ current_tag_name }}
+                        </a>
+                    </li>
+                </ul>
+                <div class="desc">
+
+                </div>
+                {{ category }}
+                {% set tpages = allPosts.total/per_page_limit %}
+                {% set totalpages = tpages|round(0, 'ceil')%}
+                {% if allPosts.total > per_page_limit %}
+                <form action="" method="GET" class="paginationform">
+                    <ul class="pagination">
+                        <input type="hidden" name="category" value="{{p_category}}">
+                        <input type="hidden" name="tag" value="{{p_tags}}">
+                        {% set cslug = '' %}
+                        {% set tslug = '' %}
+                        {% set aslug = '' %}
+                        {% if get_category_id != 0 %}
+                        {% set cslug = 'category='~get_category_id %}
+                        {% endif %}
+                        {% if get_tag_id != 0 %}
+                        {% set tslug = 'tag='~get_tag_id %}
+                        {% endif %}
+                        {% if get_category_id != 0   %}
+                        {% if get_tag_id != 0  %}
+                        {% set aslug = '&' %}
+                        {% endif %}
+                        {% endif %}
+
+                        {% if allPosts.currentPage != 1 %}
+                        <li class="first">
+                            <a href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}page=1" class="paginationbtn">First <img
+                                    src="/themes/SAN/assets/images/pagination-arrow.png"><img
+                                    src="/themes/SAN/assets/images/pagination-arrow.png"></a>
+                        </li>
+                        {% endif %}
+
+                        {% if(allPosts.currentPage != 1 ) %}
+
+                        {% if((allPosts.currentPage == allPosts.lastPage) and (totalpages > 2)) %}
+                        <li class="page"><a href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}page={{allPosts.currentPage-2}}"
+                                class="paginationbtn">{{allPosts.currentPage
+                                - 2}}</a></li>
+                        {% endif %}
+
+                        <li class="page"><a href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}&page={{allPosts.currentPage-1}}"
+                                class="paginationbtn">{{allPosts.currentPage -
+                                1}} </a></li>
+                        {% endif %}
+
+
+
+                        <li class="page current"><a href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}page={{allPosts.currentPage}}"
+                                class="paginationbtn">{{allPosts.currentPage}}</a></li>
+
+                        {% if(allPosts.currentPage != allPosts.lastPage ) %} <li class="page"><a
+                                href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}&page={{allPosts.currentPage+1}}" class="paginationbtn">{{allPosts.currentPage
+                                + 1}}</a></li>
+                        {% endif %}
+
+
+
+
+                        {% if(allPosts.currentPage != allPosts.lastPage ) %}
+                        <li class="last">
+                            <a href="{{ '' | page }}?{{cslug}}{{aslug}}{{tslug}}{{aslug}}page={{allPosts.lastPage}}" class="paginationbtn">Last <img
+                                    src="/themes/SAN/assets/images/pagination-arrow.png"><img
+                                    src="/themes/SAN/assets/images/pagination-arrow.png"></a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<input type="hidden" id="popupslug" value="{{popupslug}}">
+<!-- <a href="#transportation-popup" class="open-popup-link"></a> -->
+
+
+<!-- <div id="transportation-popup" class="white-popup mfp-hide" style="width: 60%;margin-left: 20%;margin-top: 5%;margin-bottom: 5%;">
+    <div id="myDiv"></div>
+</div> -->
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.open-popup-link').magnificPopup({
+            type: 'inline',
+            showCloseBtn: true,
+            callbacks: {
+                open: function() {
+                    $('#sign-in-dialog').append($('.mfp-close'))
+                },
+            },
+            midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+        });
+
+        // $('.blog-details').click(function(){
+        //     $('#popupslug').val($(this).data("slug"));
+        //     blogslug = $('#popupslug').val();
+        //     if(blogslug !=""){
+        //         $.request('onGetBlogDetail', {
+        //             update: {'site/singlenews' : '#myDiv'},
+        //             data: {'slug' : blogslug},
+        //             complete: function() {
+        //                 $(".open-popup-link").click();
+        //             },
+        //         });
+        //         $('.inner-slider').owlCarousel('refresh');
+
+        //         setTimeout(
+        //         function() 
+        //         {
+        //             var $owl = $('.inner-slider').owlCarousel({
+        //                 items: 1,
+        //                 loop:true,
+        //                 dots:false
+        //             });
+        //             $('.inner-slider').owlCarousel('refresh');
+        //         }, 2000);
+        //     }
+        // });
+
+        $('.category').on('change', function() {
+            $('.newsform').submit();
+        });
+        $('.tag').on('change', function() {
+            $('.newsform').submit();
+        });
+        $('.paginationbtn').click(function() {
+            $('.paginationform').submit();
+        });
+    });
+
+    $('.news-pagination select').focus(function() {
+        $(this).parent().addClass('focussed');
+    })
+    $('.news-pagination select').blur(function() {
+        $(this).parent().removeClass('focussed');
+    })
+    $('.news-pagination select').on('change', function() {
+        $(this).parent().removeClass('focussed');
+    });
+</script>
+
+
+{% if blogid %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        blogslug = $('#popupslug').val();
+        if (blogslug != "") {
+
+            $("." + blogslug).click();
+
+        }
+    });
+</script>
+{% endif %}";s:4:"code";s:4457:"function onSubmitNewsletterForm()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = post();
+
+        $rules = [
+            'full_name' => 'required',
+            'email' => 'required|unique:san_san_newsletter'
+        ];
+        $errorMessages = [
+            'email.required' => 'Please enter your email',
+            'email.unique' => 'Email already exist',
+            'full_name.required' => 'Please enter your full name'
+        ];
+
+        $validation = Validator::make($data, $rules, $errorMessages);
+
+        if ($validation->fails()) {
+            throw new ValidationException($validation);
+        } else {
+            $input = Input::all();
+            $careers = new  san\San\Models\Newsletter;
+            $careers->fulll_name = $input['full_name'];
+            $careers->email = $input['email'];
+            $careers->save();
+            Flash::success('Submitted successfully!');
+            unset($_POST);
+        }
+    }
+}
+function onStart()
+{
+
+    $this['linksorder'] = san\San\Models\BlogshareLinks::orderBy('sort_order', 'ASC')->get();
+    $this['isPopUp'] = false;
+    if (isset($_GET['id'])) {
+        $this['blogid'] = $_GET['id'];
+        $allPosts = Winter\Blog\Models\Post::Where('id', $_GET['id'])->where('published', '1')->get();
+        if ($allPosts) {
+            foreach ($allPosts as $post) {
+                $this['popupslug'] = $post['slug'];
+            }
+        }
+    }
+
+    $this['current_category_name'] = 'News';
+    $this['per_page_limit'] = 5;
+    $this['current_tag_name'] = null;
+    $all_cate_ids = [];
+    $all_tag_ids = [];
+
+    $this['allTags'] = Db::table('bedard_blogtags_tags')->orderBy('id', 'DESC')->get();
+    $this['allCategory'] = Db::table('winter_blog_categories')->orderBy('id', 'DESC')->get();
+    if (isset($_GET['category'])) {
+        $this['get_category_id'] = $_GET['category'];
+    } else {
+        $this['get_category_id'] = 0;
+    }
+
+    if (isset($_GET['tag'])) {
+        $this['get_tag_id'] = $_GET['tag'];
+    } else {
+        $this['get_tag_id'] = 0;
+    }
+    $cate_ids = Db::table('winter_blog_posts_categories')->where('category_id', $this['get_category_id'])->get();
+    $tag_ids = Db::table('bedard_blogtags_post_tag')->where('tag_id', $this['get_tag_id'])->get();
+    foreach ($cate_ids as $cate_id) {
+        $all_cate_ids[] = $cate_id->post_id;
+    }
+    foreach ($tag_ids as $tag_id) {
+        $all_tag_ids[] = $tag_id->post_id;
+    }
+    $f_arr = array_intersect($all_cate_ids, $all_tag_ids);
+    if ($this['get_category_id'] != 0 && $this['get_tag_id'] != 0) {
+        $this['allPosts'] = Winter\Blog\Models\Post::WhereIn('id', $f_arr)->Where('published', '1')->orderBy('published_at', 'desc')->paginate($this['per_page_limit']);
+    } elseif ($this['get_category_id'] != 0 && $this['get_tag_id'] == 0) {
+        $this['allPosts'] = Winter\Blog\Models\Post::WhereIn('id', $all_cate_ids)->Where('published', '1')->orderBy('published_at', 'desc')->paginate($this['per_page_limit']);
+    } elseif ($this['get_category_id'] == 0 && $this['get_tag_id'] != 0) {
+        $this['allPosts'] = Winter\Blog\Models\Post::WhereIn('id', $all_tag_ids)->Where('published', '1')->orderBy('published_at', 'desc')->paginate($this['per_page_limit']);
+    } else {
+        $this['allPosts'] = Winter\Blog\Models\Post::Where('published', '1')->orderBy('published_at', 'desc')->paginate($this['per_page_limit']);
+    }
+}
+
+
+function onGetBlogDetail()
+{
+    $data = post();
+    $allPosts = Winter\Blog\Models\Post::Where('slug', $data['slug'])->Where('published', '1')->get();
+    $categoryName = "";
+    foreach ($allPosts as $post) {
+        $this['blogCountry'] = $post['country'];
+        $this['blogDate'] = date($post['published_at']);
+        $this['blogTitle'] = $post['title'];
+        $this['blogDesc'] = $post['content_html'];
+
+        $cCount = 1;
+        $tcCount = count($post['categories']);
+        foreach ($post['categories'] as $cname) {
+            $categoryName .= $cname['name'];
+            if ($cCount < $tcCount) {
+                $categoryName .= ', ';
+            }
+            $cCount = $cCount + 1;
+        }
+
+        $allImages = array();
+        foreach ($post['featured_images'] as $images) {
+            $allImages[] = $images['path'];
+        }
+    }
+    $this['allImages'] = $allImages;
+    $this['blogCategory'] = $categoryName;
+}";s:5:"title";s:11:"News & Blog";s:3:"url";s:10:"/news-blog";s:6:"layout";s:7:"default";s:9:"is_hidden";s:1:"0";s:14:"builderDetails";a:5:{s:10:"modelClass";s:23:"san\San\Models\NewsPage";s:15:"identifierValue";s:2:"12";s:14:"modelKeyColumn";s:2:"id";s:13:"displayColumn";s:5:"title";s:15:"notFoundMessage";s:16:"Record not found";}s:14:"blogCategories";a:3:{s:4:"slug";s:11:"{{ :slug }}";s:12:"displayEmpty";s:1:"1";s:12:"categoryPage";s:9:"news-blog";}s:8:"blogTags";a:3:{s:7:"results";s:1:"5";s:7:"orderBy";s:10:"created_at";s:9:"direction";s:4:"desc";}}}

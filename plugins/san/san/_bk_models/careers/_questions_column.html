@@ -1,0 +1,8 @@
+<ul>
+    <?php $ques = json_decode($record->all_questions); foreach($ques as $questions) { ?>
+    <li>
+        <?php echo $questions->q; ?> (
+        <?php echo $questions->a; ?>)
+    </li>
+    <?php } ?>
+</ul>

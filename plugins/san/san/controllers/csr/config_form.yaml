@@ -1,0 +1,10 @@
+name: Services
+modelClass: san\San\Models\Csr
+form: $/san/san/models/csr/fields.yaml
+defaultRedirect: san/san/csr
+create:
+    redirect: 'san/san/csr/update/:id'
+    redirectClose: san/san/csr
+update:
+    redirect: san/san/csr
+    redirectClose: san/san/csr

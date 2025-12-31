@@ -1,0 +1,10 @@
+name: NewsPage
+modelClass: san\San\Models\NewsPage
+form: $/san/san/models/newspage/fields.yaml
+defaultRedirect: san/san/newspage
+create:
+    redirect: 'san/san/newspage/update/:id'
+    redirectClose: san/san/newspage
+update:
+    redirect: san/san/newspage
+    redirectClose: san/san/newspage

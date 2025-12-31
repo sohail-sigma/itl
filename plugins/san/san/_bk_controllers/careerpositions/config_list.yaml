@@ -1,0 +1,12 @@
+list: $/san/san/models/careerpositions/columns.yaml
+modelClass: san\San\Models\CareerPositions
+title: CareerPositions
+noRecordsMessage: 'backend::lang.list.no_records'
+showSetup: true
+showCheckboxes: true
+recordsPerPage: 20
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'
+recordUrl: 'san/san/careerpositions/update/:id'

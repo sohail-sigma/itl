@@ -1,0 +1,149 @@
+<!-- Primary content -->
+<?php Block::put('form-contents') ?>
+
+    <div class="control-tabs primary-tabs" data-control="tab">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#primaryTabOne">1. <?= Lang::get('briddle.data::lang.labels.import') ?></a></li>
+            <!-- <li><a href="#primaryTabTwo">2. <?= Lang::get('briddle.data::lang.labels.temporary') ?></a></li>
+            <li><a href="#primaryTabThree">3. <?= Lang::get('briddle.data::lang.labels.use') ?></a></li> -->
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active">
+
+                <h2><?= Lang::get('briddle.data::lang.labels.import') ?></h2>
+
+                <div class="form-group span-full">
+                    <div class="form-group span-full is-required">
+                        <?= Form::label('import', Lang::get('briddle.data::lang.labels.import')) ?>
+                        <?= Form::file('import', $attributes = ['class' => 'form-control']) ?>
+                        <p class="help-block"><?= Lang::get('briddle.data::lang.hints.import') ?></p>
+                    </div>
+                    <div class="form-group span-full">
+                       <?= Form::submit(Lang::get('briddle.data::lang.labels.import'),$attributes = ['class' => 'btn btn-primary']) ?>
+                       <!-- <?= Form::checkbox('replace', 1, true) ?>
+                       <?= Form::label('replace', Lang::get('briddle.data::lang.labels.replace')) ?> -->
+                    </div>
+                </div>
+
+            </div>
+            <!-- <div class="tab-pane">
+
+                <h2><?= $tmp ?> (<?= $rows ?> rows)</h2>
+                <div class="callout fade in callout-info no-subheader">
+                    <div class="header">
+                        <i class="icon-info"></i>
+                        <h3><?= Lang::get('briddle.data::lang.hints.destination') ?></h3>
+                    </div>
+                </div>
+
+                <div class="control-list">
+                    <table class="table data">
+                        <thead>
+                            <tr>
+                                <th><span>#</span></th>
+                                <th><span>Fieldname</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php for($i=0;$i<count($columns);$i++){?>
+                            <tr>
+                                <td><?= $i+1 ?></td>
+                                <td><?= $columns[$i] ?></td>
+                            </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane">
+
+                <h2><?= Lang::get('briddle.data::lang.labels.use') ?></h2>
+                <div class="callout fade in callout-info no-subheader">
+                    <div class="header">
+                        <i class="icon-info"></i>
+                        <h3><?= Lang::get('briddle.data::lang.hints.example') ?></h3>
+                    </div>
+                </div>
+
+                <textarea style="width:100%;height:300px;background:black;color:white">
+namespace Acme\Datahandler;
+
+use System\Classes\PluginBase;
+use Db;
+use Event;
+use Schema;
+
+class Plugin extends PluginBase
+{
+    public $require = ['Briddle.Data'];
+
+    public function pluginDetails()
+    {
+        return [
+            'name'        => 'Data Handler',
+            'description' => 'Handling of imported data from Briddle.Data',
+            'author'      => 'Briddle',
+            'icon'        => 'icon-cog'
+        ];
+    }
+
+    public function boot()
+    {
+        Event::listen('briddle.data.imported', function($table) {
+
+            if (Schema::hasTable('acme_cars_parts')) {
+                $result = Db::table($table)
+                    ->select('part')
+                    ->distinct()
+                    ->get();
+                Db::table('acme_cars_parts')->truncate();
+                foreach($result as $row){
+                    Db::table('acme_cars_parts')->insert([
+                        'name' => $row->part
+                    ]);
+                }
+            }
+
+        });
+    }
+}
+                </textarea>
+            </div> -->
+        </div>
+    </div>
+
+<?php Block::endPut() ?>
+
+<!-- Complimentary sidebar -->
+<?php Block::put('form-sidebar') ?>
+    <div style="margin-top: 40px;padding: 20px;border: 1px solid #D0D9DD;background: white;">
+        <h1><?= Lang::get('briddle.data::lang.plugin.name') ?></h1>
+        <p>
+            <?= Lang::get('briddle.data::lang.plugin.description') ?>
+        </p>
+        <p>
+            <?= Lang::get('briddle.data::lang.hints.destination') ?>
+        </p>
+        <!-- <p style="color: white;background: #222222;border: 1px solid #D0D9DD;padding:5px;">
+            <code><?= $tmp ?></code>
+        </p> -->
+    </div>
+<?php Block::endPut() ?>
+
+<?php Block::put('body') ?>
+
+    <div class="control-breadcrumb m-a-0">
+        <ul>
+            <li><a href="<?= Backend::url('san/san/packages') ?>">Packages</a></li>
+            <li>Import</li>
+        </ul>
+    </div>
+
+    <?= Form::open([
+            'class'=>'layout stretch',
+            'request' => 'onImport',
+            'files' => true,
+        ]) ?>
+        <?= $this->makeLayout('form-with-sidebar') ?>
+    <?= Form::close() ?>
+<?php Block::endPut() ?>

@@ -1,0 +1,109 @@
+[viewBag]
+==
+{% framework extras %}
+
+<div id="sign-in-dialog" class="zoom-anim-dialog">
+    <div class="small-dialog-header">
+        <h3><img src="{{'assets/images/mail.svg'|theme }}" class="img-fluid mail" alt="">Get In Touch</h3>
+    </div>
+    <div class="modalbody">
+        {% flash %}
+        <div data-control="flash-message" class="flash-message fade {{ type }}" data-interval="5">
+            {{ message }}
+        </div>
+        {% endflash %}
+        <form data-request="onSubmitEnquiryForm" data-request-validate data-request-flash>
+            <input type="hidden" name="form" value="popup" />
+            <div class="sign-in-wrapper">
+                <div class="row form-group">
+                    <div class="col">
+                        <label>First name*</label>
+                        <input type="text" name="first_name" class="form-control" placeholder="eg. Jhon" value="">
+                        <span data-validate-for="first_name" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                    <div class="col">
+                        <label>Last name*</label>
+                        <input type="text" name="last_name" class="form-control" placeholder="eg. David" value="">
+                        <span data-validate-for="last_name" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Email*</label>
+                        <input type="email" class="form-control" name="email" id="email"
+                            placeholder="eg. jhondavid@company.com" value="">
+                        <span data-validate-for="email" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Mobile Number*</label>
+                        <input type="number" class="form-control phone" name="phone" id="" placeholder="eg. 55333666" value="" onKeyDown="if(this.value.length==13 && event.keyCode!=8) return false;">
+                        <span data-validate-for="phone" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Nationality</label>
+                        <select id="address-country" class="form-control" name="nationality"></select>
+                        <span data-validate-for="nationality" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label class="checkboxes-label">City*</label>
+                        <input type="text" class="form-control" name="city" id="city"
+                            placeholder="City" value="">
+                        <span data-validate-for="city" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Number of Travellers*</label>
+                        <input type="text" class="form-control" name="no_traveller" placeholder="eg. 2" value="">
+                        <span data-validate-for="no_traveller" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                    <div class="col">
+                        <label>Departure From*</label>
+                        <input type="text" class="form-control" name="departure_from" placeholder="eg. Dubai" value="">
+                        <span data-validate-for="departure_from" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>When?*</label>
+                        <input type="date" class="form-control" name="when_start" placeholder="eg. Select Month"
+                            value="">
+                        <span data-validate-for="when_start" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                    <div class="col">
+                        <label>For how long?*</label>
+                        <input type="text" class="form-control" name="how_long" placeholder="eg. Select Duration"
+                            value="">
+                        <span data-validate-for="how_long" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+
+                <div class="clearfix add_bottom_15">
+                    <div class="checkboxes float-left">
+                        <label class="container_check">Subscribe for our latest updates
+                            <input type="checkbox" name="newsletter">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+
+                </div>
+                <p>By Continuing with this,
+                    You have read and agreed to the terms of
+                    ITL World <a href="https://itlworld.com/privacy-policy" target="_blank">Privacy Policy.</a></p>
+
+
+
+                <div class="text-center"><button data-attach-loading type="submit"
+                        class="btn_1 full-width">SEND</button></div>
+
+            </div>
+        </form>
+    </div>
+
+</div>

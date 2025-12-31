@@ -1,0 +1,5 @@
+title: Destination
+modelClass: san\San\Models\Destinations
+nameFrom: title
+toolbar:
+    buttons: reorder_toolbar

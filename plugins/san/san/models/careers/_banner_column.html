@@ -1,0 +1,55 @@
+<style>
+    .list-cell-name-user_cv {
+        width: 10% !important;
+    }
+
+    .cvbtn {
+        background-color: #34495e;
+        padding: 5px 15px;
+        border: solid 2px #4589;
+        border-radius: 5px;
+        font-weight: 600;
+        color: #fff !important;
+        display: block;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .cvbtn:hover {
+        color: #fff !important;
+        font-weight: 600;
+        background-color: #666;
+    }
+
+    .exportbtn {
+        background-color: #27ae60;
+        padding: 5px 15px;
+        border: solid 2px #229954;
+        border-radius: 5px;
+        font-weight: 600;
+        color: #fff !important;
+        display: block;
+        text-align: center;
+        margin-bottom: 5px;
+        text-decoration: none;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .exportbtn:hover {
+        color: #fff !important;
+        font-weight: 600;
+        background-color: #229954;
+        text-decoration: none;
+    }
+</style>
+<div class="">
+    <a class="link-nav cvbtn" target="_blank" href="<?php echo url('storage/app/uploads/public/cv/'.$record->user_cv); ?>">View</a>
+    <a class="link-nav cvbtn" target="_blank" href="<?php echo url('storage/app/uploads/public/cv/'.$record->user_cv); ?>" download>Download</a>
+    <form action="<?= Backend::url('san/san/careers/export-record/' . $record->id) ?>" method="post" style="margin: 0;">
+        <?= Form::token() ?>
+        <button type="submit" class="exportbtn" style="border: none;">
+            <i class="oc-icon-download"></i> Export
+        </button>
+    </form>
+</div>

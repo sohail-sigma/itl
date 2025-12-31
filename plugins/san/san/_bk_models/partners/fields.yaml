@@ -1,0 +1,21 @@
+fields:
+    title:
+        label: Title
+        span: auto
+        type: text
+    link:
+        label: 'Website URL'
+        span: auto
+        type: text
+    logo:
+        label: 'Company Logo (300 x 300 px)'
+        mode: image
+        prompt: '100'
+        imageWidth: '100'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        fileTypes: 'svg, jpeg, jpg, png'
+        type: fileupload

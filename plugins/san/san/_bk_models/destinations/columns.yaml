@@ -1,0 +1,17 @@
+columns:
+    title:
+        label: Title
+        type: partial
+        searchable: true
+        sortable: true
+        path: ~/plugins/san/san/models/destinations/_banner_column.html
+    status:
+        label: Published
+        type: switch
+        searchable: true
+        sortable: true
+    is_featured:
+        label: featured
+        type: switch
+        searchable: true
+        sortable: true

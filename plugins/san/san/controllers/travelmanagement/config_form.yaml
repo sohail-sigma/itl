@@ -1,0 +1,10 @@
+name: 'Travel Management'
+modelClass: san\San\Models\TravelManagement
+form: $/san/san/models/travelmanagement/fields.yaml
+defaultRedirect: san/san/travelmanagement
+create:
+    redirect: 'san/san/travelmanagement/update/:id'
+    redirectClose: san/san/travelmanagement
+update:
+    redirect: san/san/travelmanagement
+    redirectClose: san/san/travelmanagement

@@ -1,0 +1,12 @@
+columns:
+    description:
+        label: Image
+        type: partial
+        searchable: false
+        sortable: false
+        path: ~/plugins/san/san/models/slider/_banner_column.html
+    slider_title:
+        label: Title
+        type: text
+        searchable: true
+        sortable: true

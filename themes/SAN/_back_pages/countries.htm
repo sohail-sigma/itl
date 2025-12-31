@@ -1,0 +1,326 @@
+title = "countries"
+url = "/countries/:slug"
+layout = "default"
+is_hidden = 0
+
+[builderDetails]
+modelClass = "san\San\Models\Countries"
+identifierValue = "{{ :slug }}"
+modelKeyColumn = "slug"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+==
+<?php
+function onEnd(){
+    if(!@$_GET['preview'] || !Session::get('_token')){
+        $page=$this->builderDetails->record->active(1)->get();
+        if(!count($page)){
+            $this->setStatusCode(404);
+            return $this->controller->run('404');
+        }
+    }
+
+        if($metadata=$this->builderDetails->record['meta_title']) $this->page->meta_title = $metadata;
+        if($metadata=$this->builderDetails->record['meta_desc']) $this->page->meta_description = $metadata;
+        if($metadata=$this->builderDetails->record['meta_image']) $this->page->og_image = $metadata->getThumb(1200,630);
+    }
+?>
+==
+<section
+[mediaResize]
+ class="hero_single version_2 full">
+    <div class="wrapper" style="background-image: url({{builderDetails.record.banner.path}});">
+        <div class="container position-relative h-100">
+            <div class="banner_title">
+            <div class="banner_text">
+            <p>{{builderDetails.record.headline}}</p>
+            <h1 class="UniSansLight">{{builderDetails.record.title}}</h1>
+            <span class="line"><em></em></span>
+            </div>
+            </div>
+            <div class="banner_search">
+            {% partial 'site/searchform.htm' %}
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /hero_single -->
+<div class="clearfix"></div>
+<div class="bg_color_1 container mt-5">
+    <!-- /carousel -->
+    <a class="mobile-book btn btn-primary btn-lg enquiry-in w-100 d-md-none" href="{{'packages'|page}}?country={{builderDetails.record.slug}}">BOOK&nbsp;A&nbsp;TRIP</a>
+    <div class="countrynav">
+        <div class="populardetails font-size-medium UniSansLight"> {{builderDetails.record.brief|raw}}</div>
+        <div class="sub_sticky ">
+            <div class="sub_sticky_holder">
+                <ul class="countrynav justify-content-center nav-pills font-size-small d-none d-md-flex "> 
+                    <li class="nav-item  w-100">
+                        <a class="nav-link w-100" data-move="overview">OVERVIEW</a>
+                    </li>
+                    <li class="nav-item  w-100">
+                        <a class="nav-link" data-move="cities">CITIES</a>
+                    </li>
+                    <li class="nav-item  w-100">
+                        <a class="nav-link"  data-move="experiences">EXPERIENCES</a>
+                    </li>
+                    <li class="nav-item  w-100">
+                        <a class="nav-link"  data-move="facts">FACTS</a>
+                    </li>
+                    <li class="nav-item  w-100" >
+                        <a class="nav-link active" href="{{'packages'|page}}?country={{builderDetails.record.slug}}">BOOK&nbsp;A&nbsp;TRIP</a>
+                    </li>
+                </ul>                
+            </div>
+        </div>
+        
+
+        <div id="overview" class="mt-5 pb-3">    
+            <div class="main_title_2  ">
+                <h2 >Introducing  {{builderDetails.record.title}}</h2>
+                <span><em></em></span>
+            </div>
+            <div class="populardetails mb-5">{{builderDetails.record.content|raw}}</div>
+            {% if builderDetails.record.video %}}
+                <div class="embed-responsive embed-responsive-42by24">
+                    <iframe width="100%" src="https://www.youtube.com/embed/{{builderDetails.record.video}}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            {% endif %}
+
+
+        </div>
+        {% if builderDetails.record.cities %}
+        <div class="main_title_2 mt-5" id="cities">
+            <h2>CITIES TO VISIT</h2>
+            <span><em></em></span>
+        </div>
+        <div class="mainslide">
+            <div id="reccomended" class="owl-carousel owl-theme">
+
+                {% for record in builderDetails.record.cities %}
+                    <div class="item" data-desc="{{record.description}}">
+                        <div class="item-base">
+                            <figure style="background-image:url({{record.image|thumbnail(300,625,'crop')}})"></figure>
+                            <div class="title">
+                                <img class="location" src="{{ 'assets/images/location.png'|theme }}">                              
+                                 <small>{{record.title}}</small>
+                                 <strong><em></em></strong>                             
+                             </div> 
+                        </div>
+                    </div> 
+                    <!-- /item -->
+                {% endfor %}
+            </div>
+            
+            
+            <div class="d-none d-md-block owl-nav">
+                <div class="hs_owl-prev" style="left:-5px;" onclick="itl.r_owl.trigger('prev.owl.carousel');"><img src="{{ 'assets/images/prev.svg'|theme }}"></div>
+                <div class="hs_owl-next" style="right:-5px;" onclick="itl.r_owl.trigger('next.owl.carousel');"><img src="{{ 'assets/images/next.svg'|theme }}"></div>
+            </div>
+
+        </div>
+        
+        <p class="mt-3 populardetails font-size-medium UniSansLight reccomended-description"></p>
+         {% endif %}
+        <div class=" mt-5 pb-4" id="experiences">
+            {% if builderDetails.record.experiences %}
+            <div class="main_title_2 ">
+                <h2>EXPERIENCES </h2>
+                <span><em></em></span>
+            </div>
+            
+                <div class="experienc-box{% if apiFunction.isMobile %}-mobile{% endif %}">
+                 {% if apiFunction.isMobile %}
+                  {% for record in builderDetails.record.experiences %}
+                    <div class="experienc-set {% if j==0 %}active current{% endif %}">
+                        <div class="experienc-figer" >
+                            <div class="img" style="background-image:url({{exp.image|thumbnail(583,583,'crop')}})"></div>
+                            <div class="title"  onclick="expslide(1,this);"><h3>{{exp.title}}<em></em></h3></div>
+                        </div>
+                        <div class="experienc-content"><div class="experienc-content-in UniSansLight">{{exp.description|raw}}</div></div>
+                    </div>
+                     {% endfor %}
+                 {% else %}
+                    {% set expcount = builderDetails.record.experiences|length >1 ?builderDetails.record.experiences|length|round(1, 'floor') /2 : 1 %}
+                    {% set j = 0 %}
+                    {% for i in 0..expcount %}
+                    <div class="experienc-set {% if j==0 %}active current{% endif %}">
+                        {% if builderDetails.record.experiences[j] %}
+                        {% set exp = builderDetails.record.experiences[j] %}
+                        {% set j = j+1 %}                
+                        <div class="experienc-left">
+                            <div class="experienc-figer" >
+                                <div class="img" style="background-image:url({{exp.image|thumbnail(583,583,'crop')}})"></div>
+                                     <div class="title" onclick="expslide(1,this);">
+                                    <h3>{{exp.title}} <em></em></h3>
+                                </div>                                
+                            </div>
+                            <div class="experienc-content"><div class="experienc-content-in UniSansLight p-5">{{exp.description|raw}}</div></div>
+                        </div>
+                         {% endif %}
+                        {% if builderDetails.record.experiences[j] %}
+                        {% set exp = builderDetails.record.experiences[j] %}
+                        {% set j = j+1 %} 
+                        <div  class="experienc-right">
+                            <div class="experienc-figer">
+                                <div class="img" style="background-image:url({{exp.image|thumbnail(583,583,'crop')}})"></div>
+                                <div class="title" onclick="expslide(1,this);"><h3>{{exp.title}}<em></em></h3></div>                               
+                            </div>
+                            <div class="experienc-content"><div class="experienc-content-in UniSansLight p-5">{{exp.description|raw}}</div></div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                 {% endif %}
+                    <div class="morelessbar morebar">
+                        <div class="expcorner leftcorner"></div>
+                        <a class="addexp" onclick="expslide(1);"><img src="{{ 'assets/images/add.svg'|theme }}" class="img-fluid" alt=""></a>
+                        <div class="expcorner rightcorner"></div>
+                    </div>
+                </div>
+                <script>
+                    function expslide(type,ele){
+                        toele="";
+                        if(ele){
+                        toele =$(ele).closest('.experienc-set');
+                        if($(toele).length && toele.hasClass('experienc-set')){ 
+                                if(!$(toele).hasClass('open')){
+                                    $('.experienc-set').removeClass('current');
+                                    $('.experienc-set').removeClass('open');
+                                    $(toele).addClass('active');
+                                    $(toele).addClass('open');
+                                    $(toele).addClass('current');
+                                }else{
+                                    $(toele).removeClass('open');
+                                    $(toele).removeClass('current');
+                                }
+                            }  
+                        }else{
+                            $('.experienc-set').each(function(){                        
+                                if(!toele){
+                                    ele=$(this);                            
+                                        if(ele.hasClass('current')){
+                                            if(ele.hasClass('active') && !ele.hasClass('open')){
+                                                toele=ele;
+                                            }else{
+                                                if(type==1){
+                                                    toele=ele.next();
+                                                }else{
+                                                    toele=ele.prev();
+                                                }  
+                                            }
+                                        } 
+                                        if($(toele).length && toele.hasClass('experienc-set')){ 
+                                            $('.experienc-set').removeClass('current');
+                                            $('.experienc-set').removeClass('open');
+                                            $(toele).addClass('active');
+                                            $(toele).addClass('open');
+                                            $(toele).addClass('current');
+                                        }                             
+                                }
+                                index=$('.experienc-set').index(toele);
+                                if($('.experienc-set').length==index+1){
+                                    $('.morebar').addClass('d-none');
+                                }else{
+                                    $('.morebar').removeClass('d-none');
+                                } 
+                                
+                            })
+                        }
+                    }
+                </script> 
+            {% endif %}
+           
+        </div>
+
+
+        <div  id="facts" class="mt-5 pb-5">
+            <div class="main_title_2 ">
+                <h2>FACT SHEET</h2>
+                <span><em></em></span>
+            </div>
+            <div class="row">
+                {% if builderDetails.record.currency %}
+                <div class="col-sm-6  col-md-4">
+                    <div class="card center">
+                        <img class="card-img-top img_center rounded-circle" src="{{ 'assets/img/fact_sheet/currency.svg'|theme }}" style="width:130px;">
+                        <div class="card-body center">
+                            <p class="card-text">Currency</p>
+                            <Strong>{{builderDetails.record.currency}}</Strong>  
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if builderDetails.record.capital %}
+                <div class=" col-sm-6  col-md-4">
+                    <div class="card center">
+                        <img class="card-img-top img_center rounded-circle" src="{{ 'assets/img/fact_sheet/capital.svg'|theme }}" style="width:140px;">
+                        <div class="card-body center">
+                            <p class="card-text">Capital</p>
+                            <Strong>{{builderDetails.record.capital}}</Strong>  
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if builderDetails.record.language %}                          
+                <div class="col-sm-6  col-md-4">
+                    <div class="card center">
+                        <img class="card-img-top img_center rounded-circle" src="{{ 'assets/img/fact_sheet/language.svg'|theme }}" style="width:130px;">
+                        <div class="card-body center">
+                            <p class="card-text">Language</p>
+                            <Strong>{{builderDetails.record.language}}</Strong>  
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if builderDetails.record.emergency_no %}
+                  <div class="col-sm-6 col-md-4">
+                    <div class="card center">
+                        <img class="card-img-top img_center rounded-circle" src="{{ 'assets/img/fact_sheet/emergency.svg'|theme }}" style="width:170px;">
+                        <div class="card-body center">
+                            <p class="card-text">Emergency Number</p>
+                            <Strong>{{builderDetails.record.emergency_no}}</Strong>  
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if builderDetails.record.phone_code %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="card center">
+                        <img class="card-img-top img_center rounded-circle" src="{{ 'assets/img/fact_sheet/country_code.svg'|theme }}" style="width:170px;">
+                        <div class="card-body center">
+                            <p class="card-text">Country Code</p>
+                            <Strong>{{builderDetails.record.phone_code}}</Strong>  
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if builderDetails.record.gmt %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="card center">
+                        <img class="card-img-top img_center rounded-circle" src="{{ 'assets/img/fact_sheet/gmt.svg'|theme }}" style="width:170px;">
+                        <div class="card-body center">
+                            <p class="card-text">GMT</p>
+                            <Strong>{{builderDetails.record.gmt}} hrs</Strong>  
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+            </div>
+        </div>   
+
+       
+        {% if builderDetails.record.visa_on_arrival %}
+        <p class="center mt-5 mb-5 pt-3" style="border-top:1px dashed #ddd;">Nationalities can obtain a visa on arrival:<br/>
+                            <strong style="letter-spacing: 1px">{{builderDetails.record.visa_on_arrival}}</strong></p>
+        {% endif %}
+
+
+
+
+
+
+        <div class="clearfix"></div>
+
+    </div>
+    <!-- /container -->

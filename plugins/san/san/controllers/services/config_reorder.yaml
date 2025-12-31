@@ -1,0 +1,5 @@
+title: Services
+modelClass: san\San\Models\Services
+nameFrom: title
+toolbar:
+    buttons: reorder_toolbar

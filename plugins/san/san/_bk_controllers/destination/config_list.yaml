@@ -1,0 +1,13 @@
+list: $/san/san/models/destinations/columns.yaml
+modelClass: san\San\Models\Destinations
+title: Destination
+noRecordsMessage: 'backend::lang.list.no_records'
+showSetup: true
+showCheckboxes: true
+recordsPerPage: 20
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'
+recordUrl: 'san/san/destination/update/:id'
+recordOnClick: ''

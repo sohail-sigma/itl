@@ -1,0 +1,10 @@
+name: BlogsharelLinks
+form: $/san/san/models/blogsharelinks/fields.yaml
+modelClass: san\San\Models\BlogshareLinks
+defaultRedirect: san/san/blogsharellinks
+create:
+    redirect: 'san/san/blogsharellinks/update/:id'
+    redirectClose: san/san/blogsharellinks
+update:
+    redirect: san/san/blogsharellinks
+    redirectClose: san/san/blogsharellinks

@@ -1,0 +1,20 @@
+fields:
+    title:
+        label: 'Enter Page Title'
+        span: full
+        type: text
+    content_1:
+        label: 'Top Section'
+        size: large
+        span: full
+        type: richeditor
+    content_2:
+        label: 'Middle Section'
+        size: large
+        span: full
+        type: richeditor
+    content_3:
+        label: Bottom
+        span: full
+        size: large
+        type: richeditor

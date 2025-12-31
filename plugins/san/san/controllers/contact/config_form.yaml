@@ -1,0 +1,11 @@
+name: Contact
+modelClass: san\San\Models\Contact
+form: $/san/san/models/contact/fields.yaml
+defaultRedirect: san/san/contact
+create:
+    redirect: 'san/san/contact/update/:id'
+    redirectClose: san/san/contact
+update:
+    redirect: san/san/contact
+    redirectClose: san/san/contact
+preview: {  }

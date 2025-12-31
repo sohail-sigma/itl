@@ -1,0 +1,66 @@
+[apiFunction]
+[viewBag]
+==
+<?php
+function onSubmitNewsletterForm()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = post();
+
+        $rules = [
+                'full_name' => 'required',
+                'email' => 'required|unique:san_san_newsletter'
+            ];
+            $errorMessages = [
+                'email.required' => 'Please enter your email',
+                'email.unique' => 'Email already exist',
+                'full_name.required' => 'Please enter your full name'
+            ];
+
+        $validation = Validator::make($data, $rules, $errorMessages);
+
+        if ($validation->fails()) {
+            throw new ValidationException($validation);
+        }else{
+            $input = Input::all();
+            $careers = new  san\San\Models\Newsletter;
+            $careers->fulll_name = $input['full_name'];
+            $careers->email = $input['email'];
+            $careers->save();
+            Flash::success('Submitted successfully!');
+            unset($_POST);
+        }
+    }
+}
+?>
+
+==
+
+{% framework extras %}
+
+<form data-request="onSubmitNewsletterForm" data-request-validate data-request-flash class="form-str"
+    data-request-files="true" data-request-success="document.getElementById('newsletter_form').reset()"
+    id="newsletter_form">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="form-group">
+                <input type="text" name="full_name" id="full_name" class="form-control" placeholder="Your name"
+                    required>
+                <span data-validate-for="full_name" class="text-danger pt-1 font-size-small"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-9">
+            <div class="form-group">
+                <input type="email" name="email" id="email" class="form-control" placeholder="Your email" required>
+                <span data-validate-for="email" class="text-danger pt-1 font-size-small"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <input type="submit" value="Subscribe" id="submit-newsletter">
+            </div>
+        </div>
+    </div>
+</form>

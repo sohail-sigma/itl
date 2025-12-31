@@ -1,0 +1,11 @@
+list: $/san/san/models/campaign1/columns.yaml
+modelClass: san\San\Models\Campaign1
+title: Campaign1
+noRecordsMessage: 'backend::lang.list.no_records'
+showSetup: true
+showCheckboxes: true
+recordsPerPage: 20
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'

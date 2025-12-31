@@ -1,0 +1,12 @@
+fields:
+    base_country:
+        label: Base Country
+        type: dropdown
+        options: getCountryOptions
+        span: auto
+
+    target_packages:
+        label: Target Packages
+        type: checkboxlist
+        options: getPackageOptions
+        span: auto

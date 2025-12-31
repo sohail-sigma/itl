@@ -1,0 +1,7 @@
+<div style="padding-bottom: 10px;" ><b><?php echo $record->title; ?></b></div>
+<?php if($record->banner){ ?><a class="link-nav" href="/backend/san/san/packages/update/<?php echo $record->id; ?>"></a><img src="<?php echo $record->banner->getThumb(100,80,'crop'); ?>"/></a><?php } ?>
+
+<div class="list-link-nav">
+    <a class="link-nav" href="/backend/san/san/services/update/<?php echo $record->id; ?>">Edit</a>
+    <a class="link-nav" target="_blank" href="<?php echo url('/service/'.$record->slug); ?>">View Front</a>
+</div>

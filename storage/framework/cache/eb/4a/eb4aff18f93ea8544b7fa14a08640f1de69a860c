@@ -1,0 +1,236 @@
+1767162277a:1:{s:17:"single-detail.htm";a:9:{s:8:"fileName";s:17:"single-detail.htm";s:7:"content";s:3552:"title = "Detail"
+url = "/detail/:slug?"
+layout = "default"
+is_hidden = 0
+==
+<?php
+function onEnd()
+{
+	$this['slug'] = Request::segment(2);
+	$this['allPosts'] = Winter\Blog\Models\Post::Where('slug', $this['slug'])->get();
+}
+function onSubmitNewsletterForm()
+{
+	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		$data = post();
+
+		$rules = [
+			'full_name' => 'required',
+			'email' => 'required|email|unique:san_san_newsletter'
+		];
+		$errorMessages = [
+			'email.required' => 'Please enter your email',
+			'email.unique' => 'Email already exist',
+			'full_name.required' => 'Please enter your full name'
+		];
+
+		$validation = Validator::make($data, $rules, $errorMessages);
+
+		if ($validation->fails()) {
+			throw new ValidationException($validation);
+		} else {
+			$input = Input::all();
+			$careers = new  san\San\Models\Newsletter;
+			$careers->fulll_name = $input['full_name'];
+			$careers->email = $input['email'];
+			$careers->save();
+			Flash::success('Submitted successfully!');
+			unset($_POST);
+		}
+	}
+}
+function onStart()
+{
+
+	$this['linksorder'] = san\San\Models\BlogshareLinks::orderBy('sort_order', 'ASC')->get();
+}
+?>
+==
+<section class="hero_single inner">
+	<div class="inner-slider owl-carousel owl-theme">
+		{% for post in allPosts %}
+		{% for record in post.featured_images %}
+		<div class="item" style="background-image: url('');">
+		    <div class="item-img">
+		        <a href="{{record.path}}" data-lightbox="image-1" data-title="{{post.title}}">
+		            <img src="{{record.path}}" alt="" >
+		        </a>
+		    </div>
+			<div class="container position-relative item-bnr-txt">
+				<div class="banner_title">
+					<div class="banner_text">
+
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+		{% endfor %}
+	</div>
+</section>
+<div class="news-detail">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<a style="padding: 5px 10px;width:auto;height:auto; margin:0" class="" type="button" value="Go back!" onclick="history.go(-1)"> <i class="fa fa-arrow-left" aria-hidden="true"></i> Go back!</a>
+			</div>
+			{% for post in allPosts %}
+			<div class="col-md-2">
+				<div class="blog-title">
+					{% for cname in post.categories %}
+					<h2>{{cname.name}}</h2>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="col-md-10">
+				<div class="blog-date">
+					<span class="country">{{post.country}}</span>
+					{% set dateTime = date(post.created_at) %}
+					<span class="date">{{  blogDate}}</span>
+				</div>
+				<div class="blog-title">
+					<h1>{{post.title}}</h1>
+					{{post.content_html|raw}}
+				</div>
+
+				<div class="blog-share">
+					<ul class="nav">
+						{% for lo in linksorder %}
+						{% if lo.title == "linkedin" %}
+						<li>
+							<a href="https://www.linkedin.com/shareArticle?mini=true&url={{ '' | page }}&title=ITLWorld" target="_blank"><img src="/themes/SAN/assets/images/linkedin.svg"></a>
+						</li>
+						{% endif %}
+						{% if lo.title == "twitter" %}
+						<li>
+							<a href="https://twitter.com/intent/tweet?url={{ '' | page }}" target="_blank">
+								<img src="/themes/SAN/assets/images/x.svg">
+							</a>
+						</li>
+						{% endif %}
+						{% if lo.title == "facebook" %}
+						<li>
+							<a href="http://www.facebook.com/share.php?u={{ '' | page }}" target="_blank"> <img src="/themes/SAN/assets/images/facebook.svg"></a>
+						</li>
+						{% endif %}
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>";s:5:"mtime";i:1748499427;s:6:"markup";s:2380:"<section class="hero_single inner">
+	<div class="inner-slider owl-carousel owl-theme">
+		{% for post in allPosts %}
+		{% for record in post.featured_images %}
+		<div class="item" style="background-image: url('');">
+		    <div class="item-img">
+		        <a href="{{record.path}}" data-lightbox="image-1" data-title="{{post.title}}">
+		            <img src="{{record.path}}" alt="" >
+		        </a>
+		    </div>
+			<div class="container position-relative item-bnr-txt">
+				<div class="banner_title">
+					<div class="banner_text">
+
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+		{% endfor %}
+	</div>
+</section>
+<div class="news-detail">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<a style="padding: 5px 10px;width:auto;height:auto; margin:0" class="" type="button" value="Go back!" onclick="history.go(-1)"> <i class="fa fa-arrow-left" aria-hidden="true"></i> Go back!</a>
+			</div>
+			{% for post in allPosts %}
+			<div class="col-md-2">
+				<div class="blog-title">
+					{% for cname in post.categories %}
+					<h2>{{cname.name}}</h2>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="col-md-10">
+				<div class="blog-date">
+					<span class="country">{{post.country}}</span>
+					{% set dateTime = date(post.created_at) %}
+					<span class="date">{{  blogDate}}</span>
+				</div>
+				<div class="blog-title">
+					<h1>{{post.title}}</h1>
+					{{post.content_html|raw}}
+				</div>
+
+				<div class="blog-share">
+					<ul class="nav">
+						{% for lo in linksorder %}
+						{% if lo.title == "linkedin" %}
+						<li>
+							<a href="https://www.linkedin.com/shareArticle?mini=true&url={{ '' | page }}&title=ITLWorld" target="_blank"><img src="/themes/SAN/assets/images/linkedin.svg"></a>
+						</li>
+						{% endif %}
+						{% if lo.title == "twitter" %}
+						<li>
+							<a href="https://twitter.com/intent/tweet?url={{ '' | page }}" target="_blank">
+								<img src="/themes/SAN/assets/images/x.svg">
+							</a>
+						</li>
+						{% endif %}
+						{% if lo.title == "facebook" %}
+						<li>
+							<a href="http://www.facebook.com/share.php?u={{ '' | page }}" target="_blank"> <img src="/themes/SAN/assets/images/facebook.svg"></a>
+						</li>
+						{% endif %}
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>";s:4:"code";s:1083:"function onEnd()
+{
+	$this['slug'] = Request::segment(2);
+	$this['allPosts'] = Winter\Blog\Models\Post::Where('slug', $this['slug'])->get();
+}
+function onSubmitNewsletterForm()
+{
+	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+		$data = post();
+
+		$rules = [
+			'full_name' => 'required',
+			'email' => 'required|email|unique:san_san_newsletter'
+		];
+		$errorMessages = [
+			'email.required' => 'Please enter your email',
+			'email.unique' => 'Email already exist',
+			'full_name.required' => 'Please enter your full name'
+		];
+
+		$validation = Validator::make($data, $rules, $errorMessages);
+
+		if ($validation->fails()) {
+			throw new ValidationException($validation);
+		} else {
+			$input = Input::all();
+			$careers = new  san\San\Models\Newsletter;
+			$careers->fulll_name = $input['full_name'];
+			$careers->email = $input['email'];
+			$careers->save();
+			Flash::success('Submitted successfully!');
+			unset($_POST);
+		}
+	}
+}
+function onStart()
+{
+
+	$this['linksorder'] = san\San\Models\BlogshareLinks::orderBy('sort_order', 'ASC')->get();
+}";s:5:"title";s:6:"Detail";s:3:"url";s:14:"/detail/:slug?";s:6:"layout";s:7:"default";s:9:"is_hidden";s:1:"0";}}

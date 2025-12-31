@@ -1,0 +1,535 @@
+fields:
+    title:
+        label: 'Banner Title'
+        span: left
+        type: text
+    caption:
+        label: 'Main Title'
+        span: auto
+        type: text
+    sub_caption:
+        label: Subtitle
+        size: small
+        span: full
+        type: richeditor
+    brief:
+        label: Brief
+        size: large
+        span: full
+        type: richeditor
+    caption_new:
+        label: Caption
+        span: auto
+        type: text
+    sub_title:
+        label: 'Sub Caption'
+        span: auto
+        type: text
+    cities:
+        label: Cities
+        prompt: 'Add new city'
+        style: default
+        span: full
+        type: repeater
+        form:
+            fields:
+                city:
+                    label: City
+                    span: full
+                    type: text
+    slug:
+        label: Slug
+        span: left
+        preset:
+            field: title
+            type: slug
+        type: text
+    status:
+        label: Status
+        span: auto
+        type: switch
+    on_holiday_page:
+        label: 'Is Show On Holiday Page?'
+        span: left
+        type: switch
+    holiday_tag:
+        label: 'Tag For Holiday Page'
+        options:
+            'no': 'no tag'
+            fixed-departure: 'FIXED DEPARTURE'
+            flight-inclusive: 'NATIONAL DAY SPECIALS'
+            flight-green: 'FLIGHT INCLUSIVE'
+            flight-yellow: 'ALL INCLUSIVE'
+        span: right
+        trigger:
+            action: show
+            field: on_holiday_page
+            condition: checked
+        type: radio
+    unique_caption:
+        label: 'Unique Caption'
+        span: full
+        type: text
+    months:
+        label: 'Packages Month'
+        options:
+            January: January
+            February: February
+            March: March
+            April: April
+            May: May
+            Jun: Jun
+            July: July
+            August: August
+            September: September
+            October: October
+            November: November
+            December: December
+        span: auto
+        type: checkboxlist
+    banner:
+        label: 'Main Banner (Landscape 1600 x 715 px)'
+        mode: image
+        imageWidth: '150'
+        imageHeight: '90'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload
+        commentAbove: ' '
+    theme:
+        label: 'Load Under the Theme'
+        nameFrom: title
+        descriptionFrom: description
+        span: auto
+        hidden: 1
+        type: relation
+        comment: '<a href="/backend/san/san/themes/create" target="_blank">Add New Theme</a>'
+    thumbnail:
+        label: 'Thumbnail (Box 270 x 270 px)'
+        mode: image
+        imageWidth: '150'
+        imageHeight: '150'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload
+        commentAbove: ' '
+tabs:
+    fields:
+        content:
+            label: Overview
+            size: large
+            span: auto
+            type: richeditor
+            tab: Content
+        overview_image:
+            label: 'Overview Image (600 x 600 px)'
+            mode: image
+            imageWidth: '200'
+            imageHeight: '200'
+            useCaption: 0
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            commentAbove: ' '
+            tab: Content
+        conditions:
+            label: Conditions
+            size: large
+            span: auto
+            type: richeditor
+            tab: Content
+        enquiry_desc:
+            label: 'Enquiry Description'
+            size: large
+            span: auto
+            type: richeditor
+            tab: Content
+        contact_desc:
+            label: 'Contact Text'
+            size: large
+            span: full
+            type: richeditor
+            tab: Content
+        inclusions:
+            label: Inclusions
+            prompt: 'Add new item'
+            style: default
+            span: auto
+            type: repeater
+            tab: 'Inclusions & exclusions'
+            form:
+                fields:
+                    point:
+                        label: Point
+                        span: full
+                        type: text
+        exclusions:
+            label: Exclusions
+            prompt: 'Add new item'
+            style: default
+            span: auto
+            type: repeater
+            tab: 'Inclusions & exclusions'
+            form:
+                fields:
+                    point:
+                        label: Point
+                        span: full
+                        type: text
+        inclusions_image:
+            label: 'Inclusions Image (600 x 600 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            commentAbove: ' '
+            tab: 'Inclusions & exclusions'
+        hotel_stay:
+            label: 'Hotel Stay'
+            span: auto
+            type: switch
+            tab: Facilities
+        domestic_flights:
+            label: 'Domestic Flights'
+            span: auto
+            type: switch
+            tab: Facilities
+        breakfast_meals:
+            label: Breakfast/Meals
+            span: auto
+            type: switch
+            tab: Facilities
+        airport_transfers:
+            label: 'Airport Transfers'
+            span: auto
+            type: switch
+            tab: Facilities
+        site_seeing:
+            label: 'Site Seeing'
+            span: auto
+            type: switch
+            tab: Facilities
+        city_coach_tour:
+            label: 'City Tour/Coach Tour'
+            span: auto
+            type: switch
+            tab: Facilities
+        tour_guide:
+            label: 'Tour Guide'
+            span: auto
+            type: switch
+            tab: Facilities
+        train_tickets:
+            label: 'Train Tickets'
+            span: auto
+            type: switch
+            tab: Facilities
+        entrance_fee_pass:
+            label: 'Entrance Fee/ Pass'
+            span: auto
+            type: switch
+            tab: Facilities
+        cruising:
+            label: Cruising
+            span: auto
+            type: switch
+            tab: Facilities
+        entertainment:
+            label: Entertainment
+            span: auto
+            type: switch
+            tab: Facilities
+        sailing:
+            label: Sailing
+            span: auto
+            type: switch
+            tab: Facilities
+        hiking_walking_tour:
+            label: 'Hiking/Walking Tour'
+            span: auto
+            type: switch
+            tab: Facilities
+        speed_boat:
+            label: 'Speed Boat Transfers'
+            span: auto
+            type: switch
+            tab: Facilities
+        wellness:
+            label: Wellness
+            span: auto
+            type: switch
+            tab: Facilities
+        camping:
+            label: Camping
+            span: auto
+            type: switch
+            tab: Facilities
+        canyoning:
+            label: Canyoning
+            span: auto
+            type: switch
+            tab: Facilities
+        campervan:
+            label: Campervan
+            span: auto
+            type: switch
+            tab: Facilities
+        para_gliding:
+            label: 'Para Gliding'
+            span: auto
+            type: switch
+            tab: Facilities
+        bike_ride:
+            label: 'Bike Ride'
+            span: auto
+            type: switch
+            tab: Facilities
+        diving:
+            label: Diving
+            span: auto
+            type: switch
+            tab: Facilities
+        scooter_ride:
+            label: 'Scooter Ride'
+            span: auto
+            type: switch
+            tab: Facilities
+        zip_line:
+            label: 'Zip line'
+            span: auto
+            type: switch
+            tab: Facilities
+        horse_ride:
+            label: 'Horse Ride'
+            span: auto
+            type: switch
+            tab: Facilities
+        cooking_class:
+            label: 'Cooking Class'
+            span: auto
+            type: switch
+            tab: Facilities
+        shopping_tour:
+            label: 'Shopping Tour'
+            span: auto
+            type: switch
+            tab: Facilities
+        accomodation:
+            label: 'Accommodation type'
+            options:
+                - '0'
+                - '1 Star'
+                - '2 Star'
+                - '3 Star'
+                - '4 Star'
+                - '5 Star'
+                - '6 Star'
+                - '7 Star'
+            showSearch: true
+            span: full
+            type: dropdown
+            tab: Facilities
+        night:
+            label: Nights
+            options:
+                1: '1'
+                2: '2'
+                3: '3'
+                4: '4'
+                5: '5'
+                6: '6'
+                7: '7'
+                8: '8'
+                9: '9'
+                10: '10'
+                11: '11'
+                12: '12'
+                13: '13'
+                14: '14'
+                15: '15'
+            showSearch: true
+            span: auto
+            type: dropdown
+            tab: Facilities
+        days:
+            label: Days
+            options:
+                1: '1'
+                2: '2'
+                3: '3'
+                4: '4'
+                5: '5'
+                6: '6'
+                7: '7'
+                8: '8'
+                9: '9'
+                10: '10'
+                11: '11'
+                12: '12'
+                13: '13'
+                14: '14'
+                15: '15'
+            showSearch: true
+            span: auto
+            type: dropdown
+            tab: Facilities
+        nearest_airport:
+            label: 'Nearest Airport'
+            prompt: 'Add new Airport'
+            style: default
+            span: full
+            type: repeater
+            tab: Facilities
+            form:
+                fields:
+                    airport:
+                        label: Airport
+                        span: full
+                        type: text
+        others:
+            label: Others
+            prompt: 'Add new item'
+            style: default
+            span: full
+            type: repeater
+            tab: Facilities
+            form:
+                fields:
+                    title:
+                        label: Title
+                        span: auto
+                        type: text
+                    icon:
+                        label: 'Icon (98 x 97 px)'
+                        mode: image
+                        imageWidth: '100'
+                        imageHeight: '100'
+                        span: auto
+                        type: mediafinder
+                        comment: .svg
+        price:
+            label: Repeater
+            prompt: 'Add new item'
+            style: default
+            span: full
+            type: repeater
+            tab: Price
+            form:
+                fields:
+                    price:
+                        label: Price
+                        span: auto
+                        type: number
+                    currency:
+                        label: Currency
+                        options:
+                            aed: AED
+                            bhd: BHD
+                            kwd: KWD
+                            omr: OMR
+                            sar: SAR
+                            qar: QAR
+                            usd: USD
+                        showSearch: true
+                        span: auto
+                        type: dropdown
+        dates:
+            label: Repeater
+            prompt: 'Add new item'
+            style: default
+            span: full
+            type: repeater
+            tab: Date
+            form:
+                fields:
+                    from:
+                        label: From
+                        mode: date
+                        span: auto
+                        type: datepicker
+                    to:
+                        label: To
+                        mode: date
+                        span: auto
+                        type: datepicker
+        date_image:
+            label: 'Date Image (600 x 600 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            commentAbove: ' '
+            tab: Date
+        itineraries:
+            label: Repeater
+            prompt: 'Add new item'
+            style: default
+            span: full
+            type: repeater
+            tab: Itinararies
+            form:
+                fields:
+                    title:
+                        label: Tilte
+                        span: auto
+                        type: text
+                    desc:
+                        label: Description
+                        size: large
+                        span: auto
+                        type: richeditor
+        meta_title:
+            label: 'Meta Title'
+            span: auto
+            type: text
+            tab: SEO
+        meta_desc:
+            label: 'Meta Description'
+            size: ''
+            span: auto
+            type: textarea
+            tab: SEO
+        meta_image:
+            label: 'Meta Image (1200 × 630 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            comment: 'jpg/png '
+            tab: SEO
+        countries:
+            label: country
+            prompt: 'Add new item'
+            style: default
+            span: full
+            type: repeater
+            tab: Countries
+            form:
+                fields:
+                    country:
+                        label: country
+                        span: full
+                        type: text

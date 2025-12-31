@@ -1,0 +1,10 @@
+[viewBag]
+
+==
+
+<option value="any">Month</option>
+{% if allmonths %}
+    {% for month in allmonths %}
+        <option {% if get("month")==month %}selected="selected" {% endif %} value="{{month}}">{{month}}</option>
+    {% endfor %}
+{% endif %}

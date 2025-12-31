@@ -1,0 +1,6 @@
+export:
+    title: Export Bookings
+    modelClass: San\San\Models\ExportModel
+    list: $/san/san/models/booking/columns.yaml
+    fileName: bookings.csv 
+    redirect: san/san/booking

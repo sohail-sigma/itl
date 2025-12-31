@@ -1,0 +1,11 @@
+name: Services
+modelClass: san\San\Models\Services
+form: $/san/san/models/services/fields.yaml
+defaultRedirect: san/san/services
+create:
+    redirect: 'san/san/services/update/:id'
+    redirectClose: san/san/services
+update:
+    redirect: san/san/services
+    redirectClose: san/san/services
+preview: {  }

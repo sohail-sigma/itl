@@ -1,0 +1,134 @@
+==
+{% set countries = countriesList.records %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>{{ this.page.meta_title?this.page.meta_title:this.page.title }}</title>
+
+    <meta name="generator" content="{{this.page.id}}">
+    
+    {% if(this.page.id == 'holidays') %}
+        <meta name="title" content="">
+        <meta name="description" content="">
+    {% elseif(this.page.id == 'about') %}
+        <meta name="title" content="">
+        <meta name="description" content="">
+    {% elseif(this.page.id == 'travel-management') %}
+        <meta name="title" content="">
+        <meta name="description" content="">
+    {% elseif(this.page.id == 'experiences') %}
+        <meta name="title" content="{{emeta_title}}">
+        <meta name="description" content="{{emeta_desc}}">
+        <meta property="og:site_name" content="{{ emeta_title }}" />
+        <meta property="og:title" content="{{ emeta_title }}" />
+        <meta property="og:description" content="{{ emeta_desc}}" />
+        <meta property="og:image" content="{{emeta_image}}">
+    {% else %}
+        <meta name="title" content="{{ this.page.meta_title }}">
+        <meta name="description" content="{{ this.page.meta_description }}">
+        <meta property="og:site_name" content="{{ this.page.meta_title }}" />
+        <meta property="og:title" content="{{ this.page.meta_title?this.page.meta_title:this.page.title }}" />
+        <meta property="og:description" content="{{ this.page.meta_description?this.page.meta_description:this.page.meta_description}}" />
+        <meta property="og:image" content="{{this.page.og_image?this.page.og_image:""}}">
+    {% endif %}
+
+        <meta property="og:url" content="{{eurl}}" />
+    {# <meta name="author" content="{{ this.page.meta_title }}"> #}
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no,user-scalable=0">
+    
+    
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content={{ metacontent.sitename }} />
+    {# <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:description" content="{{ this.page.meta_description?this.page.meta_description:this.page.meta_description}}" />
+    <meta name="twitter:title" content="{{ this.page.meta_title?this.page.meta_title:this.page.title }}" />
+    <meta name="twitter:image:src" content="{{ url('/') }}{{ this.page.og_image?this.page.og_image|media:metacontent.featuredimage|media }}"> #}
+    {% styles %}
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/app.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/vendors.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/style1.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/intlTelInput.css'|theme }}" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/campaign1.css'|theme }}" />
+
+
+    <link rel="shortcut icon" href="{{ 'assets/img/favicon.png'|theme }}">
+    <script>
+        website = "<?php echo setting_all('website'); ?>";
+    </script>
+    <script src="{{ 'assets/js/bundle.js'|theme }}"></script>
+    <script src="{{ 'assets/js/main.js'|theme }}"></script>
+</head>
+
+<body>
+
+    <?php echo setting_all('body_tag'); ?>
+    <div class="window">
+        <div id="head">{% partial 'site/header' %} </div>
+        <main id="content">
+            {% page %}
+        </main>
+        {% partial 'site/footer' %}
+    </div>
+
+
+
+    <!-- Scripts -->
+    {% snowboard all %}
+    {% scripts %}
+    <script src="{{ 'assets/js/intlTelInput.min.js'|theme }}"></script>
+    <script src="{{ 'assets/js/countrySync.js'|theme }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        AOS.init();
+
+        input = document.querySelectorAll(".phone");
+
+        for (let i = 0; i < input.length; i++) {
+
+            // init plugin
+            var iti = window.intlTelInput(input[i], {
+                utilsScript: "../../themes/SAN/assets/js/utils.js?1638200991544" // just for formatting/placeholders etc
+            });
+            var userloccode = "{{user_country_code}}";
+            if(userloccode != ''){
+                iti.setCountry("{{user_country_code}}");
+            }else{
+                iti.setCountry("ae");
+            }
+
+
+            // listen to the telephone input for changes
+            input[i].addEventListener('countrychange', function (e) {
+                // addressDropdown.value = iti.getSelectedCountryData().iso2;
+            });
+
+        }
+
+    </script>
+
+    <!--Start of Zendesk Chat Script-->
+    <script type="text/javascript">
+        window.$zopim || (function (d, s) {
+            var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
+                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
+                    z.set.
+                    _.push(o)
+                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute("charset", "utf-8");
+            $.src = "https://v2.zopim.com/?3Zg0nAV9unOZzANTJvY07bhBreMHjCA5"; z.t = +new Date; $.
+                type = "text/javascript"; e.parentNode.insertBefore($, e)
+        })(document, "script");
+
+        $(document).ready(function() {
+            $('.itlselect').select2();
+        });
+    </script>
+
+    
+    <!--End of Zendesk Chat Script-->
+</body>
+
+</html>

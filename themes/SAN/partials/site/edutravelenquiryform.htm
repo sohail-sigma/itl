@@ -1,0 +1,214 @@
+[viewBag]
+
+[builderList travelmanagementList]
+modelClass = "san\San\Models\TravelManagement"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+==
+{% set travelmanagement = travelmanagementList.records %}
+{% framework extras %}
+
+
+<div id="sign-in-dialog" class="zoom-anim-dialog">
+    <div class="modalbody">
+        <div class="small-dialog-header">
+            <h3><img src="{{'assets/images/mail.svg'|theme }}" class="img-fluid mail" alt="">Get In Touch</h3>
+        </div>
+        <form data-request="onSubmitTravelForm" data-request-validate data-request-flash data-request-success="document.getElementById('eduform').reset(); $.magnificPopup.close(); $.magnificPopup.open({
+                items: {     src: '#after-submit-popup'  },
+                type: 'inline',
+                showCloseBtn: true,
+                callbacks: {
+                    open: function () {
+                        $('#sign-in-dialog').append($('.mfp-close'))
+                    },
+                },
+                midClick: true
+            });" id="eduform">
+            <input type="hidden" name="form_type" id="form_type" value="edu" />
+            <div class="row form-group">
+                <div class="col">
+                    <label>I’m a *</label>
+                    <div class="popup-select">
+                        <select class="custom-select" name="designation" id="designation">
+                            <option value="Dean">Dean</option>
+                            <option value="Principal">Principal</option>
+                            <option value="Teacher">Teacher</option>
+                            <option value="Student Parent">Student Parent</option>
+                            <option value="Tour Operator">Tour Operator</option>
+                        </select>
+                        <span data-validate-for="designation" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+            </div>
+            </div>
+            <div class="sign-in-wrapper">
+                <div class="row form-group">
+                    <div class="col">
+                        <label>First name*</label>
+                        <input type="text" name="first_name" class="form-control" placeholder="eg. Jhon" value="">
+                        <span data-validate-for="first_name" class="text-danger pt-1 font-size-small d-block"></span>
+                    </div>
+                    <div class="col">
+                        <label>Last name*</label>
+                        <input type="text" name="last_name" class="form-control" placeholder="eg. David" value="">
+                        <span data-validate-for="last_name" class="text-danger pt-1 font-size-small d-block"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Name of your Institution / Company*</label>
+                        <input type="text" class="form-control" name="c_name" id="c_name"
+                            placeholder="eg. Company name">
+                        <span data-validate-for="c_name" class="text-danger pt-1 font-size-small d-block"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Email*</label>
+                        <input type="email" class="form-control" name="email" id="email"
+                            placeholder="eg. jhondavid@company.com" value="">
+                        <span data-validate-for="email" class="text-danger pt-1 font-size-small d-block"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Country*</label>
+                        <select id="" class="form-control address-country" name="country"></select>
+                        <span data-validate-for="country" class="text-danger pt-1 font-size-small d-block"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label class="checkboxes-label">City*</label>
+                        <input type="text" class="form-control" name="city" id="city"
+                            placeholder="City" value="">
+                        <span data-validate-for="city" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <input type="hidden" name="interested_in" value="Educational Travel">
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Mobile Number*</label>
+                        <input type="number" class="form-control phone" name="phone" id="" placeholder="eg. 55333666" value="" onKeyDown="if(this.value.length==13 && event.keyCode!=8) return false;">
+                        <span data-validate-for="phone" class="text-danger pt-1 font-size-small d-block"></span>
+                    </div>
+                </div>                
+                <div class="clearfix add_bottom_15">
+                    <div class="checkboxes float-left">
+                        <label class="container_check">Subscribe for our latest updates
+                            <input type="checkbox" name="newsletter">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+                <p>By Continuing with this, You have read and agreed to the terms of ITL World <a href="https://itlworld.com/privacy-policy" target="_blank">Privacy Policy.</a></p>
+                <div class="text-center">
+                    <button data-attach-loading type="submit" class="btn_1 full-width"><img
+                            src="/themes/SAN/assets/img/send-arrow.svg"> Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+// Function to show success message (Custom Toaster)
+function showSuccessMessage() {
+    var toasterMessage = $('');
+    $('body').append(toasterMessage);
+
+    // Show toaster and hide after 5 seconds
+    toasterMessage.fadeIn().delay(5000).fadeOut(function() {
+        $(this).remove(); // Remove from DOM after fading out
+    });
+}
+
+$(document).ready(function() {
+    $('#eduform').on('submit', function(event) {
+        event.preventDefault();  // Prevent the default form submission
+
+        var isValid = true;
+
+        // Clear all previous error messages
+        $('.text-danger').text('');
+
+        // Validate Name
+        if ($('input[name="first_name"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="first_name"]').siblings('.text-danger').text('First name is required.');
+        }
+
+        if ($('input[name="last_name"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="last_name"]').siblings('.text-danger').text('Last name is required.');
+        }
+
+        // Validate Email
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test($('input[name="email"]').val().trim())) {
+            isValid = false;
+            $('input[name="email"]').siblings('.text-danger').text('Please enter a valid email address.');
+        }
+
+        // Validate Other fields
+        if ($('input[name="c_name"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="c_name"]').siblings('.text-danger').text('Institution/Company name is required.');
+        }
+
+        if ($('select[name="country"]').val() === '') {
+            isValid = false;
+            $('select[name="country"]').siblings('.text-danger').text('Country is required.');
+        }
+
+        if ($('input[name="city"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="city"]').siblings('.text-danger').text('City is required.');
+        }
+
+        if ($('input[name="phone"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="phone"]').siblings('.text-danger').text('Phone is required.');
+        }
+
+        // Only submit if all fields are valid
+        if (isValid) {
+            var formData = new FormData(this);  // Get the form data
+
+            $.ajax({
+                url: '/submit-edu-form', // This should be the endpoint where the form should submit
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    // Show success message only after successful submission
+                    showSuccessMessage(); // Display the toaster message
+
+                    document.getElementById('eduform').reset(); // Reset the form
+                    $.magnificPopup.close(); // Close the form popup
+                    $.magnificPopup.open({
+                        items: { src: '#after-submit-popup' },
+                        type: 'inline',
+                        showCloseBtn: true,
+                        callbacks: {
+                            open: function() {
+                                $('#sign-in-dialog').append($('.mfp-close'));
+                            }
+                        },
+                        midClick: true
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Handle the error (if any)
+                    alert('An error occurred while submitting the form.');
+                }
+            });
+        }
+    });
+});
+</script>

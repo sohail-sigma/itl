@@ -1,0 +1,22 @@
+[viewBag]
+
+[builderList packageList]
+modelClass = "san\San\Models\Packages"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+==
+<option value="any">Country</option>
+{% if allpackages|length > 0 %}
+	{% for countryname in allpackages | sort((a, b) => a.country <=> b.country ) %}
+	<option value="{{countryname.slug}}" {% if get("package")==countryname.slug
+		%} selected="selected" {% endif %}>{{countryname.country}}
+	</option>
+	{% endfor %}
+{% endif %}
+
+

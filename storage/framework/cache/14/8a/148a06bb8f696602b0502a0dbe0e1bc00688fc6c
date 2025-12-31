@@ -1,0 +1,125 @@
+1767162277a:1:{s:12:"security.htm";a:7:{s:8:"fileName";s:12:"security.htm";s:7:"content";s:1886:"[viewBag]
+title = "Security"
+url = "/security"
+layout = "static"
+is_hidden = 0
+navigation_hidden = 0
+==
+<section class="hero_single version_2">
+	<div class="wrapper" style="background-image: url(/themes/SAN/assets/images/header-background.png);">
+		<div class="container">
+
+			<h4>Security</h4>
+
+			<h1 class="UniSansLight">ITL WORLD</h1>
+			<div style="margin-bottom:5%;">
+				<br>
+			</div></div></div>
+</section>
+<!-- /hero_single -->
+<div class="bg_color_1 contact-wrapper">
+	<div class="clearfix">
+		<br>
+	</div>
+	<div class="Privacy_title">
+		<div class="container ">
+			<div class="row">
+				<div class="col-md-12 col-lg-12 privacy-content">
+
+					<h4>Security is our top priority</h4>
+
+					<p>We are committed to ensuring full security of all information provided through and transactions conducted at, our site.</p>
+
+					<h5>Towards ensuring this:</h5>
+
+					<ul>
+						<li style="text-align: left;">We employ appropriate best-of-class technical security measures to protect your personal information</li>
+						<li style="text-align: left;">Information storage is on secure computers and information is encrypted wherever possible</li>
+						<li style="text-align: left;">When you transact on our Site, you are assigned a User Name and Customer Security Codes and then use these codes to access your account</li>
+						<li style="text-align: left;">All messages between us travel in a secure messaging environment</li>
+						<li style="text-align: left;">We monitor and review transactions on an on-going basis, to identify potentially fraudulent situations and take immediate corrective steps to mitigate/limit any damage caused/likely to be caused from the same</li>
+						<li style="text-align: left;">We review our security arrangements continuously</li>
+					</ul>
+
+					<p>
+						<br>
+					</p>
+				</div></div></div></div></div>";s:5:"mtime";i:1719548401;s:6:"markup";s:1782:"<section class="hero_single version_2">
+	<div class="wrapper" style="background-image: url(/themes/SAN/assets/images/header-background.png);">
+		<div class="container">
+
+			<h4>Security</h4>
+
+			<h1 class="UniSansLight">ITL WORLD</h1>
+			<div style="margin-bottom:5%;">
+				<br>
+			</div></div></div>
+</section>
+<!-- /hero_single -->
+<div class="bg_color_1 contact-wrapper">
+	<div class="clearfix">
+		<br>
+	</div>
+	<div class="Privacy_title">
+		<div class="container ">
+			<div class="row">
+				<div class="col-md-12 col-lg-12 privacy-content">
+
+					<h4>Security is our top priority</h4>
+
+					<p>We are committed to ensuring full security of all information provided through and transactions conducted at, our site.</p>
+
+					<h5>Towards ensuring this:</h5>
+
+					<ul>
+						<li style="text-align: left;">We employ appropriate best-of-class technical security measures to protect your personal information</li>
+						<li style="text-align: left;">Information storage is on secure computers and information is encrypted wherever possible</li>
+						<li style="text-align: left;">When you transact on our Site, you are assigned a User Name and Customer Security Codes and then use these codes to access your account</li>
+						<li style="text-align: left;">All messages between us travel in a secure messaging environment</li>
+						<li style="text-align: left;">We monitor and review transactions on an on-going basis, to identify potentially fraudulent situations and take immediate corrective steps to mitigate/limit any damage caused/likely to be caused from the same</li>
+						<li style="text-align: left;">We review our security arrangements continuously</li>
+					</ul>
+
+					<p>
+						<br>
+					</p>
+				</div></div></div></div></div>";s:4:"code";N;s:7:"viewBag";a:5:{s:5:"title";s:8:"Security";s:3:"url";s:9:"/security";s:6:"layout";s:6:"static";s:9:"is_hidden";s:1:"0";s:17:"navigation_hidden";s:1:"0";}s:12:"parsedMarkup";s:1782:"<section class="hero_single version_2">
+	<div class="wrapper" style="background-image: url(/themes/SAN/assets/images/header-background.png);">
+		<div class="container">
+
+			<h4>Security</h4>
+
+			<h1 class="UniSansLight">ITL WORLD</h1>
+			<div style="margin-bottom:5%;">
+				<br>
+			</div></div></div>
+</section>
+<!-- /hero_single -->
+<div class="bg_color_1 contact-wrapper">
+	<div class="clearfix">
+		<br>
+	</div>
+	<div class="Privacy_title">
+		<div class="container ">
+			<div class="row">
+				<div class="col-md-12 col-lg-12 privacy-content">
+
+					<h4>Security is our top priority</h4>
+
+					<p>We are committed to ensuring full security of all information provided through and transactions conducted at, our site.</p>
+
+					<h5>Towards ensuring this:</h5>
+
+					<ul>
+						<li style="text-align: left;">We employ appropriate best-of-class technical security measures to protect your personal information</li>
+						<li style="text-align: left;">Information storage is on secure computers and information is encrypted wherever possible</li>
+						<li style="text-align: left;">When you transact on our Site, you are assigned a User Name and Customer Security Codes and then use these codes to access your account</li>
+						<li style="text-align: left;">All messages between us travel in a secure messaging environment</li>
+						<li style="text-align: left;">We monitor and review transactions on an on-going basis, to identify potentially fraudulent situations and take immediate corrective steps to mitigate/limit any damage caused/likely to be caused from the same</li>
+						<li style="text-align: left;">We review our security arrangements continuously</li>
+					</ul>
+
+					<p>
+						<br>
+					</p>
+				</div></div></div></div></div>";}}

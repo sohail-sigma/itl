@@ -1,0 +1,9 @@
+columns:
+    fulll_name:
+        label: Name
+        type: text
+        searchable: true
+    email:
+        label: email
+        type: text
+        searchable: true

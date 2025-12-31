@@ -1,0 +1,37 @@
+items:
+    -
+        title: Privacy
+        nesting: null
+        type: url
+        url: /privacy-policy
+        code: ''
+        reference: null
+        cmsPage: null
+        replace: null
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+    -
+        title: Security
+        nesting: null
+        type: url
+        url: /Security
+        code: ''
+        reference: null
+        cmsPage: null
+        replace: null
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+    -
+        title: 'Terms of Use'
+        type: url
+        url: /terms-conditions
+        code: ''
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+name: 'footer terms menu'

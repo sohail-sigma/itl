@@ -1,0 +1,232 @@
+fields:
+    title:
+        label: 'Banner Title'
+        span: auto
+        type: text
+    slug:
+        label: Slug
+        span: auto
+        preset:
+            field: title
+            type: slug
+        type: text
+    home_slider_title:
+        label: 'Homepage Slider Title'
+        span: auto
+        type: text
+        commentAbove: 'This title show on home page (experience slider)'
+    main_slider_title:
+        label: 'Detail page slider title'
+        span: auto
+        type: text
+        commentAbove: 'This title show on experience detail page.'
+    sub_title:
+        label: 'Sub TItle'
+        span: auto
+        type: text
+    # country_select:
+    #     label: 'Country Availability'
+    #     type: taglist
+    #     mode: array
+    #     options: getCountryOptions
+    #     span: full
+    #     tab: Countries
+    #     separator: comma
+    #     customTags: false
+    #     placeholder: 'Select available countries...'
+
+
+    status:
+        label: Status
+        span: auto
+        type: switch
+    is_featured:
+        label: Featured
+        span: full
+        type: switch
+    banner:
+        label: 'Main Banner (Landscape 1600 x 715 px)'
+        mode: image
+        imageWidth: '200'
+        imageHeight: '150'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload
+        commentAbove: ' '
+    image:
+        label: 'Home Slider Image (Portrait 380 × 600 px)'
+        mode: image
+        imageWidth: '200'
+        imageHeight: '150'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        fileTypes: 'svg, jpeg, jpg, png'
+        type: fileupload
+        commentAbove: ' '
+    thumbnail:
+        label: 'Thumbnail (Landscape 630 x 380 px)'
+        mode: image
+        imageWidth: '200'
+        imageHeight: '150'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: left
+        type: fileupload
+        commentAbove: ' '
+    holidays_thumbnail:
+        label: 'Holidays Thumbnail (320 x 250 px)'
+        mode: image
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: right
+        imageWidth: '200'
+        imageHeight: '150'
+        type: fileupload
+tabs:
+    fields:
+        banner_type:
+            label: 'Select Banner Slider Option'
+            options:
+                Image: Image
+                Video: Video
+            showSearch: true
+            span: full
+            type: dropdown
+            comment: '(Landscape 1600 x 715 px)'
+            tab: 'Banner images/video slider'
+        banner_image:
+            label: 'Banner Images'
+            mode: image
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: full
+            trigger:
+                action: show
+                field: banner_type
+                condition: 'value[Image]'
+            type: fileupload
+            tab: 'Banner images/video slider'
+        banner_iframe:
+            label: 'Add Video'
+            prompt: 'Add Video Link'
+            style: default
+            span: full
+            trigger:
+                action: show
+                field: banner_type
+                condition: 'value[Video]'
+            type: repeater
+            tab: 'Banner images/video slider'
+            form:
+                fields:
+                    iframe:
+                        label: 'Add URL for video'
+                        span: left
+                        type: text
+                    video_duration:
+                        label: 'Video Duration (in seconds)'
+                        span: right
+                        type: number
+        mob_banner_type:
+            label: 'Select Banner Slider Option For Mobile'
+            options:
+                Image: Image
+                Video: Video
+            showSearch: true
+            span: full
+            type: dropdown
+            comment: '(Landscape 1600 x 715 px)'
+            tab: 'Banner images/video slider'
+        mob_banner_image:
+            label: 'Mobile Banner Image (750 x 800px)'
+            mode: image
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: full
+            trigger:
+                action: show
+                field: mob_banner_type
+                condition: 'value[Image]'
+            type: fileupload
+            tab: 'Banner images/video slider'
+        mob_banner_iframe:
+            label: 'Add Video For Mobile'
+            prompt: 'Add Video Link  For Mobile'
+            style: default
+            span: full
+            trigger:
+                action: show
+                field: mob_banner_type
+                condition: 'value[Video]'
+            type: repeater
+            tab: 'Banner images/video slider'
+            form:
+                fields:
+                    mob_iframe:
+                        label: 'Add URL for video  For Mobile'
+                        span: left
+                        type: text
+                    mob_video_duration:
+                        label: 'Video Duration (in seconds)'
+                        span: right
+                        type: number
+        content:
+            label: Description
+            size: large
+            span: left
+            type: richeditor
+            tab: Content
+        packages:
+            label: 'Select Packages'
+            nameFrom: name
+            descriptionFrom: description
+            span: auto
+            select: unique_caption
+            type: relation
+            tab: Content
+        iframe:
+            label: 'Add Video'
+            size: large
+            span: auto
+            disabled: 1
+            hidden: 1
+            type: textarea
+            tab: Content
+        meta_title:
+            label: 'Meta Title'
+            span: auto
+            type: text
+            tab: SEO
+        meta_desc:
+            label: 'Meta Description'
+            size: ''
+            span: auto
+            type: textarea
+            tab: SEO
+        meta_image:
+            label: 'Meta Image (1200 x 630 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            comment: jpg/png
+            tab: SEO

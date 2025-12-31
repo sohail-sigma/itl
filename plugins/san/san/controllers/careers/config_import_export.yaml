@@ -1,0 +1,7 @@
+export:
+    # useList: true
+    title: Export Data
+    modelClass: San\San\Models\ExportCareersModel
+    list: $/san/san/models/careers/export_columns.yaml
+    fileName: careers-cvs.csv 
+    redirect: san/san/careers

@@ -1,0 +1,800 @@
+1767162277a:1:{s:11:"default.htm";a:6:{s:8:"fileName";s:11:"default.htm";s:7:"content";s:17945:"description = "Default layout"
+==
+<?php
+function onStart()
+{
+    session_start();
+    $api_cooldown = 15*60;
+    
+    // start initialize hard coded in cases any condition not executed
+     // $_SESSION['country'] = $country ='AE';
+   // $_SESSION['currencyCode'] = $currencyCode ='AED';
+   // $_SESSION['countryName'] = $countryName = "United Arab Emirates";
+/*     if (!isset($_SESSION['last_api_call']) || (time() - $_SESSION['last_api_call']) > $api_cooldown){
+        $_SESSION['last_api_call'] = time();
+    }else{
+        print_r($_SESSION['last_api_call']);exit;
+    }*/
+    
+    $client = @$_SERVER['HTTP_CLIENT_IP'];
+    $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
+    $remote = $_SERVER['REMOTE_ADDR'];
+    $country = "Unknown";
+    if (filter_var($client, FILTER_VALIDATE_IP)) {
+        $ip = $client;
+    } elseif (filter_var($forward, FILTER_VALIDATE_IP)) {
+        $ip = $forward;
+    } else {
+        $ip = $remote;
+    }
+    
+    $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Unknown';
+
+    $path = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+          
+
+    // ✅ Log IP + User Agent + Path
+   
+    \Log::info("API CALL ".$ip);
+    //$ip = '83.110.250.231'; //'135.181.154.2'; //'83.110.250.231';
+     //$ip = '83.110.250.231';
+    // $specialIps = ['20.171.207.221','135.220.210.143','2.50.33.44','188.71.212.164','103.181.238.234','124.123.71.215','188.143.244.144','66.249.93.229','135.225.24.191','66.249.93.230','66.249.93.228','40.86.77.238','216.81.248.73','20.199.38.45','103.16.202.234','37.99.148.146','111.92.61.111','66.249.84.100','66.249.84.98','66.249.84.99'];
+  //  if (in_array($ip, $specialIps) || strpos($ip, '66.249') === 0) {
+        //    $country ='AE';
+        //    $currencyCode ='AED';
+       //     $countryName = "United Arab Emirates";
+    //} else{
+        if (!isset($_SESSION['last_api_call']) || (time() - $_SESSION['last_api_call']) > $api_cooldown){
+            
+            $_SESSION['last_api_call'] = time();
+             \DB::table('ip_logs')->insert([
+        'ip' => $ip,
+        'user_agent' => $userAgent,
+        'path' => $path,
+        'created_at' => now()
+    ]);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "https://apiip.net/api/check?ip=" . $ip . "&accessKey=992d6d78-1215-44c9-b72f-715caafd9cc3");
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+            $ip_data_in = curl_exec($ch); // string
+            curl_close($ch);
+            //print "<pre>".print_r($ip_data_in, true)."</pre>";
+            //exit;
+            $ip_data = json_decode($ip_data_in, true);
+            $ip_data = str_replace('&quot;', '"', $ip_data); 
+            //echo "<pre>";print_r($ip_data);exit;
+            if ($ip_data && isset($ip_data['countryCode']) && $ip_data['countryCode'] != null) {
+                $_SESSION['country'] = $country = $ip_data['countryCode'];
+                $_SESSION['currencyCode'] = $currencyCode = $ip_data['currency']['code'];
+                $_SESSION['countryName'] = $countryName = $ip_data['countryName'];
+               
+            }else{
+                 $_SESSION['country'] = $country ='AE';
+                 $_SESSION['currencyCode'] = $currencyCode ='AED';
+                 $_SESSION['countryName'] = $countryName = "United Arab Emirates";
+            }
+        }else{
+            $country = $_SESSION['country'];
+            $currencyCode = $_SESSION['currencyCode'];
+            $countryName = $_SESSION['countryName'];
+        }
+               
+   // }
+            $this['user_country_code'] = strtolower($country);
+    $this['user_currency_code'] = strtolower($currencyCode);
+        $this['user_country_name'] = strtolower($countryName);
+     
+     
+     if(!isset($_SESSION['country']) || !isset($_SESSION['currencyCode']) || !isset($_SESSION['countryName']) )
+     {
+         $_SESSION['country'] = $country ='AE';
+                 $_SESSION['currencyCode'] = $currencyCode ='AED';
+                 $_SESSION['countryName'] = $countryName = "United Arab Emirates";
+     }
+     
+     //$country ='AE';
+       //$currencyCode ='AED';
+      // $countryName = "United Arab Emirates";
+    //$this['user_country_code'] = strtolower($country);
+    //$this['user_currency_code'] = strtolower($currencyCode);
+      //  $this['user_country_name'] = strtolower($countryName);
+    
+     // echo "<pre>"; print_r($this['user_currency_code']);die;
+    /*$ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://www.geoplugin.com/json.gp?ip=" . $ip . "&key=737bedfc-5dfe-40bb-9707-edec8ee911e1");
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    $ip_data_in = curl_exec($ch); // string
+    curl_close($ch);
+    //print "<pre>".print_r($ip_data_in, true)."</pre>";
+    //exit;
+    $ip_data = json_decode($ip_data_in, true);
+    $ip_data = str_replace('&quot;', '"', $ip_data); 
+    //print_r($ip_data);exit;
+    if ($ip_data && isset($ip_data['geoplugin_countryCode']) && $ip_data['geoplugin_countryCode'] != null) {
+        $country = $ip_data['geoplugin_countryCode'];
+       $currencyCode = $ip_data['geoplugin_currencyCode'];
+    }else{
+         $country ='AE';
+       $currencyCode ='AED';
+        }
+
+    $this['user_country_code'] = strtolower($country);
+    $this['user_currency_code'] = strtolower($currencyCode);
+    //$this['user_country_code'] = 'AE';
+    //$this['user_currency_code'] = 'AED';*/
+    
+    $myexpslug = Request::segment(1);
+    $this['expslug'] = Request::segment(2);
+    
+    if($myexpslug == "experiences"){
+        $this['cdestinations'] = San\San\Models\Destinations::where('status', 1)->where('slug', $this['expslug'])->get();
+        $this['emeta_title'] = $this['cdestinations'][0]['meta_title'];
+        $this['emeta_desc'] = $this['cdestinations'][0]['meta_desc'];
+        if($this['cdestinations'][0]['meta_image'] != ""){
+            $this['emeta_image'] = $this['cdestinations'][0]['meta_image']['path'];
+        }else{
+            $this['emeta_image'] = "";
+        }
+    }
+    if($myexpslug == "holidays"){
+        $this['holidaysdata'] = San\San\Models\Holidays::where('id', 13)->get();
+        $this['holiday_meta_title'] = $this['holidaysdata'][0]['meta_title'];
+        $this['holiday_meta_desc'] = $this['holidaysdata'][0]['meta_desc'];
+    }
+    if($myexpslug == "travel-management"){
+        $this['tmdata'] = San\San\Models\Holidays::where('id', 7)->get();
+        $this['tm_meta_title'] = $this['tmdata'][0]['meta_title'];
+        $this['tm_meta_desc'] = $this['tmdata'][0]['meta_desc'];
+    }
+    if($myexpslug == "services"){
+        $this['servicesdata'] = San\San\Models\Holidays::where('id', 8)->get();
+        $this['services_meta_title'] = $this['servicesdata'][0]['meta_title'];
+        $this['services_meta_desc'] = $this['servicesdata'][0]['meta_desc'];
+    }
+    if($myexpslug == "careers"){
+        $this['careersdata'] = San\San\Models\Holidays::where('id', 9)->get();
+        $this['careers_meta_title'] = $this['careersdata'][0]['meta_title'];
+        $this['careers_meta_desc'] = $this['careersdata'][0]['meta_desc'];
+    }
+    if($myexpslug == "news-blog"){
+        $this['holidaysdata'] = San\San\Models\Holidays::where('id', 12)->get();
+        $this['newsblog_meta_title'] = $this['holidaysdata'][0]['meta_title'];
+        $this['newsblog_meta_desc'] = $this['holidaysdata'][0]['meta_desc'];
+    }
+     if($myexpslug == "detail"){
+        $this['ndetails'] = Winter\Blog\Models\Post::where('slug', $this['expslug'])->get();
+        $this['nmeta_title'] = $this['ndetails'][0]['title'];
+        $this['nmeta_desc'] = $this['ndetails'][0]['content'];
+        $this['blogDate'] = date('j F Y', strtotime($this['ndetails'][0]['published_at'])); 
+
+        if ($this['ndetails'][0]['featured_images'] && count($this['ndetails'][0]['featured_images']) > 0) {
+        $this['nmeta_image'] = $this['ndetails'][0]['featured_images'][0]['path'];
+    } else {
+        $this['nmeta_image'] = '/default-image-path.jpg'; 
+    }
+    }
+    $this['eurl'] = Request::url();
+}
+?>
+==
+{% set countries = countriesList.records %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+<!--     <meta name="facebook-domain-verification" content="9j0sz3wwdbbin14utcvo73eyh1b433" />
+ -->    <!-- Open Graph Meta Tags -->
+    
+    <meta name="generator" content="{{ this.page.id }}">
+
+    {% if this.page.id == 'experiences' %}
+    
+        <title>{{ emeta_title }}</title>
+        <meta name="title" content="{{ emeta_title }}">
+        <meta name="description" content="{{ emeta_desc }}">
+        <meta property="og:site_name" content="{{ emeta_title }}" />
+        <meta property="og:title" content="{{ emeta_title }}" />
+        <meta property="og:description" content="{{ emeta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+    {% elseif this.page.id == 'holidays' %}
+        <title>{{ holiday_meta_title }}</title>
+        <meta name="title" content="{{ holiday_meta_title }}">
+        <meta name="description" content="{{ holiday_meta_desc }}">
+        <meta property="og:site_name" content="{{ holiday_meta_title }}" />
+        <meta property="og:title" content="{{ holiday_meta_title }}" />
+        <meta property="og:description" content="{{ holiday_meta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+    {% elseif this.page.id == 'news-blog' %}
+        <title>{{ newsblog_meta_title }}</title>
+        <meta name="title" content="{{ newsblog_meta_title }}">
+        <meta name="description" content="{{ newsblog_meta_desc }}">
+        <meta property="og:site_name" content="{{ newsblog_meta_title }}" />
+        <meta property="og:title" content="{{ newsblog_meta_title }}" />
+        <meta property="og:description" content="{{ newsblog_meta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+        <meta property="og:url" content="{{ eurl }}" />
+        <meta property="og:image:width" content="400">
+        <meta property="og:image:height" content="300">
+        <meta property="og:image:alt" content="something">
+    {% elseif this.page.id == 'single-detail' %}
+          <title>{{ nmeta_title }}</title>
+        <meta name="title" content="{{ nmeta_title }}">
+        <meta name="description" content="{{ nmeta_desc }}">
+        <meta property="og:site_name" content="{{ nmeta_title }}" />
+        <meta property="og:title" content="{{ nmeta_title }}" />
+        <meta property="og:description" content="{{ nmeta_desc }}" />
+        <meta property="og:image" content="{{ nmeta_image }}" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:published_time" content="{{ blogDate }}">
+       
+        
+        {% elseif this.page.id == 'travel-management' %}
+        <title>{{ tm_meta_title }}</title>
+        <meta name="title" content="{{ tm_meta_title }}">
+        <meta name="description" content="{{ tm_meta_desc }}">
+        <meta property="og:site_name" content="{{ tm_meta_title }}" />
+        <meta property="og:title" content="{{ tm_meta_title }}" />
+        <meta property="og:description" content="{{ tm_meta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+    {% elseif this.page.id == 'services' %}
+        <title>{{ services_meta_title }}</title>
+        <meta name="title" content="{{ services_meta_title }}">
+        <meta name="description" content="{{ services_meta_desc }}">
+        <meta property="og:site_name" content="{{ services_meta_title }}" />
+        <meta property="og:title" content="{{ services_meta_title }}" />
+        <meta property="og:description" content="{{ services_meta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+    {% elseif this.page.id == 'careers' %}
+        <title>{{ careers_meta_title }}</title>
+        <meta name="title" content="{{ careers_meta_title }}">
+        <meta name="description" content="{{ careers_meta_desc }}">
+        <meta property="og:site_name" content="{{ careers_meta_title }}" />
+        <meta property="og:title" content="{{ careers_meta_title }}" />
+        <meta property="og:description" content="{{ careers_meta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+    {% else %}
+        <title>{{ this.page.meta_title ? this.page.meta_title : this.page.title }}</title>
+        <meta name="title" content="{{ this.page.meta_title }}">
+        <meta name="description" content="{{ this.page.meta_description }}">
+        <meta property="og:site_name" content="{{ this.page.meta_title }}" />
+        <meta property="og:description" content="{{ this.page.meta_description ? this.page.meta_description : this.page.meta_description }}" />
+    {% endif %}
+
+    <meta property="og:url" content="{{ eurl }}" />
+
+    
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ emeta_title }}" />
+    <meta name="twitter:description" content="{{ emeta_desc }}" />
+    <meta name="twitter:image" content="{{ emeta_image }}" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no, user-scalable=0">
+
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+
+    {% styles %}
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/app.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/vendors.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/style1.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/intlTelInput.css'|theme }}" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="{{ 'assets/img/favicon.png'|theme }}">
+    <script>
+        website = "<?php echo setting_all('website'); ?>";
+    </script>
+    <script src="{{ 'assets/js/bundle.js'|theme }}"></script>
+    <script src="{{ 'assets/js/main.js'|theme }}"></script>
+
+    <style>
+        .usiful-links ul{
+            margin-top: 10px;
+        }
+        .ic-box:nth-child(even) .custom-accordions button {
+  float: left;
+  padding-left: 0;
+  padding-right: 0;
+}
+.conditions_btn {
+    padding-left: 20px !important;
+}
+.window .mheader.menu-opened ul.menu li.has-child span a {
+  pointer-events: none;
+}
+.contact-wrapper p a {
+    font-weight: 800;
+}
+.container_check .checkmark:after{
+    left: 6px;
+    top: 2px;
+}
+
+@media only screen and (max-width: 600px) {
+    .ic-box:nth-child(even) .custom-accordions button:after{
+            left: -2px;
+    }
+    </style>
+    <!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-DC81CDVYJ5"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-DC81CDVYJ5'); </script>
+</head>
+
+<body>
+
+    <?php echo setting_all('body_tag'); ?>
+    <div class="window">
+        <div id="head">{% partial 'site/header' %} </div>
+        <main id="content">
+            {% page %}
+        </main>
+        {% partial 'site/footer' %}
+    </div>
+
+    <!-- Scripts -->
+    {% snowboard all %}
+    {% scripts %}
+    <script src="{{ 'assets/js/intlTelInput.min.js'|theme }}"></script>
+    <script src="{{ 'assets/js/countrySync.js'|theme }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        AOS.init();
+
+        input = document.querySelectorAll(".phone");
+
+        for (let i = 0; i < input.length; i++) {
+            // init plugin
+            var iti = window.intlTelInput(input[i], {
+                utilsScript: "../../themes/SAN/assets/js/utils.js?1638200991544"
+            });
+            var userloccode = "{{user_country_code}}";
+            if(userloccode != ''){
+                iti.setCountry("{{user_country_code}}");
+            } else {
+                iti.setCountry("ae");
+            }
+
+            input[i].addEventListener('countrychange', function (e) {
+                // code for country change event
+            });
+        }
+    </script>
+
+    <!-- Zendesk Chat Script -->
+    <script type="text/javascript">
+        window.$zopim || (function (d, s) {
+            var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
+                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
+                    z.set._.push(o)
+                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute("charset", "utf-8");
+            $.src = "https://v2.zopim.com/?3Zg0nAV9unOZzANTJvY07bhBreMHjCA5"; z.t = +new Date; $.
+                type = "text/javascript"; e.parentNode.insertBefore($, e)
+        })(document, "script");
+
+        $(document).ready(function() {
+            $('.itlselect').select2();
+        });
+        
+        
+jQuery(document).ready(function () {
+    function toggleArrows() {
+        let carousel = jQuery("#carouselExampleIndicators");
+        let itemsCount = carousel.find(".carousel-inner .carousel-item").length;
+
+        if (itemsCount > 1) {
+            carousel.addClass("show_arrows");
+        } else {
+            carousel.removeClass("show_arrows");
+        }
+    }
+
+    toggleArrows();
+});
+
+    </script>
+
+</body>
+
+</html>";s:5:"mtime";i:1767076501;s:6:"markup";s:9643:"{% set countries = countriesList.records %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+<!--     <meta name="facebook-domain-verification" content="9j0sz3wwdbbin14utcvo73eyh1b433" />
+ -->    <!-- Open Graph Meta Tags -->
+    
+    <meta name="generator" content="{{ this.page.id }}">
+
+    {% if this.page.id == 'experiences' %}
+    
+        <title>{{ emeta_title }}</title>
+        <meta name="title" content="{{ emeta_title }}">
+        <meta name="description" content="{{ emeta_desc }}">
+        <meta property="og:site_name" content="{{ emeta_title }}" />
+        <meta property="og:title" content="{{ emeta_title }}" />
+        <meta property="og:description" content="{{ emeta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+    {% elseif this.page.id == 'holidays' %}
+        <title>{{ holiday_meta_title }}</title>
+        <meta name="title" content="{{ holiday_meta_title }}">
+        <meta name="description" content="{{ holiday_meta_desc }}">
+        <meta property="og:site_name" content="{{ holiday_meta_title }}" />
+        <meta property="og:title" content="{{ holiday_meta_title }}" />
+        <meta property="og:description" content="{{ holiday_meta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+    {% elseif this.page.id == 'news-blog' %}
+        <title>{{ newsblog_meta_title }}</title>
+        <meta name="title" content="{{ newsblog_meta_title }}">
+        <meta name="description" content="{{ newsblog_meta_desc }}">
+        <meta property="og:site_name" content="{{ newsblog_meta_title }}" />
+        <meta property="og:title" content="{{ newsblog_meta_title }}" />
+        <meta property="og:description" content="{{ newsblog_meta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+        <meta property="og:url" content="{{ eurl }}" />
+        <meta property="og:image:width" content="400">
+        <meta property="og:image:height" content="300">
+        <meta property="og:image:alt" content="something">
+    {% elseif this.page.id == 'single-detail' %}
+          <title>{{ nmeta_title }}</title>
+        <meta name="title" content="{{ nmeta_title }}">
+        <meta name="description" content="{{ nmeta_desc }}">
+        <meta property="og:site_name" content="{{ nmeta_title }}" />
+        <meta property="og:title" content="{{ nmeta_title }}" />
+        <meta property="og:description" content="{{ nmeta_desc }}" />
+        <meta property="og:image" content="{{ nmeta_image }}" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:published_time" content="{{ blogDate }}">
+       
+        
+        {% elseif this.page.id == 'travel-management' %}
+        <title>{{ tm_meta_title }}</title>
+        <meta name="title" content="{{ tm_meta_title }}">
+        <meta name="description" content="{{ tm_meta_desc }}">
+        <meta property="og:site_name" content="{{ tm_meta_title }}" />
+        <meta property="og:title" content="{{ tm_meta_title }}" />
+        <meta property="og:description" content="{{ tm_meta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+    {% elseif this.page.id == 'services' %}
+        <title>{{ services_meta_title }}</title>
+        <meta name="title" content="{{ services_meta_title }}">
+        <meta name="description" content="{{ services_meta_desc }}">
+        <meta property="og:site_name" content="{{ services_meta_title }}" />
+        <meta property="og:title" content="{{ services_meta_title }}" />
+        <meta property="og:description" content="{{ services_meta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+    {% elseif this.page.id == 'careers' %}
+        <title>{{ careers_meta_title }}</title>
+        <meta name="title" content="{{ careers_meta_title }}">
+        <meta name="description" content="{{ careers_meta_desc }}">
+        <meta property="og:site_name" content="{{ careers_meta_title }}" />
+        <meta property="og:title" content="{{ careers_meta_title }}" />
+        <meta property="og:description" content="{{ careers_meta_desc }}" />
+        <meta property="og:image" content="{{ emeta_image }}">
+    {% else %}
+        <title>{{ this.page.meta_title ? this.page.meta_title : this.page.title }}</title>
+        <meta name="title" content="{{ this.page.meta_title }}">
+        <meta name="description" content="{{ this.page.meta_description }}">
+        <meta property="og:site_name" content="{{ this.page.meta_title }}" />
+        <meta property="og:description" content="{{ this.page.meta_description ? this.page.meta_description : this.page.meta_description }}" />
+    {% endif %}
+
+    <meta property="og:url" content="{{ eurl }}" />
+
+    
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ emeta_title }}" />
+    <meta name="twitter:description" content="{{ emeta_desc }}" />
+    <meta name="twitter:image" content="{{ emeta_image }}" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no, user-scalable=0">
+
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+
+    {% styles %}
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/app.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/vendors.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/style1.css'|theme }}" />
+    <link type="text/css" rel="stylesheet" href="{{ 'assets/css/intlTelInput.css'|theme }}" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="{{ 'assets/img/favicon.png'|theme }}">
+    <script>
+        website = "<?php echo setting_all('website'); ?>";
+    </script>
+    <script src="{{ 'assets/js/bundle.js'|theme }}"></script>
+    <script src="{{ 'assets/js/main.js'|theme }}"></script>
+
+    <style>
+        .usiful-links ul{
+            margin-top: 10px;
+        }
+        .ic-box:nth-child(even) .custom-accordions button {
+  float: left;
+  padding-left: 0;
+  padding-right: 0;
+}
+.conditions_btn {
+    padding-left: 20px !important;
+}
+.window .mheader.menu-opened ul.menu li.has-child span a {
+  pointer-events: none;
+}
+.contact-wrapper p a {
+    font-weight: 800;
+}
+.container_check .checkmark:after{
+    left: 6px;
+    top: 2px;
+}
+
+@media only screen and (max-width: 600px) {
+    .ic-box:nth-child(even) .custom-accordions button:after{
+            left: -2px;
+    }
+    </style>
+    <!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-DC81CDVYJ5"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-DC81CDVYJ5'); </script>
+</head>
+
+<body>
+
+    <?php echo setting_all('body_tag'); ?>
+    <div class="window">
+        <div id="head">{% partial 'site/header' %} </div>
+        <main id="content">
+            {% page %}
+        </main>
+        {% partial 'site/footer' %}
+    </div>
+
+    <!-- Scripts -->
+    {% snowboard all %}
+    {% scripts %}
+    <script src="{{ 'assets/js/intlTelInput.min.js'|theme }}"></script>
+    <script src="{{ 'assets/js/countrySync.js'|theme }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        AOS.init();
+
+        input = document.querySelectorAll(".phone");
+
+        for (let i = 0; i < input.length; i++) {
+            // init plugin
+            var iti = window.intlTelInput(input[i], {
+                utilsScript: "../../themes/SAN/assets/js/utils.js?1638200991544"
+            });
+            var userloccode = "{{user_country_code}}";
+            if(userloccode != ''){
+                iti.setCountry("{{user_country_code}}");
+            } else {
+                iti.setCountry("ae");
+            }
+
+            input[i].addEventListener('countrychange', function (e) {
+                // code for country change event
+            });
+        }
+    </script>
+
+    <!-- Zendesk Chat Script -->
+    <script type="text/javascript">
+        window.$zopim || (function (d, s) {
+            var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
+                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
+                    z.set._.push(o)
+                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute("charset", "utf-8");
+            $.src = "https://v2.zopim.com/?3Zg0nAV9unOZzANTJvY07bhBreMHjCA5"; z.t = +new Date; $.
+                type = "text/javascript"; e.parentNode.insertBefore($, e)
+        })(document, "script");
+
+        $(document).ready(function() {
+            $('.itlselect').select2();
+        });
+        
+        
+jQuery(document).ready(function () {
+    function toggleArrows() {
+        let carousel = jQuery("#carouselExampleIndicators");
+        let itemsCount = carousel.find(".carousel-inner .carousel-item").length;
+
+        if (itemsCount > 1) {
+            carousel.addClass("show_arrows");
+        } else {
+            carousel.removeClass("show_arrows");
+        }
+    }
+
+    toggleArrows();
+});
+
+    </script>
+
+</body>
+
+</html>";s:4:"code";s:8252:"
+function onStart()
+{
+    session_start();
+    $api_cooldown = 15*60;
+    
+    // start initialize hard coded in cases any condition not executed
+     // $_SESSION['country'] = $country ='AE';
+   // $_SESSION['currencyCode'] = $currencyCode ='AED';
+   // $_SESSION['countryName'] = $countryName = "United Arab Emirates";
+/*     if (!isset($_SESSION['last_api_call']) || (time() - $_SESSION['last_api_call']) > $api_cooldown){
+        $_SESSION['last_api_call'] = time();
+    }else{
+        print_r($_SESSION['last_api_call']);exit;
+    }*/
+    
+    $client = @$_SERVER['HTTP_CLIENT_IP'];
+    $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
+    $remote = $_SERVER['REMOTE_ADDR'];
+    $country = "Unknown";
+    if (filter_var($client, FILTER_VALIDATE_IP)) {
+        $ip = $client;
+    } elseif (filter_var($forward, FILTER_VALIDATE_IP)) {
+        $ip = $forward;
+    } else {
+        $ip = $remote;
+    }
+    
+    $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Unknown';
+
+    $path = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+          
+
+    // ✅ Log IP + User Agent + Path
+   
+    \Log::info("API CALL ".$ip);
+    //$ip = '83.110.250.231'; //'135.181.154.2'; //'83.110.250.231';
+     //$ip = '83.110.250.231';
+    // $specialIps = ['20.171.207.221','135.220.210.143','2.50.33.44','188.71.212.164','103.181.238.234','124.123.71.215','188.143.244.144','66.249.93.229','135.225.24.191','66.249.93.230','66.249.93.228','40.86.77.238','216.81.248.73','20.199.38.45','103.16.202.234','37.99.148.146','111.92.61.111','66.249.84.100','66.249.84.98','66.249.84.99'];
+  //  if (in_array($ip, $specialIps) || strpos($ip, '66.249') === 0) {
+        //    $country ='AE';
+        //    $currencyCode ='AED';
+       //     $countryName = "United Arab Emirates";
+    //} else{
+        if (!isset($_SESSION['last_api_call']) || (time() - $_SESSION['last_api_call']) > $api_cooldown){
+            
+            $_SESSION['last_api_call'] = time();
+             \DB::table('ip_logs')->insert([
+        'ip' => $ip,
+        'user_agent' => $userAgent,
+        'path' => $path,
+        'created_at' => now()
+    ]);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "https://apiip.net/api/check?ip=" . $ip . "&accessKey=992d6d78-1215-44c9-b72f-715caafd9cc3");
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+            $ip_data_in = curl_exec($ch); // string
+            curl_close($ch);
+            //print "<pre>".print_r($ip_data_in, true)."</pre>";
+            //exit;
+            $ip_data = json_decode($ip_data_in, true);
+            $ip_data = str_replace('&quot;', '"', $ip_data); 
+            //echo "<pre>";print_r($ip_data);exit;
+            if ($ip_data && isset($ip_data['countryCode']) && $ip_data['countryCode'] != null) {
+                $_SESSION['country'] = $country = $ip_data['countryCode'];
+                $_SESSION['currencyCode'] = $currencyCode = $ip_data['currency']['code'];
+                $_SESSION['countryName'] = $countryName = $ip_data['countryName'];
+               
+            }else{
+                 $_SESSION['country'] = $country ='AE';
+                 $_SESSION['currencyCode'] = $currencyCode ='AED';
+                 $_SESSION['countryName'] = $countryName = "United Arab Emirates";
+            }
+        }else{
+            $country = $_SESSION['country'];
+            $currencyCode = $_SESSION['currencyCode'];
+            $countryName = $_SESSION['countryName'];
+        }
+               
+   // }
+            $this['user_country_code'] = strtolower($country);
+    $this['user_currency_code'] = strtolower($currencyCode);
+        $this['user_country_name'] = strtolower($countryName);
+     
+     
+     if(!isset($_SESSION['country']) || !isset($_SESSION['currencyCode']) || !isset($_SESSION['countryName']) )
+     {
+         $_SESSION['country'] = $country ='AE';
+                 $_SESSION['currencyCode'] = $currencyCode ='AED';
+                 $_SESSION['countryName'] = $countryName = "United Arab Emirates";
+     }
+     
+     //$country ='AE';
+       //$currencyCode ='AED';
+      // $countryName = "United Arab Emirates";
+    //$this['user_country_code'] = strtolower($country);
+    //$this['user_currency_code'] = strtolower($currencyCode);
+      //  $this['user_country_name'] = strtolower($countryName);
+    
+     // echo "<pre>"; print_r($this['user_currency_code']);die;
+    /*$ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://www.geoplugin.com/json.gp?ip=" . $ip . "&key=737bedfc-5dfe-40bb-9707-edec8ee911e1");
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    $ip_data_in = curl_exec($ch); // string
+    curl_close($ch);
+    //print "<pre>".print_r($ip_data_in, true)."</pre>";
+    //exit;
+    $ip_data = json_decode($ip_data_in, true);
+    $ip_data = str_replace('&quot;', '"', $ip_data); 
+    //print_r($ip_data);exit;
+    if ($ip_data && isset($ip_data['geoplugin_countryCode']) && $ip_data['geoplugin_countryCode'] != null) {
+        $country = $ip_data['geoplugin_countryCode'];
+       $currencyCode = $ip_data['geoplugin_currencyCode'];
+    }else{
+         $country ='AE';
+       $currencyCode ='AED';
+        }
+
+    $this['user_country_code'] = strtolower($country);
+    $this['user_currency_code'] = strtolower($currencyCode);
+    //$this['user_country_code'] = 'AE';
+    //$this['user_currency_code'] = 'AED';*/
+    
+    $myexpslug = Request::segment(1);
+    $this['expslug'] = Request::segment(2);
+    
+    if($myexpslug == "experiences"){
+        $this['cdestinations'] = San\San\Models\Destinations::where('status', 1)->where('slug', $this['expslug'])->get();
+        $this['emeta_title'] = $this['cdestinations'][0]['meta_title'];
+        $this['emeta_desc'] = $this['cdestinations'][0]['meta_desc'];
+        if($this['cdestinations'][0]['meta_image'] != ""){
+            $this['emeta_image'] = $this['cdestinations'][0]['meta_image']['path'];
+        }else{
+            $this['emeta_image'] = "";
+        }
+    }
+    if($myexpslug == "holidays"){
+        $this['holidaysdata'] = San\San\Models\Holidays::where('id', 13)->get();
+        $this['holiday_meta_title'] = $this['holidaysdata'][0]['meta_title'];
+        $this['holiday_meta_desc'] = $this['holidaysdata'][0]['meta_desc'];
+    }
+    if($myexpslug == "travel-management"){
+        $this['tmdata'] = San\San\Models\Holidays::where('id', 7)->get();
+        $this['tm_meta_title'] = $this['tmdata'][0]['meta_title'];
+        $this['tm_meta_desc'] = $this['tmdata'][0]['meta_desc'];
+    }
+    if($myexpslug == "services"){
+        $this['servicesdata'] = San\San\Models\Holidays::where('id', 8)->get();
+        $this['services_meta_title'] = $this['servicesdata'][0]['meta_title'];
+        $this['services_meta_desc'] = $this['servicesdata'][0]['meta_desc'];
+    }
+    if($myexpslug == "careers"){
+        $this['careersdata'] = San\San\Models\Holidays::where('id', 9)->get();
+        $this['careers_meta_title'] = $this['careersdata'][0]['meta_title'];
+        $this['careers_meta_desc'] = $this['careersdata'][0]['meta_desc'];
+    }
+    if($myexpslug == "news-blog"){
+        $this['holidaysdata'] = San\San\Models\Holidays::where('id', 12)->get();
+        $this['newsblog_meta_title'] = $this['holidaysdata'][0]['meta_title'];
+        $this['newsblog_meta_desc'] = $this['holidaysdata'][0]['meta_desc'];
+    }
+     if($myexpslug == "detail"){
+        $this['ndetails'] = Winter\Blog\Models\Post::where('slug', $this['expslug'])->get();
+        $this['nmeta_title'] = $this['ndetails'][0]['title'];
+        $this['nmeta_desc'] = $this['ndetails'][0]['content'];
+        $this['blogDate'] = date('j F Y', strtotime($this['ndetails'][0]['published_at'])); 
+
+        if ($this['ndetails'][0]['featured_images'] && count($this['ndetails'][0]['featured_images']) > 0) {
+        $this['nmeta_image'] = $this['ndetails'][0]['featured_images'][0]['path'];
+    } else {
+        $this['nmeta_image'] = '/default-image-path.jpg'; 
+    }
+    }
+    $this['eurl'] = Request::url();
+}";s:11:"description";s:14:"Default layout";}}

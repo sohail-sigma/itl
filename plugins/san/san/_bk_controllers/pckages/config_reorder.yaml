@@ -1,0 +1,4 @@
+title: Pckages
+modelClass: san\San\Models\Packages
+toolbar:
+    buttons: reorder_toolbar

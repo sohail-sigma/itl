@@ -1,0 +1,17 @@
+columns:
+    fname:
+        label: fname
+        type: text
+        searchable: true
+    lname:
+        label: lname
+        type: text
+        searchable: true
+    telephone:
+        label: telephone
+        type: text
+        searchable: true
+    email:
+        label: email
+        type: text
+        searchable: true

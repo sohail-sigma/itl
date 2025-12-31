@@ -1,0 +1,272 @@
+<?php
+
+namespace san\San\Models;
+
+use Model;
+use DB;
+use Itlworld\Ipcountries\Models\CountryRule;
+/**
+ * Model
+ */
+class Packages extends Model
+{
+    use \Winter\Storm\Database\Traits\Validation;
+    use \Winter\Storm\Database\Traits\Sortable;
+    use \Winter\Storm\Database\Traits\Sluggable;
+
+    /**
+     * @var string The database table used by the model.
+     */
+    public $table = 'san_san_packages';
+    protected $jsonable = ['experiences', 'inclusions', 'exclusions', 'others', 'price', 'dates', 'countries', 'itineraries', 'months','cities','nearest_airport','package_country_select'];
+    protected $slugs = ['slug' => 'name'];
+   
+    public $belongsTo = [
+        'theme' => \San\San\Models\Themes::class,
+        'country' => \San\San\Models\Countries::class
+    ];
+    public $belongsToMany = [
+        'destinations' => \San\San\Models\Destinations::class
+    ];
+
+
+    public $attachOne = [
+        'banner' => 'System\Models\File',
+        'thumbnail' => 'System\Models\File',
+        'overview_image' => 'System\Models\File',
+        'inclusions_image' => 'System\Models\File',
+        'exclusions_image' => 'System\Models\File',
+        'date_image' => 'System\Models\File',
+        'meta_image' => 'System\Models\File'
+    ];
+
+    /**
+     * @var array Validation rules
+     */
+    public $rules = [
+        'slug' => 'unique:san_san_packages,slug',
+    ];
+
+    public function scopeActive($query, $status)
+    {
+        return $query->where('status', $status);
+    }
+    public function scopeSearch($query)
+    {
+        $data =  $query->where('status', 1);
+
+        if (get('package') && get('package') != 'any') {
+            $data =  $query->where('status', 1)->where('title', get('package'));
+        }
+
+        if (get('month') && get('month') != 'any') {
+            $months = [1 => "January", 2 => "February", 3 => "March", 4 => "April", 5 => "May", 6 => "June", 7 => "July", 8 => "August", 9 => "September", 10 => "October", 11 => "November", 12 => "December"];
+            $m = @$months[get('month')];
+            // if ($m) $data = $data->whereJsonContains('months', $m);
+        }
+
+        return $data;
+    }
+    
+    public function getCountryOptions()
+    {
+        return [
+            'Afghanistan' => 'Afghanistan',
+            'Albania' => 'Albania',
+            'Algeria' => 'Algeria',
+            'Andorra' => 'Andorra',
+            'Angola' => 'Angola',
+            'Antigua and Barbuda' => 'Antigua and Barbuda',
+            'Argentina' => 'Argentina',
+            'Armenia' => 'Armenia',
+            'Australia' => 'Australia',
+            'Austria' => 'Austria',
+            'Azerbaijan' => 'Azerbaijan',
+            'Bahamas' => 'Bahamas',
+            'Bahrain' => 'Bahrain',
+            'Bangladesh' => 'Bangladesh',
+            'Barbados' => 'Barbados',
+            'Belarus' => 'Belarus',
+            'Belgium' => 'Belgium',
+            'Belize' => 'Belize',
+            'Benin' => 'Benin',
+            'Bhutan' => 'Bhutan',
+            'Bolivia' => 'Bolivia',
+            'Bosnia and Herzegovina' => 'Bosnia and Herzegovina',
+            'Botswana' => 'Botswana',
+            'Brazil' => 'Brazil',
+            'Brunei' => 'Brunei',
+            'Bulgaria' => 'Bulgaria',
+            'Burkina Faso' => 'Burkina Faso',
+            'Burundi' => 'Burundi',
+            'Cambodia' => 'Cambodia',
+            'Cameroon' => 'Cameroon',
+            'Canada' => 'Canada',
+            'Cape Verde' => 'Cape Verde',
+            'Central African Republic' => 'Central African Republic',
+            'Chad' => 'Chad',
+            'Chile' => 'Chile',
+            'China' => 'China',
+            'Colombia' => 'Colombia',
+            'Comoros' => 'Comoros',
+            'Congo (Brazzaville)' => 'Congo (Brazzaville)',
+            'Congo (Kinshasa)' => 'Congo (Kinshasa)',
+            'Costa Rica' => 'Costa Rica',
+            'Croatia' => 'Croatia',
+            'Cuba' => 'Cuba',
+            'Cyprus' => 'Cyprus',
+            'Czech Republic' => 'Czech Republic',
+            'Denmark' => 'Denmark',
+            'Djibouti' => 'Djibouti',
+            'Dominica' => 'Dominica',
+            'Dominican Republic' => 'Dominican Republic',
+            'East Timor' => 'East Timor',
+            'Ecuador' => 'Ecuador',
+            'Egypt' => 'Egypt',
+            'El Salvador' => 'El Salvador',
+            'Equatorial Guinea' => 'Equatorial Guinea',
+            'Eritrea' => 'Eritrea',
+            'Estonia' => 'Estonia',
+            'Eswatini' => 'Eswatini',
+            'Ethiopia' => 'Ethiopia',
+            'Fiji' => 'Fiji',
+            'Finland' => 'Finland',
+            'France' => 'France',
+            'Gabon' => 'Gabon',
+            'Gambia' => 'Gambia',
+            'Georgia' => 'Georgia',
+            'Germany' => 'Germany',
+            'Ghana' => 'Ghana',
+            'Greece' => 'Greece',
+            'Grenada' => 'Grenada',
+            'Guatemala' => 'Guatemala',
+            'Guinea' => 'Guinea',
+            'Guinea-Bissau' => 'Guinea-Bissau',
+            'Guyana' => 'Guyana',
+            'Haiti' => 'Haiti',
+            'Honduras' => 'Honduras',
+            'Hungary' => 'Hungary',
+            'Iceland' => 'Iceland',
+            'India' => 'India',
+            'Indonesia' => 'Indonesia',
+            'Iran' => 'Iran',
+            'Iraq' => 'Iraq',
+            'Ireland' => 'Ireland',
+            'Israel' => 'Israel',
+            'Italy' => 'Italy',
+            'Jamaica' => 'Jamaica',
+            'Japan' => 'Japan',
+            'Jordan' => 'Jordan',
+            'Kazakhstan' => 'Kazakhstan',
+            'Kenya' => 'Kenya',
+            'Kiribati' => 'Kiribati',
+            'Korea, North' => 'Korea, North',
+            'Korea, South' => 'Korea, South',
+            'Kosovo' => 'Kosovo',
+            'Kuwait' => 'Kuwait',
+            'Kyrgyzstan' => 'Kyrgyzstan',
+            'Laos' => 'Laos',
+            'Latvia' => 'Latvia',
+            'Lebanon' => 'Lebanon',
+            'Lesotho' => 'Lesotho',
+            'Liberia' => 'Liberia',
+            'Libya' => 'Libya',
+            'Liechtenstein' => 'Liechtenstein',
+            'Lithuania' => 'Lithuania',
+            'Luxembourg' => 'Luxembourg',
+            'Madagascar' => 'Madagascar',
+            'Malawi' => 'Malawi',
+            'Malaysia' => 'Malaysia',
+            'Maldives' => 'Maldives',
+            'Mali' => 'Mali',
+            'Malta' => 'Malta',
+            'Marshall Islands' => 'Marshall Islands',
+            'Mauritania' => 'Mauritania',
+            'Mauritius' => 'Mauritius',
+            'Mexico' => 'Mexico',
+            'Micronesia' => 'Micronesia',
+            'Moldova' => 'Moldova',
+            'Monaco' => 'Monaco',
+            'Mongolia' => 'Mongolia',
+            'Montenegro' => 'Montenegro',
+            'Morocco' => 'Morocco',
+            'Mozambique' => 'Mozambique',
+            'Myanmar' => 'Myanmar',
+            'Namibia' => 'Namibia',
+            'Nauru' => 'Nauru',
+            'Nepal' => 'Nepal',
+            'Netherlands' => 'Netherlands',
+            'New Zealand' => 'New Zealand',
+            'Nicaragua' => 'Nicaragua',
+            'Niger' => 'Niger',
+            'Nigeria' => 'Nigeria',
+            'North Macedonia' => 'North Macedonia',
+            'Norway' => 'Norway',
+            'Oman' => 'Oman',
+            'Pakistan' => 'Pakistan',
+            'Palau' => 'Palau',
+            'Palestine' => 'Palestine',
+            'Panama' => 'Panama',
+            'Papua New Guinea' => 'Papua New Guinea',
+            'Paraguay' => 'Paraguay',
+            'Peru' => 'Peru',
+            'Philippines' => 'Philippines',
+            'Poland' => 'Poland',
+            'Portugal' => 'Portugal',
+            'Qatar' => 'Qatar',
+            'Romania' => 'Romania',
+            'Russia' => 'Russia',
+            'Rwanda' => 'Rwanda',
+            'Saint Kitts and Nevis' => 'Saint Kitts and Nevis',
+            'Saint Lucia' => 'Saint Lucia',
+            'Saint Vincent and the Grenadines' => 'Saint Vincent and the Grenadines',
+            'Samoa' => 'Samoa',
+            'San Marino' => 'San Marino',
+            'Sao Tome and Principe' => 'Sao Tome and Principe',
+            'Saudi Arabia' => 'Saudi Arabia',
+            'Senegal' => 'Senegal',
+            'Serbia' => 'Serbia',
+            'Seychelles' => 'Seychelles',
+            'Sierra Leone' => 'Sierra Leone',
+            'Singapore' => 'Singapore',
+            'Slovakia' => 'Slovakia',
+            'Slovenia' => 'Slovenia',
+            'Solomon Islands' => 'Solomon Islands',
+            'Somalia' => 'Somalia',
+            'South Africa' => 'South Africa',
+            'South Sudan' => 'South Sudan',
+            'Spain' => 'Spain',
+            'Sri Lanka' => 'Sri Lanka',
+            'Sudan' => 'Sudan',
+            'Suriname' => 'Suriname',
+            'Sweden' => 'Sweden',
+            'Switzerland' => 'Switzerland',
+            'Syria' => 'Syria',
+            'Taiwan' => 'Taiwan',
+            'Tajikistan' => 'Tajikistan',
+            'Tanzania' => 'Tanzania',
+            'Thailand' => 'Thailand',
+            'Togo' => 'Togo',
+            'Tonga' => 'Tonga',
+            'Trinidad and Tobago' => 'Trinidad and Tobago',
+            'Tunisia' => 'Tunisia',
+            'Turkey' => 'Turkey',
+            'Turkmenistan' => 'Turkmenistan',
+            'Tuvalu' => 'Tuvalu',
+            'Uganda' => 'Uganda',
+            'Ukraine' => 'Ukraine',
+            'United Arab Emirates' => 'United Arab Emirates',
+            'United Kingdom' => 'United Kingdom',
+            'United States of America' => 'United States of America',
+            'Uruguay' => 'Uruguay',
+            'Uzbekistan' => 'Uzbekistan',
+            'Vanuatu' => 'Vanuatu',
+            'Vatican City' => 'Vatican City',
+            'Venezuela' => 'Venezuela',
+            'Vietnam' => 'Vietnam',
+            'Yemen' => 'Yemen',
+            'Zambia' => 'Zambia',
+            'Zimbabwe' => 'Zimbabwe',
+        ];
+    }
+}

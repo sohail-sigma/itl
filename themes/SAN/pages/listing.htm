@@ -1,0 +1,120 @@
+title = "listing"
+url = "/listing"
+is_hidden = 0
+==
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html style="">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/jquery.table2excel.min.js"></script>
+    
+    <title>ITL World | Aramco</title>
+    <link rel="icon" type="image/x-icon" href="favicon.png">
+
+<script>
+$(function() {
+        $("#exporttable").click(function(e){
+          var table = $("#htmltable");
+          if(table && table.length){
+            $(table).table2excel({
+              exclude: ".noExl",
+              name: "Entries",
+              filename: "Entries" + new Date().toISOString().replace(/[\-\:\.]/g, "") + ".xls",
+              fileext: ".xls",
+              exclude_img: true,
+              exclude_links: false,
+              exclude_inputs: true,
+              preserveColors: false
+            });
+          }
+        });
+        
+      });
+</script>
+
+
+  </head>
+  <body style="margin-top:0px; margin-bottom: 10px; background-color:#FFF;color:#000; height: auto; min-height: auto;margin-left:auto;margin-right:auto;font-family: UniSansRegular;">
+ 
+<div class="container-fluid">
+  <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center;">
+    <img class="logo img-responsive" src="https://www.itlworld.com/Aramco/itlworld-logo.png" width="120px" style="margin-left:auto;margin-right:auto; margin-top: 10px;">
+  </div>
+
+
+<div class="col-md-12 col-sm-12 col-xs-12">
+    <button id="exporttable" class="btn btn-md btn-danger" style="float:right;">Export</button>
+</div>
+
+
+&nbsp;<br>&nbsp;<br>&nbsp;<br>
+
+<div class="col-md-12 col-sm-12 col-xs-12 table-responsive">
+   <table id="htmltable" class="table table-bordered table-striped" style="width:100%;" >
+        <thead>
+            <tr>
+                <th>Sl No.</th>
+                <th>Date</th>
+                <th>Salutation</th>
+                <th>Full Name</th>
+                <th>Country Code</th>
+                <th>Mobile</th>
+                <th>Email</th>
+                <th>Country</th>
+                <th>City</th>
+                <th>Nationality</th>
+                <th>Preferred Language</th>
+                <th>Which cruiselines have you experience before?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+              $j=1;
+    while($drs = mysqli_fetch_array($dresult))
+    { 
+      
+            echo'
+            <tr>
+            <td>'.$j.'</td>
+            <td>'.$drs['date'].'</td>
+            <td>'.$drs['salutation'].'</td>
+             <td>'.$drs['fname'].'</td>
+            <td>'.$drs['code'].'</td>
+            <td>'.$drs['mobile'].'</td>
+            <td>'.$drs['email'].'</td>
+            <td>'.$drs['country'].'</td>
+            <td>'.$drs['city'].'</td>
+            <td>'.$drs['nationality'].'</td>
+            <td>'.$drs['language'].'</td>
+            <td>'.$drs['cruiselines'].'</td>
+            </tr>';
+            $j++;
+    }
+        ?>
+        </tbody>
+    </table>
+</div>
+
+
+ 
+     
+<script>
+$(document).ready(function(){
+  $("#myselect").change(function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+  </body>
+</html>

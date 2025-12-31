@@ -1,0 +1,11 @@
+name: Destination
+modelClass: san\San\Models\Destinations
+form: $/san/san/models/destinations/fields.yaml
+defaultRedirect: san/san/destination
+create:
+    redirect: 'san/san/destination/update/:id'
+    redirectClose: san/san/destination
+update:
+    redirect: san/san/destination
+    redirectClose: san/san/destination
+preview: {  }

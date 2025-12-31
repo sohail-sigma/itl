@@ -1,0 +1,7 @@
+export:
+   # useList: true
+   title: Export Newsletter
+   modelClass: San\San\Models\ExportNewsletter
+   list: $/san/san/models/newsletter/columns.yaml
+   fileName: newsletter.csv 
+   redirect: san/san/newsletter

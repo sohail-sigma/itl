@@ -1,0 +1,13 @@
+title: Careers
+modelClass: san\San\Models\Careers
+list: $/san/san/models/careers/columns.yaml
+recordUrl: "san/san/careers/preview/:id"
+recordOnClick: ""
+noRecordsMessage: "backend::lang.list.no_records"
+recordsPerPage: 20
+showCheckboxes: 1
+showSetup: true
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: "backend::lang.list.search_prompt"

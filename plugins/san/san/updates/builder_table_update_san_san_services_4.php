@@ -1,0 +1,23 @@
+<?php namespace san\San\Updates;
+
+use Schema;
+use Winter\Storm\Database\Updates\Migration;
+
+class BuilderTableUpdateSanSanServices4 extends Migration
+{
+    public function up()
+    {
+        Schema::table('san_san_services', function($table)
+        {
+            $table->string('uniqe_reference', 255)->nullable();
+        });
+    }
+    
+    public function down()
+    {
+        Schema::table('san_san_services', function($table)
+        {
+            $table->dropColumn('uniqe_reference');
+        });
+    }
+}

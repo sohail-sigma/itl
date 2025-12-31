@@ -1,0 +1,4 @@
+title: Office
+modelClass: san\San\Models\Office
+toolbar:
+    buttons: reorder_toolbar

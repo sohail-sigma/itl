@@ -1,0 +1,29 @@
+columns:
+    title:
+        label: 'Banner Title'
+        type: partial
+        searchable: true
+        invisible: false
+        sortable: true
+        path: ~/plugins/san/san/models/packages/_banner_column.html
+    unique_caption:
+        label: 'Unique Caption'
+        type: text
+        searchable: true
+        sortable: true
+    theme_id:
+        label: experience
+        type: text
+        searchable: true
+        select: title
+        relation: destinations
+    months:
+        label: Months
+        type: text
+        searchable: true
+        sortable: true
+    status:
+        label: Published
+        type: switch
+        searchable: true
+        sortable: true

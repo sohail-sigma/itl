@@ -1,0 +1,17 @@
+<?php
+$packageIds = $record->target_packages ?? [];
+if (empty($packageIds) || !is_array($packageIds)) {
+    echo '—';
+} else {
+    $packages = \San\San\Models\Packages::whereIn('id', $packageIds)->get();
+    $names = [];
+    
+    foreach ($packages as $package) {
+        $packageName = $package->title ?? $package->caption ?? $package->name ?? 'Package #' . $package->id;
+        $names[] = $packageName;
+    }
+    
+    echo implode(', ', $names);
+}
+?>
+

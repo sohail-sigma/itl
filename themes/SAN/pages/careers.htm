@@ -1,0 +1,298 @@
+title = "careers"
+url = "/careers"
+layout = "default"
+meta_title = "Contact ITL World Careers"
+meta_description = "Best Travel Agency in GCC | ITL World Careers"
+is_hidden = 0
+
+[builderDetails]
+modelClass = "san\San\Models\Career"
+identifierValue = 9
+modelKeyColumn = "id"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+==
+<?php
+function onSubmitCareerForm()
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        return;
+    }
+
+    $input = Input::all();
+    $rules = [
+        'name' => 'required',
+        'phone' => 'required',
+        'user_email' => 'required|email',
+        'date_day' => 'required',
+        'date_month' => 'required',
+        'date_year' => 'required',
+        'job_position' => 'required',
+        'cv' => 'required|file|mimes:pdf,doc,docx|max:5120',
+    ];
+    $errorMessages = [
+        'job_position.required' => 'Please select job position.',
+        'name.required' => 'Please enter your full name.',
+        'user_email.required' => 'Please enter your email address.',
+        'phone.required' => 'Please enter your phone number.',
+        'date_day.required' => 'Please enter day of your date of birth.',
+        'date_month.required' => 'Please choose month of your date of birth.',
+        'date_year.required' => 'Please enter year of your date of birth.',
+        'cv.required' => 'Please upload your CV.',
+        'cv.mimes' => 'Please upload a valid file (PDF, DOC, DOCX).',
+        'cv.max' => 'Maximum file size is 5 MB.',
+    ];
+
+    $validation = Validator::make($input, $rules, $errorMessages);
+    if ($validation->fails()) {
+        throw new ValidationException($validation);
+    }
+
+    $all_qa = [];
+    $ques_ans = "";
+    $total_q_key = 'total_ques_' . $input['job_position'];
+    $total_questions = isset($input[$total_q_key]) ? (int)$input[$total_q_key] : 0;
+
+    $position = \San\San\Models\CareerPositions::find($input['job_position']);
+    if (!$position) {
+        throw new Exception('Invalid job position selected.');
+    }
+
+    // Process questions and their subquestions
+    if ($total_questions > 0 && $position->questionnaires) {
+        foreach ($position->questionnaires as $index => $question) {
+            $i = $index + 1;
+            if ($i > $total_questions) break;
+
+            $q_index = "questions_{$input['job_position']}{$i}";
+            $label_index = "qu_{$input['job_position']}{$i}";
+            $question_text = isset($input[$label_index]) ? $input[$label_index] : $question['question'];
+            $answer = isset($input[$q_index]) && $input[$q_index][0] === 'on' ? 'Yes' : 'No';
+
+            // Initialize the question entry
+            $qa_entry = [
+                'q' => $question_text,
+                'a' => $answer,
+                'subquestions' => [] // Add a subquestions array to store nested subquestions
+            ];
+
+            // Process subquestions if the answer is "Yes"
+            $sub_answers = [];
+            if ($answer === 'Yes' && !empty($position->subquestions)) {
+                foreach ($position->subquestions as $sub_index => $subquestion) {
+                    if ($subquestion['parent_question'] === $question_text) {
+                        $sub_name = "sub_{$input['job_position']}_{$i}_{$sub_index}";
+                        if (!empty($input[$sub_name]) && $input[$sub_name] !== 'Select') {
+                            // Add subquestion and its answer to the subquestions array
+                            $qa_entry['subquestions'][] = [
+                                'sub_q' => $subquestion['subquestion_text'],
+                                'sub_a' => $input[$sub_name]
+                            ];
+                            $ques_ans .= "  - {$subquestion['subquestion_text']}: {$input[$sub_name]}<br>";
+                        }
+                    }
+                }
+            }
+
+            $ques_ans .= "{$i}: {$question_text} ({$answer})<br>";
+            $all_qa[] = $qa_entry;
+        }
+    }
+
+    // Handle CV upload
+    $fileName = '';
+    if (isset($input['cv'])) {
+        $extension = $input['cv']->getClientOriginalExtension();
+        $fileName = time() . rand(100, 999) . "." . $extension;
+        $destinationPath = storage_path('/app/uploads/public/cv');
+        $input['cv']->move($destinationPath, $fileName);
+    }
+
+    // Prepare other form data
+    $position_name = $position->title;
+    $user_email = $input['user_email'];
+    $dob = "{$input['date_day']}-{$input['date_month']}-{$input['date_year']}";
+
+    // Save to CMS
+    $careers = new \San\San\Models\Careers;
+    $careers->fulll_name = $input['name'];
+    $careers->dob = $dob;
+    $careers->phone = $input['phone'];
+    $careers->c_email = $user_email;
+    $careers->gender = $input['gender'];
+    $careers->all_questions = json_encode($all_qa); // Save the nested structure
+    $careers->user_cv = $fileName;
+    $careers->careerpositions_id = $position_name;
+    $careers->created_at = date("Y-m-d H:i:s");
+    $careers->save();
+
+    // Prepare email variables
+    $vars = [
+        'name' => $input['name'],
+        'email' => $user_email,
+        'gender' => $input['gender'],
+        'phone' => $input['phone'],
+        'job_position' => $position_name,
+        'dob' => $dob,
+        'cv' => url('storage/app/uploads/public/cv/') . "/" . $fileName,
+        'ques_ans' => $ques_ans,
+    ];
+
+    // Send email to admin
+    $enqmails = \San\San\Models\EnquiryEmails::where('id', '14')->first();
+    if ($enqmails && !empty($enqmails['content_1'])) {
+        Mail::send('careers_temp', $vars, function ($message) use ($enqmails) {
+            $message->to($enqmails['content_1'], 'Careers query')
+                    ->subject('Careers query');
+        });
+    }
+
+    // Send confirmation email to user
+    Mail::send('career_confirmation_email', $vars, function ($message) use ($user_email) {
+        $message->to($user_email)
+                ->subject('Career Application Confirmation');
+    });
+
+    Flash::success('Submitted successfully!');
+    unset($_POST);
+}
+?>
+==
+<div class="banner-slider only_desktop">
+    <div class="slider-inner">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-caption d-md-block">
+                    <h1>Careers</h1>
+                    <span class="line"><em></em></span>
+                </div>
+                {% if(builderDetails.record.banner_type == 'image') %}
+                    {% set scount = 1 %}
+                    {% for bannerslider in builderDetails.record.banner_image %}
+                        <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}">
+                            <div class="banner-image">
+                                <img class="d-block w-100" src="{{bannerslider.path}}" alt="First slide">
+                                
+                            </div> 
+                        </div>
+                        {% set scount = scount + 1 %}
+                    {% endfor %}
+                {% elseif(builderDetails.record.banner_type == 'video') %}
+                    {% set scount = 1 %}
+                    {% for banneriframe in builderDetails.record.banner_iframe %}
+                    {% set v_dur = banneriframe.video_duration * 1000 %}
+                        <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}" data-interval="{{v_dur}}">
+                            <div class="banner-iframe">
+                                <iframe width="770" height="433" src="https://www.youtube.com/embed/{{ banneriframe.iframe[17:] }}?showinfo=0&playlist={{ banneriframe.iframe[17:] }}&loop=1&autoplay=1&controls=0&mute=1" title="{{cdestinations_List[0].title}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+                            </div>
+                        </div>
+                        {% set scount = scount + 1 %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="banner-slider only_mob">
+    <div class="slider-inner">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-caption d-md-block">
+					<h1>{{builderDetails.record.title}}</h1>
+					<span class="line"><em></em></span>
+				</div>
+                {% set scount = 1 %}
+                {% for bannerslider in builderDetails.record.mob_banner_image %}
+                    <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}">
+                        <div class="banner-image">
+                            <img class="d-block w-100" src="{{bannerslider.path}}" alt="">
+                            
+                        </div> 
+                    </div>
+                    {% set scount = scount + 1 %}
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- <section class="hero_single version_2 inner">
+    <div class="wrapper" style="background-image: url({{builderDetails.record.banner.path}});">
+        <div class="container position-relative">
+            <div class="banner_title">
+                <div class="banner_text">
+                    <h1>Careers</h1>
+                    <span class="line"><em></em></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<section class="career-form">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="main_title_2">
+                    <h2>CAREER OPPORTUNITIES</h2>
+                    <span><em></em></span>
+                </div>
+                <div class="home-popular-desc">
+                    <p>At ITL World, we believe that travel has the power to transform lives. As a leader in the travel industry, we’re committed to creating unforgettable experiences for our customers, and we’re looking for passionate, innovative individuals to join our team.</p>
+                </div>
+                <div class="container ">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-12 " id="contact_form">
+                            {% partial 'site/careerform.htm' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="after-submit-popup" class="white-popup mfp-hide">
+    <div id="sign-in-dialog" class="zoom-anim-dialog">
+        <div class="modalbody">
+            <div class="small-dialog-header">
+                <h3><img src="../themes/SAN/assets/images/mail.svg" class="img-fluid mail"
+                        alt="">Successfully sent</h3>
+            </div>
+        </div>
+        <div style="padding: 80px 10px;">
+            <h4>Form has been submitted successfully!</h4>
+        </div>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+    </div>
+</div>
+
+
+<script>
+    $('.open-popup-link').magnificPopup({
+        type: 'inline',
+        showCloseBtn: true,
+        callbacks: {
+            open: function () {
+                $('#sign-in-dialog').append($('.mfp-close'))
+            },
+        },
+        midClick: true
+    });
+</script>

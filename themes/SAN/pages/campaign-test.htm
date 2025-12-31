@@ -1,0 +1,156 @@
+title = "Campaign Test"
+url = "/campaign-test"
+layout = "campaign_test"
+is_hidden = 0
+==
+<?php
+function onSubmitCampaignTestForm()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = post();
+        $rules = [
+            'fname' => 'required',
+            'lname' => 'required',
+            'telephone' => 'numeric|required',
+            'email'=> 'required|email',
+        ];
+        $errorMessages = [
+            'fname.required' => 'Enter your first name',
+            'lname.required' => 'Enter your last name',
+            'telephone.numeric' => 'Enter only numbers',
+            'telephone.required' => 'Enter your telephone',
+            'email.required' => 'Enter your email',
+            'email.email' => 'Enter valid email',
+        ];
+        $validation = Validator::make($data, $rules, $errorMessages);
+        if ($validation->fails()) {
+            throw new ValidationException($validation);
+        }else{
+            $input = Input::all();
+            $enq = new  san\San\Models\CampaignTest; //Change Modal name
+            $enq->fname = $input['fname']; 
+            $enq->lname = $input['lname'];
+            $enq->telephone = $input['telephone'];
+            $enq->email = $input['email'];
+            $enq->save();
+
+			$vars = [
+                'fname' => $input['fname'],
+                'lname' => $input['lname'],
+                'telephone' => $input['telephone'],
+                'email' => $input['email'],
+            ];
+            Mail::send('template_campaign1', $vars, function($message) {
+                $message->to('a.qayyum@sigmads.com', 'Test Campaign1');  //Change youe recipt email
+                $message->subject('Test Campaign1'); //Change youe subject
+            });
+            
+            Flash::success('Submitted successfully!');
+            unset($_POST);
+        }
+    }
+}
+?>
+==
+<div class="clearfix"></div>
+<div class="container">
+
+{% framework extras %}
+                    
+<form data-request="onSubmitCampaignTestForm" data-request-validate data-request-flash class="form-campaign"
+   data-request-files="true" data-request-success="document.getElementById('aboutform').reset(); $.magnificPopup.open({
+                items: {     src: '#after-submit-popup'  },
+                type: 'inline',
+                showCloseBtn: true,
+                callbacks: {
+                    open: function () {
+                        $('#contact').append($('.mfp-close'))
+                    },
+                },
+                midClick: true
+            });" id="aboutform"  style="margin:200px 0 ;">
+   <div class="row">
+       <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="col-md-3 col-sm-3 col-xs-12">
+        <label for="fname">First Name</label>
+      </div>
+      <div class="col-md-9 col-sm-9 col-xs-12">
+        <input type="text" id="fname" name="first_name" class="form-control form-group" required>
+       
+       
+      </div>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="col-md-3 col-sm-3 col-xs-12">
+        <label for="lname">Last Name</label>
+      </div>
+      <div class="col-md-9 col-sm-9 col-xs-12">
+        <input type="text" id="lname" name="last_name" class="form-control form-group" >
+      </div>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="col-md-3 col-sm-3 col-xs-12">
+        <label for="email">Email</label>
+      </div>
+      <div class="col-md-9 col-sm-9 col-xs-12">
+        <input type="email" id="email" name="email" class="form-control form-group" required>
+      </div>
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+      <div class="col-md-3 col-sm-3 col-xs-12">
+        <label for="nationality">Nationality</label>
+      </div>
+      <div class="col-md-9 col-sm-9 col-xs-12">
+        <input type="text" id="nationality" name="nationality" class="form-control form-group" required>
+      </div>
+    </div>
+    
+    
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="text" name="fname" placeholder="First Name" value="">
+            <span data-validate-for="fname" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="text" name="lname" placeholder="Last Name" value="">
+            <span data-validate-for="lname" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="tel" name="telephone" placeholder="Telephone No" value="">
+            <span data-validate-for="telephone" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="email" name="email" placeholder="Your Email" value="">
+            <span data-validate-for="email" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+   </div>
+   <p class="add_top_30">
+      <button data-attach-loading type="submit" value="SUBMIT FORM" class="btn_contact btn contact-submit"
+         id="submit-contact"><i class="icon"><img src="/themes/SAN/assets/img/send-arrow.svg"></i> Submit
+         Form</button>
+   </p>
+</form>
+
+ </div>
+
+ <div id="after-submit-popup" class="white-popup mfp-hide">
+    <div id="sign-in-dialog" class="zoom-anim-dialog">
+        <div class="modalbody">
+            <div class="small-dialog-header">
+                <h3><img src="/themes/SAN/assets/images/mail.svg" class="img-fluid mail"
+                        alt="">Successfully sent</h3>
+            </div>
+        </div>
+        <div style="padding: 80px 10px;">
+            <h4>Form has been submitted successfully!</h4>
+        </div>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+    </div>
+</div>

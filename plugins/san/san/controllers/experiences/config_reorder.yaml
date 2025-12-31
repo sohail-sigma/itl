@@ -1,0 +1,5 @@
+title: Experiences
+modelClass: san\San\Models\Experiences
+nameFrom: title
+toolbar:
+    buttons: reorder_toolbar

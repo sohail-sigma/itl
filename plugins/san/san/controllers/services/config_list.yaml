@@ -1,0 +1,13 @@
+list: $/san/san/models/services/columns.yaml
+modelClass: san\San\Models\Services
+title: Services
+noRecordsMessage: 'backend::lang.list.no_records'
+showSetup: true
+showCheckboxes: true
+recordsPerPage: 20
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'
+recordUrl: 'san/san/services/update/:id'
+recordOnClick: ''

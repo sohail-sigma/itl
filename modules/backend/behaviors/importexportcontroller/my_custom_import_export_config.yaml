@@ -1,0 +1,13 @@
+# ===================================
+#  Import/Export Behavior Config
+# ===================================
+
+import:
+    title: Import subscribers
+    modelClass: Acme\Campaign\Models\SubscriberImport
+    list: $/acme/campaign/models/subscriber/columns.yaml
+
+export:
+    title: Export subscribers
+    modelClass: Acme\Campaign\Models\SubscriberExport
+    list: $/acme/campaign/models/subscriber/columns.yaml

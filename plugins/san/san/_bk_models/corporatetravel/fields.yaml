@@ -1,0 +1,86 @@
+fields:
+    title:
+        label: Title
+        span: auto
+        type: text
+    banner:
+        label: 'Banner (1920 x 680 px)'
+        mode: image
+        imageWidth: '150'
+        imageHeight: '100'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload
+tabs:
+    fields:
+        banner_type:
+            label: 'Select Banner Slider Option'
+            options:
+                image: image
+                video: video
+            showSearch: true
+            span: full
+            type: dropdown
+            tab: 'Banner images/video slider'
+        banner_image:
+            label: 'Banner Images'
+            mode: image
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: full
+            trigger:
+                action: show
+                field: banner_type
+                condition: 'value[image]'
+            type: fileupload
+            tab: 'Banner images/video slider'
+        banner_iframe:
+            label: 'Add Video'
+            prompt: 'Add Video Link'
+            style: default
+            span: full
+            trigger:
+                action: show
+                field: banner_type
+                condition: 'value[video]'
+            type: repeater
+            tab: 'Banner images/video slider'
+            form:
+                fields:
+                    iframe:
+                        label: 'Add URL for video'
+                        span: auto
+                        type: text
+                    video_duration:
+                        label: 'Video Duration (in seconds)'
+                        span: auto
+                        type: number
+        meta_title:
+            label: 'Meta Title'
+            span: full
+            type: text
+            tab: SEO
+        meta_desc:
+            label: 'Text area'
+            size: ''
+            span: full
+            type: textarea
+            tab: SEO
+        meta_image:
+            label: 'OG image (1200 x 630 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            comment: 'jpg/png The recommended size for a lowdown OG image is 1200×630 pixels'
+            tab: SEO

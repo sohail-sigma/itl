@@ -1,0 +1,31 @@
+<?php
+   $data = post();
+   if($data){
+      if($data['all_ids']){
+         $allids = $data['all_ids'];
+      }else{
+         $allids = '';
+      }
+   }else{
+      $allids = '';
+   }
+   ?>
+
+   <?= Form::open(['class' => 'layout']) ?>
+
+      <div class="layout-row">
+         <?php echo $this->exportRender() ?>
+      </div>
+
+      <div class="form-buttons">
+         <button
+               type="submit"
+               data-control="popup"
+               data-handler="onExportLoadForm"
+               data-keyboard="false"
+               class="btn btn-primary">
+               Export Campaign1
+         </button>
+      </div>
+      <input type="hidden" name="all_ids" id="all_ids" value="<?php echo $allids; ?>">
+   <?= Form::close() ?>

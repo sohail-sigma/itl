@@ -1,0 +1,79 @@
+description = "Default layout"
+
+[builderDetails aboutDetails]
+modelClass = "san\San\Models\About"
+identifierValue = 3
+modelKeyColumn = "id"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+
+[builderList countriesList]
+modelClass = "san\San\Models\Countries"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+
+[builderDetails contactDetails]
+modelClass = "san\San\Models\Contact"
+identifierValue = 2
+modelKeyColumn = "id"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+
+[staticPage]
+useContent = 1
+default = 0
+==
+{% set countries = countriesList.records %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{{ this.page.meta_title?this.page.meta_title:this.page.title }}</title>
+        <meta name="description" content="{{ this.page.meta_description?this.page.meta_description:this.page.meta_description}}">
+        <meta name="title" content="{{ this.page.meta_title?this.page.meta_title:this.page.title }}">
+        <meta name="author" content="sancreatives.com">
+        <meta name="generator" content="SAN CMS">
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,shrink-to-fit=no,user-scalable=0">
+        <meta property="og:url" content="http://eduvoyage.com/en/" /> 
+        <meta property="og:site_name" content="{{ this.page.meta_title }}" /> 
+        <meta property="og:image" content="{{this.page.og_image?this.page.og_image:""}}"> 
+        <meta property="og:locale" content="en_US" /> 
+        <meta property="og:type" content={{ metacontent.sitename }} />
+        <meta property="og:title" content="{{ this.page.meta_title?this.page.meta_title:this.page.title }}" />
+        <meta property="og:description" content="{{ this.page.meta_description?this.page.meta_description:this.page.meta_description}}" />
+        <meta name="twitter:card" content="summary_large_image" /> 
+        <meta name="twitter:description" content="{{ this.page.meta_description?this.page.meta_description:this.page.meta_description}}" /> 
+        <meta name="twitter:title" content="{{ this.page.meta_title?this.page.meta_title:this.page.title }}" /> 
+        <meta name="twitter:image:src" content="{{ url('/') }}{{ this.page.og_image?this.page.og_image|media:metacontent.featuredimage|media }}">
+        {% styles %}
+        <link type="text/css" rel="stylesheet" href="{{ 'assets/css/app.css'|theme }}" />
+        <link type="text/css" rel="stylesheet" href="{{ 'assets/css/vendors.css'|theme }}" />
+        <link type="text/css" rel="stylesheet" href="{{ 'assets/css/style.css'|theme }}" />
+        <link rel="shortcut icon" href="{{ 'assets/img/favicon.png'|theme }}">
+        <script src="{{ 'assets/js/bundle.js'|theme }}"></script>
+        <script src="{{ 'assets/js/main.js'|theme }}"></script>
+    </head>
+    <body>
+
+     <?php echo setting_all('body_tag'); ?>
+        <div class="window">
+            <div id="head">{% partial 'site/header' %} </div>
+            <main id="content">
+                {% page %}
+            </main>
+            {% partial 'site/footer' %} 
+        </div>
+
+
+
+        <!-- Scripts -->
+        {% snowboard all %}
+        {% scripts %}
+
+    </body>
+</html>

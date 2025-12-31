@@ -1,0 +1,10 @@
+name: Formimages
+modelClass: san\San\Models\Formimages
+form: $/san/san/models/formimages/fields.yaml
+defaultRedirect: 'san/san/formimages/update/:id'
+create:
+    redirect: 'san/san/formimages/update/:id'
+    redirectClose: 'san/san/formimages/update/:id'
+update:
+    redirect: 'san/san/formimages/update/:id'
+    redirectClose: 'san/san/formimages/update/:id'

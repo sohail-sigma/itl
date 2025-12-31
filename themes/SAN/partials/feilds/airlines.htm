@@ -1,0 +1,53 @@
+[viewBag]
+
+==
+
+<style>
+   .dest-list ul li {
+      font-size: 16px;
+      border-bottom: 1px solid #e6e6e6;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #495057;
+   }
+   .dest-list ul li:hover {
+      background-color: #f2f2f2;
+   }
+
+   .dest-list ul li:last-child {
+      border-bottom: none;
+   }
+
+   .dest-list {
+      background-color: #fff;
+      border-radius: 6px;
+      padding: 10px;
+      max-height: 300px;
+      overflow: auto;
+      overflow-x: hidden;
+      position: absolute;
+      width: 100%;
+      z-index: 9999;
+      box-shadow: 0px 3px 6px #0000006C;
+   }
+</style>
+
+{% if alldestinations %}
+<div class="dest-list">
+   <ul style="margin: 0;">
+      {% for destination,value in alldestinations %}
+      <li class="destination" data-city_code="{{destination}}" >{{value}}</li>
+      {% endfor %}
+   </ul>
+</div>
+{% endif %}
+
+
+<script>
+   $("body").on("click", ".destination", function(){
+      $("#search-destination").attr("placeholder", $(this).text());
+      $("#hotel-destination").val($(this).attr("data-city_code"));
+      $("#search-destination").val($(this).text());
+		$(".dest-list").hide();
+   });
+</script>

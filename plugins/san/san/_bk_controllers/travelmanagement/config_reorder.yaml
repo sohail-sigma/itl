@@ -1,0 +1,5 @@
+title: travelmanagement
+modelClass: san\San\Models\TravelManagement
+nameFrom: title
+toolbar:
+    buttons: reorder_toolbar

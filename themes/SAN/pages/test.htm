@@ -1,0 +1,101 @@
+title = "Test"
+url = "/test"
+layout = "static_blank"
+is_hidden = 0
+==
+<?php
+function onSubmitCF()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = post();
+            $rules = [
+                'f_name' => 'required',
+                'l_name' => 'required',
+                'email' => 'required',
+                'phone' => 'required',
+            ];
+            $errorMessages = [
+                'f_name.required' => 'Enter your first name',
+                'l_name.required' => 'Enter your last name',
+                'email.required' => 'Enter your Email',
+                'phone.required' => 'Enter your Phone',
+            ];
+            $validation = Validator::make($data, $rules, $errorMessages);
+            if ($validation->fails()) {
+                throw new ValidationException($validation);
+            }else{
+                $input = Input::all();
+                $enq = new  san\San\Models\ContactForm;
+                $enq->firstname = $input['f_name']; 
+                $enq->lastname = $input['l_name'];
+                $enq->email = $input['email'];
+                $enq->phone = $input['phone'];
+                $enq->save();
+                Flash::success('Submitted successfully!');
+                unset($_POST);
+            }
+        }
+    }
+?>
+==
+{% framework extras %}
+<form data-request="onSubmitCF" data-request-validate data-request-flash class="form-str"
+   data-request-files="true" data-request-success="document.getElementById('aboutform').reset(); $.magnificPopup.open({
+                items: {     src: '#after-submit-popup'  },
+                type: 'inline',
+                showCloseBtn: true,
+                callbacks: {
+                    open: function () {
+                        $('#contact').append($('.mfp-close'))
+                    },
+                },
+                midClick: true
+            });" id="aboutform">
+   <div class="row">
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="text" name="f_name" placeholder="First Name" value="">
+            <span data-validate-for="f_name" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="text" name="l_name" placeholder="Last Name" value="">
+            <span data-validate-for="l_name" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="email" name="email" placeholder="Email" value="">
+            <span data-validate-for="email" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="text" name="phone" placeholder="Phone" value="">
+            <span data-validate-for="phone" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+   </div>
+   <p class="add_top_30">
+      <button data-attach-loading type="submit" value="SUBMIT FORM" class="btn_contact btn contact-submit"
+         id="submit-contact"><i class="icon"><img src="/themes/SAN/assets/img/send-arrow.svg"></i> Submit
+         Form</button>
+   </p>
+</form>
+
+ </div>
+ <div id="after-submit-popup" class="white-popup mfp-hide">
+    <div id="sign-in-dialog" class="zoom-anim-dialog">
+        <div class="modalbody">
+            <div class="small-dialog-header">
+                <h3><img src="themes/SAN/assets/images/mail.svg" class="img-fluid mail"
+                        alt="">Successfully sent</h3>
+            </div>
+        </div>
+        <div style="padding: 80px 10px;">
+            <h4>Form has been submitted successfully!</h4>
+        </div>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+columns:
+    name:
+        label: Name
+    email:
+        label: Email
+    phone:
+        label: Phone
+    gender:
+        label: Gender
+    dob:
+        label: Date of Birth
+    position:
+        label: Position
+    questions:
+        label: Questions & Answers
+    cv_link:
+        label: CV Link
+    submitted_on:
+        label: Submitted On
+

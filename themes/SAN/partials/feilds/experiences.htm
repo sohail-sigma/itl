@@ -1,0 +1,24 @@
+[viewBag]
+
+[builderList experienceList]
+modelClass = "san\San\Models\Destinations"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+
+==
+{% set experience = experienceList.records %}
+{% set oldexp = "" %}
+<option value="any">Experience</option>
+{% if allexp %}
+    {% for exp in allexp | sort((a, b) => a.title <=> b.title ) %}
+        {% if oldexp != exp.slug %}
+            <option value="{{exp.slug}}" {% if get("experience")==exp.slug %} selected="selected" {% endif %}>{{exp.title |capitalize}}</option>
+        {% endif %}
+        {% set oldexp = exp.slug %}
+    {% endfor %}
+{% endif %}

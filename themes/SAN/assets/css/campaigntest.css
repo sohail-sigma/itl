@@ -1,0 +1,124 @@
+
+ 
+   body{
+        font-size: 16px; background-color:#dbd7d7!important; height: auto; min-height: auto;margin-left:auto;margin-right:auto;font-family: UniSansRegular;
+     }
+     .form-campaign{
+         background-color:#dbd7d7!important;
+         
+     }
+	.multi-select-menuitem
+	{
+		width:100%;
+		vertical-align:middle;
+	}
+	.multi-select-menuitem input[type="checkbox"]{ 
+	margin-top:0px;
+		vertical-align:middle;
+		    margin-bottom:2px !important;
+			margin-left:5px;
+	}
+	.multi-select-container {
+	  display: inline-block;
+	  position: relative;
+	  z-index:1000;
+	  width:100%;
+	}
+
+	.multi-select-menu {
+	  position: absolute;
+	  left: 0;
+	  top: 0.8em;
+	  float: left;
+	  min-width: 100%;
+	  background: #fff;
+	  margin: 1em 0;
+	  padding: 0.4em 0;
+	  border: 1px solid #aaa;
+	  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+	  display: none;
+	  z-index:1000;
+	  width:100%;
+	}
+
+	.multi-select-menu input {
+	  
+	  vertical-align: 0.1em;
+	  margin-left:5px;
+	 
+	}
+	
+	.multi-select-button {
+		width:100%;
+	  display: inline-block;
+	  font-size: 0.875em;
+
+	  padding: 0.6em 0.6em;
+	 
+	  white-space: nowrap;
+	  overflow: hidden;
+	  text-overflow: ellipsis;
+	  vertical-align: -0.5em;
+	  background-color: #fff;
+	  border: 1px solid #aaa;
+	  border-radius: 4px;
+	  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+	  cursor: default;
+	  z-index:1000;
+	}
+	
+	.multi-select-button:after {
+	  content: "";
+	  display: inline-block;
+	  width: 0;
+	  height: 0;
+	  border-style: solid;
+	  border-width: 0.4em 0.4em 0 0.4em;
+	  border-color: #999 transparent transparent transparent;
+	  margin-left: 0.4em;
+	  vertical-align: 0.1em;
+	  z-index:1000;
+	}
+	
+	.multi-select-container--open .multi-select-menu { display: block; width:100%;}
+	
+	.multi-select-container--open .multi-select-button:after {
+	  border-width: 0 0.4em 0.4em 0.4em;
+	  border-color: transparent transparent #999 transparent;
+	}
+	
+	input[type=number]::-webkit-outer-spin-button,
+	input[type=number]::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+		
+		margin-bottom: 15px;
+	
+	}
+
+input[type=number] {
+    -moz-appearance:textfield;
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+	margin-bottom:10px;
+}
+.btnc{
+	border : solid 0px #000000;
+	border-radius : 5px;
+	moz-border-radius : 5px;
+	font-size : 18px;
+	color : #ffffff;
+	padding : 1px 17px;
+	background : #d62128;
+	
+	
+}

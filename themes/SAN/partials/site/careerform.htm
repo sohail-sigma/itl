@@ -1,0 +1,554 @@
+[viewBag]
+
+[apiFunction]
+
+[builderList careerPositions]
+modelClass = "san\San\Models\CareerPositions"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+==
+{% set positions = careerPositions.records %}
+
+{% framework extras %}
+
+<div class="form-wrapper" id="contact-dialog">
+    {% flash %}
+    <div data-control="flash-message" class="flash-message fade {{ type }}" data-interval="5">
+        {{ message }}
+    </div>
+    {% endflash %}
+
+
+
+
+    <!-- <form data-request="onSubmitCareerForm" data-request-validate data-request-flash class="form-str"
+        data-request-files="true" data-request-success="document.getElementById('careesform').reset()" id="careesform"> -->
+
+    <form data-request="onSubmitCareerForm" data-request-validate data-request-flash class="form-str"
+        data-request-files="true" data-request-success="document.getElementById('careesform').reset(); $.magnificPopup.open({
+                items: {     src: '#after-submit-popup'  },
+                type: 'inline',
+                showCloseBtn: true,
+                callbacks: {
+                    open: function () {
+                        $('#contact').append($('.mfp-close'))
+                    },
+                },
+                midClick: true
+            });" id="careesform">
+
+        <div class="form-group">
+            <div class="field-label">
+                <label>Position</label>
+            </div>
+            <div class="field-group">
+                <div class="form-select col-md-12">
+                    <select class="form-control job_position" name="job_position">
+                        <option value="">Choose Position</option>
+                        {% for position in positions %}
+                        <option value="{{position.id}}">{{position.title}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-data">
+            <div class="form-group">
+                <div class="field-label">
+
+                </div>
+                <div class="field-group">
+                    <div class="accordion col-md-12">
+                        <div class="answer-group">
+                            <p class="collapsed" data-toggle="collapse" data-target="#collapse-1" aria-expanded="true"
+                                aria-controls="collapse-1">
+                                Read job description here <i class="fa arrow-expand" aria-hidden="true"></i>
+                            </p>
+                            <div id="collapse-1" class="collapse">
+                                <div class="card-body pos_desc">
+                                    {% for position_d in positions %}
+                                    <div class="j_desc" style="display: none;" id="pos_{{position_d.id}}">
+                                        <p>{{position_d.description | raw}}</p>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="field-label">
+                    <label>Name</label>
+                </div>
+                <div class="field-group">
+                    <div class="form-input col-md-12">
+                        <input type="text" name="name" placeholder="Name" class="form-control" value="">
+                        <span data-validate-for="name" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="field-label">
+                    <label>Phone</label>
+                </div>
+                <div class="field-group">
+                    <div class="form-input col-md-12">
+                            <input type="number" class="form-control phone" name="phone" id="" placeholder="eg. 55333666" value="" onKeyDown="if(this.value.length==13 && event.keyCode!=8) return false;">
+                        <span data-validate-for="phone" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="field-label">
+                    <label>Email</label>
+                </div>
+                <div class="field-group">
+                    <div class="form-input col-md-12">
+                        <input type="email" class="form-control" name="user_email" placeholder="Email">
+                        <span data-validate-for="user_email" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="field-label">
+                    <label>Gender</label>
+                </div>
+                <div class="field-group">
+                    <div class="option-sel option-sel-left col-md-12 c-g-opt">
+                        <label class="r-container">
+                            <label>Male</label>
+                            <input type="radio" name="gender" checked="checked" value="Male">
+                            <span class="checkmark"></span>
+                        </label>
+                        <label class="r-container">
+                            <label>Female</label>
+                            <input type="radio" name="gender" value="Female">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0px;">
+                <div class="field-label">
+                    <label>Date Of Birth</label>
+                </div>
+                <div class="col-md-12">
+                    <input type="hidden" id="example">
+                </div>
+            </div>
+
+            <div class="form-group">
+                
+                <div class="field-label">
+                    <label></label>
+                </div>
+                <span data-validate-for="date_day" class="text-danger pt-1 font-size-small"
+                    style="flex: 0 0 27%;"></span>
+                <span data-validate-for="date_month" class="text-danger pt-1 font-size-small"
+                    style="flex: 0 0 27%;"></span>
+                <span data-validate-for="date_year" class="text-danger pt-1 font-size-small"
+                    style="flex: 0 0 27%;"></span>
+            </div>
+
+
+            <div class="pos_descqq">
+                <div class="form-group">
+                    <div class="form-input col-md-9">
+                    </div>
+                    <div class="option-sel col-md-3">
+                        <div class="qa-no-yes">
+                            <span>NO</span> / 
+                            <span>YES</span>
+                        </div>
+                    </div>
+                </div>
+                {% for position in positions %}
+                <input type="hidden" name="total_ques_{{position.id}}" value="{{ position.questionnaires | length }}">                
+                {% set count = 1 %}
+                {% for questions in position.questionnaires %}
+                <div class="form-group j_desc_q s_ques_{{position.id}}" style="display: none;" data-question-index="{{count}}">
+                    <div class="field-label">
+                        <label></label>
+                    </div>
+                    <div class="field-group">
+                        <div class="form-input col-md-9">                            
+                            <label>{{questions.question}}</label>
+                            <input type="hidden" name="qu_{{position.id}}{{count}}" value="{{questions.question}}">
+                        </div>
+                        <div class="option-sel col-md-3">                            
+                            <label class="r-container">
+                                <input type="radio" name="questions_{{position.id}}{{count}}[]"  value="off" class="question-radio">
+                                <span class="checkmark no-off"></span>
+                            </label>
+                            <label class="r-container">
+                                <input type="radio" name="questions_{{position.id}}{{count}}[]" checked="checked" value="on" class="question-radio">
+                                <span class="checkmark yes-on"></span>
+                            </label>
+                        </div>
+                    </div>
+                                        <!-- Subquestions -->
+                    {% for subquestion in position.subquestions %}
+                        {% if subquestion.parent_question == questions.question %}
+                        <div class="form-group subquestion-block s_ques_{{position.id}}" style="display: none;" 
+                             data-parent-question="{{questions.question}}" 
+                             data-condition="{{subquestion.condition}}" 
+                             data-subquestion-id="{{loop.index0}}"> <!-- Use loop.index0 for zero-based indexing -->
+                            <div class="field-label"></div>
+                            <div class="field-group">
+                                <div class="form-input col-md-9">
+                                    <label>{{ subquestion.subquestion_text }} ({{ subquestion.subquestion_type }})</label>
+                                    {% if subquestion.subquestion_type == 'Text' %}
+                                    <textarea  type="text" name="sub_{{position.id}}_{{count}}_{{loop.index0}}" class="form-control subquestion-field"></textarea>
+                                    {% elseif subquestion.subquestion_type == 'Dropdown' %}
+                                    <select name="sub_{{position.id}}_{{count}}_{{loop.index0}}" class="form-control subquestion-field">
+                                        <option value="">Select</option>
+                                        {% set options = subquestion.subquestion_options|split(',') %}
+                                        {% for option in options %}
+                                        <option value="{{ option|trim }}">{{ option|trim }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                </div>
+                {% set count = count + 1 %}
+                {% endfor %}
+                {% endfor %}
+            </div>
+
+           <div class="form-group upload-file">
+    <div class="field-label">
+        <label></label>
+    </div>
+    <div class="field-group">
+        <div class="form-input col-md-4">
+            <input type="file" name="cv" accept=".pdf,.doc,.docx" id="cv-upload">
+            <button class="file-upload">
+                <img src="/themes/SAN/assets/img/upload.svg"> Choose File
+            </button>
+            <span id="cv-filename" class="filename-display"></span> <!-- Added for filename display -->
+        </div>
+        <div class="form-input col-md-8">
+            <label>Upload resume<br> (PDF / Word Format Less than 5MB)</label><br>
+            <span data-validate-for="cv" class="text-danger pt-1 font-size-small"></span>
+        </div>
+    </div>
+</div>
+
+            <div class="form-group contact-wrapper">
+                <div class="field-label">
+                    <label></label>
+                </div>
+                <div class="field-group">
+                    <div class="col-md-12">
+                        <p class="mt-5">
+                            <button data-attach-loading="" type="submit" value="SUBMIT FORM"
+                                class="btn_contact btn contact-submit" id="submit-contact"><i class="icon"><img
+                                        src="/themes/SAN/assets/img/send-arrow.svg"></i> Submit
+                                Form</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<style>
+    .iti__flag-container {
+        width: 75px !important;
+    }
+
+    .form-data {
+        display: none;
+    }
+
+    .date-dropdowns {
+        display: flex;
+    }
+
+    .option-sel-left {
+        text-align: left !important;
+    }
+
+    .option-sel-left .r-container {
+        margin-right: 40px;
+    }
+    .flash-message {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 9999;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.flash-message.show {
+    display: block;
+}
+
+.mfp-bg {
+    background: transparent !important;
+}
+
+.mfp-container {
+    z-index: 99999;
+}
+.subquestion-block {
+        margin-top: 10px;
+}
+
+.filename-display {
+        margin-left: 10px;
+        font-size: 14px;
+        color: #333;
+        display: inline-block;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+</style>
+
+<script src="{{ 'assets/js/jquery.date-dropdowns.js'|theme }}"></script>
+<script>
+$(document).ready(function() {
+    $("#example").dateDropdowns();
+
+    // Populate Day, Month, and Year dropdowns dynamically
+    var days = "";
+    for (var i = 1; i <= 31; i++) {
+        days += '<option value="' + i + '">' + i + '</option>';
+    }
+    $('#date_day').html(days);
+
+    var months = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var monthsOptions = "";
+    for (var i = 1; i <= 12; i++) {
+        monthsOptions += '<option value="' + i + '">' + months[i] + '</option>';
+    }
+    $('#date_month').html(monthsOptions);
+
+    var currentYear = new Date().getFullYear();
+    var yearsOptions = "";
+    for (var i = currentYear - 100; i <= currentYear; i++) {
+        yearsOptions += '<option value="' + i + '">' + i + '</option>';
+    }
+    $('#date_year').html(yearsOptions);
+
+    // Function to update subquestion visibility based on parent question answer
+    function updateSubquestionVisibility($questionGroup) {
+        var positionId = $questionGroup.attr('class').match(/s_ques_(\d+)/)[1];
+        var parentQuestion = $questionGroup.find('input[name^="qu_"]').val();
+        var isYes = $questionGroup.find('input[name^="questions_"][value="on"]').is(':checked');
+
+        // Find all subquestions for this question
+        $('.subquestion-block.s_ques_' + positionId).each(function() {
+            var $subquestion = $(this);
+            var subquestionParent = $subquestion.data('parent-question');
+            var condition = $subquestion.data('condition');
+
+            // Only handle subquestions for the current parent question
+            if (subquestionParent === parentQuestion) {
+                // Show subquestion only if condition is "Yes" and parent answer is "Yes"
+                if (condition === 'Yes' && isYes) {
+                    $subquestion.show();
+                } else {
+                    $subquestion.hide();
+                    $subquestion.find('.subquestion-field').val('');
+                }
+            }
+        });
+    }
+
+    // Initialize subquestion visibility on page load for all questions
+    $('.j_desc_q').each(function() {
+        updateSubquestionVisibility($(this));
+    });
+
+    // Handle Yes/No radio change to show/hide subquestions
+    $('.question-radio').on('change', function() {
+        var $radio = $(this);
+        var $questionGroup = $radio.closest('.j_desc_q');
+        updateSubquestionVisibility($questionGroup);
+    });
+
+    // Show job description and questions based on selected position
+    $('.job_position').change(function() {
+        var selected_position = $(this).val();
+        var value = $(this).find('option:selected').val();
+        $('.pos_desc .j_desc').not("#pos_" + value).hide();
+        $('.pos_descqq .j_desc_q').not(".s_ques_" + value).hide();
+        $('.pos_descqq .subquestion-block').not(".s_ques_" + value).hide();
+        $("#pos_" + value).show();
+        $(".s_ques_" + value).show();
+        if (selected_position != "") {
+            $(".form-data").show();
+        } else {
+            $(".form-data").hide();
+        }
+        // Reinitialize subquestion visibility for the selected position
+        $('.j_desc_q.s_ques_' + value).each(function() {
+            updateSubquestionVisibility($(this));
+        });
+    });
+
+    // Listen for changes in the file input
+    $('#cv-upload').on('change', function() {
+        var fileName = $(this).val().split('\\').pop();  // Get the file name
+        $('#cv-filename').text(fileName);  // Display the file name in the #cv-filename span
+    });
+
+    $('#careesform').on('submit', function(event) {
+        event.preventDefault();
+        var form = $(this);
+        var isValid = true;
+        var selectedPosition = $('select[name="job_position"]').val(); // Store selected position
+
+        // Validate Name
+        if ($('input[name="name"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="name"]').siblings('.text-danger').text('Name is required.');
+        } else {
+            $('input[name="name"]').siblings('.text-danger').text('');
+        }
+
+        // Validate Phone
+        if ($('input[name="phone"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="phone"]').siblings('.text-danger').text('Phone is required.');
+        } else {
+            $('input[name="phone"]').siblings('.text-danger').text('');
+        }
+
+        // Validate Email
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test($('input[name="user_email"]').val().trim())) {
+            isValid = false;
+            $('input[name="user_email"]').siblings('.text-danger').text('Please enter a valid email address.');
+        } else {
+            $('input[name="user_email"]').siblings('.text-danger').text('');
+        }
+
+        // Validate Position
+        if ($('select[name="job_position"]').val() === "") {
+            isValid = false;
+            $('select[name="job_position"]').siblings('.text-danger').text('Please select a job position.');
+        } else {
+            $('select[name="job_position"]').siblings('.text-danger').text('');
+        }
+
+        // Validate Date of Birth
+        if ($('select[name="date_day"]').val() === "") {
+            isValid = false;
+            $('span[data-validate-for="date_day"]').text('Day is required.');
+        } else {
+            $('span[data-validate-for="date_day"]').text('');
+        }
+        if ($('select[name="date_month"]').val() === "") {
+            isValid = false;
+            $('span[data-validate-for="date_month"]').text('Month is required.');
+        } else {
+            $('span[data-validate-for="date_month"]').text('');
+        }
+        if ($('select[name="date_year"]').val() === "") {
+            isValid = false;
+            $('span[data-validate-for="date_year"]').text('Year is required.');
+        } else {
+            $('span[data-validate-for="date_year"]').text('');
+        }
+
+        // Validate CV upload
+        var fileInput = $('input[name="cv"]')[0];
+        var file = fileInput.files[0];
+        var validFormats = ['pdf', 'doc', 'docx'];
+        var maxSize = 5 * 1024 * 1024;
+
+        if (!file) {
+            isValid = false;
+            $('input[name="cv"]').siblings('.text-danger').text('CV is required.');
+        } else if (file.size > maxSize) {
+            isValid = false;
+            $('input[name="cv"]').siblings('.text-danger').text('File size should be less than 5MB.');
+        } else if (!validFormats.includes(file.name.split('.').pop().toLowerCase())) {
+            isValid = false;
+            $('input[name="cv"]').siblings('.text-danger').text('Invalid file format. Please upload a PDF or Word document.');
+        } else {
+            $('input[name="cv"]').siblings('.text-danger').text('');
+        }
+
+        // Validate visible subquestions
+        $('.subquestion-block:visible .subquestion-field').each(function() {
+            if ($(this).val() === '' || $(this).val() === 'Select') {
+                isValid = false;
+                $(this).siblings('.text-danger').remove();
+                $(this).after('<span class="text-danger pt-1 font-size-small">This field is required.</span>');
+            } else {
+                $(this).siblings('.text-danger').remove();
+            }
+        });
+
+        if (isValid) {
+            // Show toaster message
+            function showSuccessMessage() {
+                var toasterMessage = $('<div class="flash-message show">Form submitted successfully!</div>');
+                $('body').append(toasterMessage);
+                setTimeout(function() {
+                    toasterMessage.fadeOut(function() {
+                        $(this).remove();
+                    });
+                }, 5000);
+            }
+            showSuccessMessage();
+
+            // Submit form data
+            var formData = new FormData(this);
+            $.ajax({
+                url: '/submit-career-form',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    document.getElementById('careesform').reset();
+                    $('#cv-filename').text('');
+                    // Restore form state
+                    if (selectedPosition) {
+                        $('select[name="job_position"]').val(selectedPosition);
+                        $('.pos_desc .j_desc').not("#pos_" + selectedPosition).hide();
+                        $('.pos_descqq .j_desc_q').not(".s_ques_" + selectedPosition).hide();
+                        $('.pos_descqq .subquestion-block').not(".s_ques_" + selectedPosition).hide();
+                        $("#pos_" + selectedPosition).show();
+                        $(".s_ques_" + selectedPosition).show();
+                        $(".form-data").show();
+                        // Reinitialize subquestion visibility
+                        $('.j_desc_q.s_ques_' + selectedPosition).each(function() {
+                            updateSubquestionVisibility($(this));
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('An error occurred while submitting the form.');
+                }
+            });
+        }
+    });
+});
+</script>

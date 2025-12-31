@@ -1,0 +1,11 @@
+name: Search
+modelClass: san\San\Models\Search
+form: $/san/san/models/search/fields.yaml
+defaultRedirect: san/san/search
+create:
+    redirect: 'san/san/search/update/:id'
+    redirectClose: san/san/search
+update:
+    redirect: san/san/search
+    redirectClose: san/san/search
+preview: {  }

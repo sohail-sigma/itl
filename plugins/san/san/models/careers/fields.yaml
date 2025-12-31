@@ -1,0 +1,17 @@
+fields:
+    fulll_name:
+        label: Name
+        span: left
+        type: text
+    dob:
+        label: DOB
+        span: auto
+        type: text
+    sales_exp:
+        label: 'Sales Experience'
+        span: auto
+        type: text
+    tmc_exp:
+        label: 'TMC Experience'
+        span: auto
+        type: text

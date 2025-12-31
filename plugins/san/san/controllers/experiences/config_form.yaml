@@ -1,0 +1,10 @@
+name: Experiences
+form: $/san/san/models/experiences/fields.yaml
+modelClass: san\San\Models\Experiences
+defaultRedirect: san/san/experiences
+create:
+    redirect: 'san/san/experiences/update/:id'
+    redirectClose: san/san/experiences
+update:
+    redirect: san/san/experiences
+    redirectClose: san/san/experiences

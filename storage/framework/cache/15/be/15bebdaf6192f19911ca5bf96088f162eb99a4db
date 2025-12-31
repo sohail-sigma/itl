@@ -1,0 +1,86 @@
+1767162278a:1:{s:15:"site/header.htm";a:7:{s:8:"fileName";s:15:"site/header.htm";s:7:"content";s:2176:"[viewBag]
+
+[staticMenu]
+code = "main-menu"
+==
+<link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha512-xtV3HfYNbQXS/1R1jP53KbFcU9WXiSA1RFKzl5hRlJgdOJm4OxHCWYpskm6lN0xp0XtKGpAfVShpbvlFH3MDAA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<header class="header fixed-top">
+    <div class="container">
+
+        <div class="innermenu {{ this.page.id == 'home'?'d-lg-none':'' }} ">
+            <div class="burger-container {{ this.page.id == 'home'?'d-lg-none':'' }}">
+                <div id="burger">
+                    <div class="bar topBar"></div>
+                    <div class="bar btmBar"></div>
+                </div>
+            </div>
+        </div>
+
+        {% if this.page.id == 'home' %}
+        <nav id="menu" class="main-menu d-none d-md-block">
+            {% component 'staticMenu' menu="main" %}
+        </nav>
+        {% endif %}
+        <div id="logo">
+            <a href="{{'home'|page }}">
+                <img src="{{ 'assets/img/logo.jpg'|theme }}" width="100" height="auto" data-retina="true" alt=""
+                    class="logo_normal">
+            </a>
+        </div>
+    </div>
+</header>
+<div class="mheader">
+    <div class="container">
+        {% component 'staticMenu' menu="mobile" %}
+    </div>
+</div>";s:5:"mtime";i:1753860471;s:6:"markup";s:2130:"<link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha512-xtV3HfYNbQXS/1R1jP53KbFcU9WXiSA1RFKzl5hRlJgdOJm4OxHCWYpskm6lN0xp0XtKGpAfVShpbvlFH3MDAA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<header class="header fixed-top">
+    <div class="container">
+
+        <div class="innermenu {{ this.page.id == 'home'?'d-lg-none':'' }} ">
+            <div class="burger-container {{ this.page.id == 'home'?'d-lg-none':'' }}">
+                <div id="burger">
+                    <div class="bar topBar"></div>
+                    <div class="bar btmBar"></div>
+                </div>
+            </div>
+        </div>
+
+        {% if this.page.id == 'home' %}
+        <nav id="menu" class="main-menu d-none d-md-block">
+            {% component 'staticMenu' menu="main" %}
+        </nav>
+        {% endif %}
+        <div id="logo">
+            <a href="{{'home'|page }}">
+                <img src="{{ 'assets/img/logo.jpg'|theme }}" width="100" height="auto" data-retina="true" alt=""
+                    class="logo_normal">
+            </a>
+        </div>
+    </div>
+</header>
+<div class="mheader">
+    <div class="container">
+        {% component 'staticMenu' menu="mobile" %}
+    </div>
+</div>";s:4:"code";N;s:7:"viewBag";a:0:{}s:10:"staticMenu";a:1:{s:4:"code";s:9:"main-menu";}}}

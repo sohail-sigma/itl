@@ -1,0 +1,38 @@
+1767162278a:1:{s:22:"footer-terms-menu.yaml";a:7:{s:8:"fileName";s:22:"footer-terms-menu.yaml";s:7:"content";s:784:"items:
+    -
+        title: Privacy
+        nesting: null
+        type: url
+        url: /privacy-policy
+        code: ''
+        reference: null
+        cmsPage: null
+        replace: null
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+    -
+        title: Security
+        nesting: null
+        type: url
+        url: /Security
+        code: ''
+        reference: null
+        cmsPage: null
+        replace: null
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+    -
+        title: 'Terms of Use'
+        type: url
+        url: /terms-conditions
+        code: ''
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+name: 'footer terms menu'
+";s:5:"mtime";i:1745906457;s:6:"markup";N;s:4:"code";N;s:4:"name";N;s:5:"items";a:0:{}}}

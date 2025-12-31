@@ -1,0 +1,228 @@
+[viewBag]
+
+[staticMenu footertermsmenu]
+code = "footer-terms-menu"
+
+[staticMenu externalmenu]
+code = "footer-external-menu"
+
+[staticMenu footerbottommenu]
+code = "footer-menu"
+==
+<?php
+function onStart()
+{
+    $this['allPosts'] = Winter\Blog\Models\Post::where('published', '1')->take(2)->latest('published_at')->get();
+    $this['contactDetails'] = san\San\Models\Contact::where('id', '2')->first();
+
+}
+
+function onSubmitNewsletterForm()
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = post();
+
+        $rules = [
+            'name_newsletter' => 'required',
+            'email_newsletter' => 'required'
+        ];
+        $errorMessages = [
+            'email_newsletter.required' => 'Please enter your email.',
+            'name_newsletter.required' => 'Please enter your full name.'
+        ];
+
+        $validation = Validator::make($data, $rules, $errorMessages);
+
+        if ($validation->fails()) {
+            throw new ValidationException($validation);
+        } else {
+            $input = Input::all();
+            $careers = new  san\San\Models\Newsletter;
+            $careers->fulll_name = $input['name_newsletter'];
+            $careers->email = $input['email_newsletter'];
+            $careers->save();
+            Flash::success('Submitted successfully!');
+            unset($_POST);
+        }
+    }
+}
+?>
+==
+<!-- FOOTER -->
+<style>
+    .usiful-links ul {
+        display: flex;
+        gap: 41px;
+    }
+</style>
+<footer>
+    <div class="container margin_60_35">
+        <div class="row">
+            <div class="col-md-4 p-r-5">
+                <div class=" d-md-block">
+                    <h5>RECENT UPDATES</h5>
+                    {% for post1 in allPosts %}
+                    <div class="blog-footer-single-item">
+                        <div class="row">
+                            <div class="col-4">
+                                <a href="{{ post.url }}/detail/{{ post1.slug }}">
+                                    <img class="img-fluid footer-blog-img"
+                                        src="{{post1.post_thumnail.getThumb(150,200,{mode:'crop'}) }}">
+                                </a>
+                            </div>
+                            <div class="col-8">
+                                <a href="{{ post.url }}/detail/{{ post1.slug }}">
+                                    <h5 class="footer-blog-heading mb-0">{{post1.title}}</h5>
+                                </a>
+                                <p class="footer-blog-desc">{{post1.content_html|striptags[:100]}}...</p>
+                                {% set dateTime = date(post1.published_at) %}
+                                <span class="footer-blog-date"> {{ dateTime | date('d/m/y') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4 ml-lg-auto d-md-block">
+                <!-- <div id="newsletter">
+                    <h6>SUBSCRIBE TO HEAR FROM US</h6>
+                    <div id="message-newsletter"></div>
+                    {% partial 'site/newsletterform.htm' %}
+                </div> -->
+            </div>
+            <div class="col-md-4 text-center text-md-left">
+                <h5>Useful links</h5>
+                <div class="footer-menu">
+                    {% component 'externalmenu' %}
+                </div>
+                <div class="follow_us text-center text-md-left">
+              
+                  <!--   <ul>
+                      {% if contactDetails.record.content_1 %}<li><a href="{{contactDetails.record.content_1}}" target="_blank"><i class="fa fa-facebook"></i></a></li>{% endif %}
+                      {% if contactDetails.record.content_2 %}<li><a href="{{contactDetails.record.content_2}}" target="_blank"><i class="fa fa-twitter"></i></a></li>{% endif %}
+                      {% if contactDetails.record.content_3 %}<li><a href="{{contactDetails.record.content_3}}" target="_blank"><i class="fa fa-instagram"></i></a></li>{% endif %}
+                      {% if contactDetails.record.content_4 %}<li><a href="{{contactDetails.record.content_4}}" target="_blank"><i class="fa fa-linkedin"></i></a></li>{% endif %}
+                      {% if contactDetails.record.content_5 %}<li><a href="{{contactDetails.record.content_5}}" target="_blank"><i class="fa fa-snapchat"></i></a></li>{% endif %}
+                      {% if contactDetails.record.content_6 %}<li><a href="{{contactDetails.record.content_6}}" target="_blank"><i class="fa fa-youtube-play"></i></a></li>{% endif %}
+                      {% if contactDetails.record.content_7 %}<li><a href="{{contactDetails.record.content_7}}" target="_blank" class="f-icons"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 18px;">
+                                  <path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
+                              </svg></a></li>{% endif %}
+                      {% if contactDetails.record.content_8 %}<li><a href="{{contactDetails.record.content_8}}" target="_blank"><i class="fa fa-pinterest"></i></a></li>{% endif %}
+                      {% if contactDetails.record.content_9 %}<li><a href="{{contactDetails.record.content_9}}" target="_blank"><i class="fa fa-reddit"></i></a></li>{% endif %}
+                  </ul> -->
+                  <ul>
+                         {% if contactDetails.content_1 %}<li><a href="{{contactDetails.content_1}}" target="_blank"><i class="fa fa-facebook"></i></a></li>{% endif %}
+                         <!-- {% if contactDetails.content_2 %}<li><a href="{{contactDetails.content_2}}" target="_blank"><i class="fa fa-twitter"></i></a></li>{% endif %} -->
+                         {% if contactDetails.content_2 %}
+                            <li>
+                                <a href="{{contactDetails.content_2}}" target="_blank" class="f-icons">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 18px;">
+                                        <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.1L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/>
+                                    </svg>
+                                </a>
+                            </li>
+                            {% endif %}
+                         {% if contactDetails.content_3 %}<li><a href="{{contactDetails.content_3}}" target="_blank"><i class="fa fa-instagram"></i></a></li>{% endif %}
+                         {% if contactDetails.content_4 %}<li><a href="{{contactDetails.content_4}}" target="_blank"><i class="fa fa-linkedin"></i></a></li>{% endif %}
+                         {% if contactDetails.content_5 %}<li><a href="{{contactDetails.content_5}}" target="_blank"><i class="fa fa-snapchat"></i></a></li>{% endif %}
+                         {% if contactDetails.content_6 %}<li><a href="{{contactDetails.content_6}}" target="_blank"><i class="fa fa-youtube-play"></i></a></li>{% endif %}
+                         {% if contactDetails.content_7 %}<li><a href="{{contactDetails.content_7}}" target="_blank" class="f-icons"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 18px;">
+                                     <path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z" />
+                                 </svg></a></li>{% endif %}
+                         {% if contactDetails.record.content_8 %}<li><a href="{{contactDetails.record.content_8}}" target="_blank"><i class="fa fa-pinterest"></i></a></li>{% endif %}
+                         {% if contactDetails.record.content_9 %}<li><a href="{{contactDetails.record.content_9}}" target="_blank"><i class="fa fa-reddit"></i></a></li>{% endif %}
+                     </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container">
+            <!--/row-->
+            <div class="row">
+                <div class="col-lg-4">
+                    <P class="m-0 text-left">Copyright {{ "now" | date("Y") }}. All Rights Reserved</P>
+                    <div class="usiful-links">
+                        {% component 'footertermsmenu' %}
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="footer-bottom-menu text-right">
+                        {% component 'footerbottommenu' %}
+                    </div>
+                    <!-- <ul id="additional_links">
+                        <li class="right"><a href="{{ 'home'|page }}">HOME</a></li>
+                        <li class="right"><a href="{{ 'about'|page }}">ABOUT US</a></li>
+                        <li class="right"><a href="{{ 'contact'|page }}">CONTACT US</a></li>
+                    </ul> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <span class="upbtn"><i class="fa fa-arrow-up" aria-hidden="true"></i></span>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha512-KbRFbjA5bwNan6DvPl1ODUolvTTZ/vckssnFhka5cG80JVa5zSlRPCr055xSgU/q6oMIGhZWLhcbgIC0fyw3RQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    lightbox.option({
+      'resizeDuration': 200,
+      'wrapAround': true
+    })
+</script>
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        var date = new Date().toISOString().slice(0, 10);
+        $('input[type="date"]').attr('min', date);
+
+
+        $('.menu .has-child a').click(function() {
+            $('#burger').trigger('click');
+        });
+        setTimeout(
+            function() {
+                var totalItems = jQuery('.carousel-item').length;
+                if (totalItems > 1) {
+                    jQuery('#carouselExampleIndicators').addClass('show_arrows');
+                }
+            }, 1000);
+
+    });
+
+      $(document).ready(function () {
+        if ($(".only_desktop #carouselExampleIndicators .carousel-item").length === 1) {
+            $(".only_desktop #carouselExampleIndicators .carousel-control-prev, #carouselExampleIndicators .carousel-control-next").hide();
+        }
+        if ($(".only_mob #carouselExampleIndicators .carousel-item").length === 1) {
+            $(".only_mob #carouselExampleIndicators .carousel-control-prev, #carouselExampleIndicators .carousel-control-next").hide();
+        }
+    });
+
+   // button script
+   	        
+    $(document).ready(function () {
+   	  const items = [
+   	    { text: "Book Flights", iconClass: "icon-flight" },
+   	    { text: "Book Hotels", iconClass: "icon-hotel" },
+   	    { text: "Book Packages", iconClass: "icon-package" }
+   	  ];
+   	  
+   	  let index = 0;
+   	
+   	  // Inject span wrapper inside the anchor if not already done
+   	  const $btn = $('.booking-btn-menu a');
+   	  if ($btn.find('.icon-text-wrapper').length === 0) {
+   	    $btn.html('<span class="icon-text-wrapper"><i class="icon-flight"></i><span class="text">Book Flights</span></span>');
+   	  }
+   	
+   	  setInterval(function () {
+   	    const item = items[index];
+   	    $btn.find("i").attr("class", item.iconClass);
+   	    $btn.find(".text").text(item.text);
+   	    index = (index + 1) % items.length;
+   	  }, 3000);
+   	});
+  
+  
+</script>

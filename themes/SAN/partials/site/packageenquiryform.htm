@@ -1,0 +1,356 @@
+[viewBag]
+
+[builderList packageList]
+modelClass = "san\San\Models\Packages"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+
+[builderList experienceList]
+modelClass = "san\San\Models\Destinations"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+==
+<?php
+function onEnd()
+    {
+        $currentPackage = san\San\Models\Packages::find($this->builderDetails->record->id);
+        foreach($currentPackage->destinations as $adestinations){
+            $this['expslugs'] = $adestinations->title;
+        }
+    }
+?>
+==
+{% framework extras %}
+
+{% set packages = packageList.records %}
+{% set experiences = experienceList.records %}
+<div id="sign-in-dialog" class="zoom-anim-dialog">
+    <div class="small-dialog-header">
+        <h3><img src="{{'assets/images/mail.svg'|theme }}" class="img-fluid mail" alt="">Get In Touch</h3>
+    </div>
+    <div class="modalbody">
+        <div class="modelbanner">
+            <img id="p-image" src="{{builderDetails.record.banner.path}}" alt="">
+            <h5 id="p-title">{{builderDetails.record.title}}</h5>
+        </div>
+        {% flash %}
+        <div data-control="flash-message" class="flash-message fade {{ type }}" data-interval="5">
+            {{ message }}
+        </div>
+        {% endflash %}
+
+        <form data-request="onSubmitEnquiryForm" data-request-validate data-request-flash class="form-str"
+              data-request-files="true" id="enquiryForm">
+            <input type="hidden" name="form" value="popup" />            
+            <div class="row form-group">
+                <div class="col">
+                    <label>Your enquiry is about</label>
+                    <input type="text" name="pacage" class="form-control" 
+                           value="{{record.title}} ({% if record.cities %}{% set ccount = 1 %}{% for scity in record.cities %}{{scity.city}}{% if ccount < record.cities|length %} |{% endif %}{% set ccount=ccount + 1 %}{% endfor %} {%endif %})" readonly>
+                    <span data-validate-for="pacage" class="text-danger pt-1 font-size-small"></span>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col">
+                    <label>Experience</label>
+                    <input type="text" name="experiences" class="form-control" value="{{expslugs}}" readonly>
+                    <span data-validate-for="experiences" class="text-danger pt-1 font-size-small"></span>
+                </div>
+            </div>
+
+            <div class="sign-in-wrapper">
+                <div class="row form-group">
+                    <div class="col">
+                        <label>First name*</label>
+                        <input type="text" name="first_name" class="form-control" placeholder="eg. Jhon" required>
+                        <span data-validate-for="first_name" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                    <div class="col">
+                        <label>Last name*</label>
+                        <input type="text" name="last_name" class="form-control" placeholder="eg. David" required>
+                        <span data-validate-for="last_name" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Email*</label>
+                        <input type="email" class="form-control" name="email" placeholder="eg. jhondavid@company.com" required>
+                        <span data-validate-for="email" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Mobile Number*</label>
+                        <input type="number" class="form-control phone" name="phone" placeholder="eg. 55333666" 
+                               onKeyDown="if(this.value.length==13 && event.keyCode!=8) return false;" required>
+                        <span data-validate-for="phone" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Country</label>
+                        <select id="address-country" class="form-control" name="country" placeholder="eg. UAE" >
+                            <!-- Populate dynamically via JavaScript or server-side -->
+                        </select>
+                        <span data-validate-for="country" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Nationality</label>
+                        <select class="form-control nationality" name="nationality" placeholder="eg. UAE" >
+                            <!-- Populate dynamically via JavaScript or server-side -->
+                        </select>
+                        <span data-validate-for="nationality" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>City*</label>
+                        <input type="text" class="form-control" name="city" placeholder="City" required>
+                        <span data-validate-for="city" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Number of Adults*</label>
+                        <div class="popup-select">
+                            <select class="custom-select" name="no_adults" required>
+                                <option value="">Select</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="9+">9+</option>
+                            </select>
+                        </div>
+                        <span data-validate-for="no_adults" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                    <div class="col">
+                        <label>Number of Children</label>
+                        <div class="popup-select">
+                            <select class="custom-select" name="no_children">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="9+">9+</option>
+                            </select>
+                        </div>
+                        <span data-validate-for="no_children" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Departure From*</label>
+                        <input type="text" class="form-control" name="departure_from" placeholder="eg. Dubai" required>
+                        <span data-validate-for="departure_from" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Departure Date?*</label>
+                        <input type="date" class="form-control" name="when_start" min="{{ 'now'|date('Y-m-d') }}" required>
+                        <span data-validate-for="when_start" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                    <div class="col">
+                        <label>Number of Days?*</label>
+                        <input type="number" class="form-control" name="how_long" min="1" placeholder="eg. Select Duration" required>
+                        <span data-validate-for="how_long" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label>Remarks/Comments</label>
+                        <textarea class="form-control" name="remarks_comments" row="6"></textarea>
+                        <span data-validate-for="remarks_comments" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="clearfix add_bottom_15">
+                    <div class="checkboxes float-left">
+                        <label class="container_check">Subscribe for our latest updates
+                            <input type="checkbox" name="newsletter">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+                <p>By Continuing with this, You have read and agreed to the terms of
+                    ITL World <a href="https://itlworld.com/privacy-policy" target="_blank">Privacy Policy.</a></p>
+                <div class="text-center">
+                    <button data-attach-loading type="submit" class="btn_1 full-width">
+                        <img src="/themes/SAN/assets/img/send-arrow.svg"> Submit
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Form validation before submitting
+    $('#enquiryForm').on('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        let isValid = true;
+
+        // Clear previous error messages
+        $('.text-danger').text('');
+
+        // Validate required fields
+        if ($('input[name="first_name"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="first_name"]').siblings('.text-danger').text('First name is required.');
+        }
+
+        if ($('input[name="last_name"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="last_name"]').siblings('.text-danger').text('Last name is required.');
+        }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test($('input[name="email"]').val().trim())) {
+            isValid = false;
+            $('input[name="email"]').siblings('.text-danger').text('Please enter a valid email address.');
+        }
+
+        if ($('input[name="phone"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="phone"]').siblings('.text-danger').text('Phone number is required.');
+        }
+
+       
+
+        if ($('input[name="city"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="city"]').siblings('.text-danger').text('City is required.');
+        }
+
+        if ($('select[name="no_adults"]').val() === '' || $('select[name="no_adults"]').val() === null) {
+            isValid = false;
+            $('select[name="no_adults"]').siblings('.text-danger').text('Number of adults is required.');
+        }
+
+        if ($('input[name="departure_from"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="departure_from"]').siblings('.text-danger').text('Departure from is required.');
+        }
+
+        if ($('input[name="when_start"]').val().trim() === '') {
+            isValid = false;
+            $('input[name="when_start"]').siblings('.text-danger').text('Departure date is required.');
+        } else {
+            const departureDate = new Date($('input[name="when_start"]').val());
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Set today's date to midnight
+            if (departureDate < today) {
+                isValid = false;
+                $('input[name="when_start"]').siblings('.text-danger').text('Please select today or a future date.');
+                $('input[name="when_start"]').val(''); // Reset the input field
+            }
+        }
+
+        if ($('input[name="how_long"]').val().trim() === '' || $('input[name="how_long"]').val() < 1) {
+            isValid = false;
+            $('input[name="how_long"]').siblings('.text-danger').text('Number of days is required and must be at least 1.');
+        }
+
+        // If all validations pass, submit the form using AJAX
+        if (isValid) {
+            const formData = new FormData(this); // Get the form data
+
+            $.ajax({
+                url: '/submit-enquiry-form', // Form submission endpoint
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                beforeSend: function() {
+                    $('button[type="submit"]').prop('disabled', true).addClass('loading');
+                },
+                success: function(response) {
+                    // Display success message
+                    const toasterMessage = $('<div class="flash-message show">Form submitted successfully!</div>');
+                    $('body').append(toasterMessage);
+
+                    // Hide toaster after 5 seconds
+                    setTimeout(function() {
+                        toasterMessage.fadeOut(function() {
+                            $(this).remove();
+                        });
+                    }, 5000);
+
+                    // Reset the form and close the popup
+                    document.getElementById('enquiryForm').reset();
+                    $.magnificPopup.close();
+
+                    // Open success popup
+                    $.magnificPopup.open({
+                        items: { src: '#after-submit-popup' },
+                        type: 'inline',
+                        showCloseBtn: true,
+                        callbacks: {
+                            open: function() {
+                                $('#sign-in-dialog').append($('.mfp-close'));
+                            }
+                        },
+                        midClick: true
+                    });
+                },
+                error: function(xhr) {
+                    // Handle server-side errors
+                    const errors = xhr.responseJSON?.errors || {};
+                    Object.keys(errors).forEach(field => {
+                        $(`[data-validate-for="${field}"]`).text(errors[field][0]);
+                    });
+                    if (!Object.keys(errors).length) {
+                        alert('An error occurred while submitting the form.');
+                    }
+                },
+                complete: function() {
+                    $('button[type="submit"]').prop('disabled', false).removeClass('loading');
+                }
+            });
+        }
+    });
+});
+</script>
+
+<style>
+/ Optional: Style for loading state /
+.btn_1.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.flash-message.show {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 1000;
+}
+</style>

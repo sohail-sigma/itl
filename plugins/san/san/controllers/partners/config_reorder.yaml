@@ -1,0 +1,5 @@
+title: Partners
+modelClass: san\San\Models\Partners
+nameFrom: title
+toolbar:
+    buttons: reorder_toolbar

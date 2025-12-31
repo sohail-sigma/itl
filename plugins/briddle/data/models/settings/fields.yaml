@@ -1,0 +1,4 @@
+fields:
+    suffix:
+        span: left
+        label: briddle.data::lang.settings.suffix

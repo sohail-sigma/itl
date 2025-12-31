@@ -1,0 +1,203 @@
+1.0.1:
+    - 'Initialize plugin.'
+1.0.2:
+    - 'Drop table san_san_slider'
+    - builder_table_delete_san_san_slider.php
+1.0.3:
+    - 'Created table san_san_slider'
+    - builder_table_create_san_san_slider.php
+1.0.4:
+    - 'Updated table san_san_slider'
+    - builder_table_update_san_san_slider.php
+1.0.5:
+    - 'Updated table san_san_destinations'
+    - builder_table_update_san_san_destinations.php
+1.0.6:
+    - 'Updated table san_san_destinations'
+    - builder_table_update_san_san_destinations_2.php
+1.0.7:
+    - 'Updated table san_san_destinations'
+    - builder_table_update_san_san_destinations_3.php
+1.0.8:
+    - 'Updated table san_san_services'
+    - builder_table_update_san_san_services.php
+1.0.9:
+    - 'Updated table san_san_services'
+    - builder_table_update_san_san_services_2.php
+1.0.10:
+    - 'Updated table san_san_services'
+    - builder_table_update_san_san_services_3.php
+1.0.11:
+    - 'Updated table san_san_services'
+    - builder_table_update_san_san_services_4.php
+1.0.12:
+    - 'Updated table san_san_services'
+    - builder_table_update_san_san_services_5.php
+1.0.13:
+    - 'Created table san_san_career_positions'
+    - builder_table_create_san_san_career_positions.php
+1.0.14:
+    - 'Created table san_san_travel_management'
+    - builder_table_create_san_san_travel_management.php
+1.0.15:
+    - 'Updated table san_san_travel_management'
+    - builder_table_update_san_san_travel_management.php
+1.0.16:
+    - 'Updated table san_san_enquiry'
+    - builder_table_update_san_san_enquiry.php
+1.0.17:
+    - 'Updated table san_san_enquiry'
+    - builder_table_update_san_san_about_enquiry.php
+1.0.18:
+    - 'Created table san_san_package_enquiry'
+    - builder_table_create_san_san_package_enquiry.php
+1.0.19:
+    - 'Created table san_san_travel_enquiry'
+    - builder_table_create_san_san_travel_enquiry.php
+1.0.20:
+    - 'Updated table san_san_enquiry'
+    - builder_table_update_san_san_enquiry_2.php
+1.0.21:
+    - 'Updated table san_san_services'
+    - builder_table_update_san_san_services_6.php
+1.0.22:
+    - 'Updated table san_san_services'
+    - builder_table_update_san_san_services_7.php
+1.0.23:
+    - 'Updated table san_san_destinations'
+    - builder_table_update_san_san_destinations_4.php
+1.0.24:
+    - 'Updated table san_san_destinations'
+    - builder_table_update_san_san_destinations_5.php
+1.0.25:
+    - 'Updated table san_san_packages'
+    - builder_table_update_san_san_packages.php
+1.0.26:
+    - 'Updated table san_san_packages'
+    - builder_table_update_san_san_packages_2.php
+1.0.27:
+    - 'Updated table san_san_page'
+    - builder_table_update_san_san_page.php
+1.0.28:
+    - 'Created table san_san_services_enquiry'
+    - builder_table_create_san_san_services_enquiry.php
+1.0.29:
+    - 'Updated table san_san_page'
+    - builder_table_update_san_san_page_2.php
+1.0.30:
+    - 'Created table san_san_destination_cities'
+    - builder_table_create_san_san_destination_cities.php
+1.0.31:
+    - 'Updated table san_san_destination_cities'
+    - builder_table_update_san_san_destination_cities.php
+1.0.32:
+    - 'Created table san_san_airports'
+    - builder_table_create_san_san_airports.php
+1.0.33:
+    - 'Created table san_san_preffered_airline'
+    - builder_table_create_san_san_preffered_airline.php
+1.0.34:
+    - 'Updated table san_san_about_enquiry'
+    - builder_table_update_san_san_about_enquiry_2.php
+1.0.35:
+    - 'Updated table san_san_page'
+    - builder_table_update_san_san_page_3.php
+1.0.36:
+    - 'Updated table san_san_package_enquiry'
+    - builder_table_update_san_san_package_enquiry.php
+1.0.37:
+    - 'Created table san_san_nationality'
+    - builder_table_create_san_san_nationality.php
+1.0.38:
+    - 'Created table san_san_test_form'
+    - builder_table_create_san_san_test_form.php
+1.0.39:
+    - 'Updated table san_san_test_form'
+    - builder_table_update_san_san_test_form.php
+1.0.40:
+    - 'Drop table san_san_test_form'
+    - builder_table_delete_san_san_test_form.php
+1.0.41:
+    - 'Created table san_san_test_form'
+    - builder_table_create_san_san_test_form_2.php
+1.0.42:
+    - 'Drop table san_san_test_form'
+    - builder_table_delete_san_san_test_form_2.php
+1.0.43:
+    - 'Created table san_san_test_from'
+    - builder_table_create_san_san_test_from.php
+1.0.44:
+    - 'Created table san_san_default_layout'
+    - builder_table_create_san_san_default_layout.php
+1.0.45:
+    - 'Created table san_san_test270224'
+    - builder_table_create_san_san_test270224.php
+1.0.46:
+    - 'Created table san_san_contact_form'
+    - builder_table_create_san_san_contact_form.php
+1.0.47:
+    - 'Created table san_san_campaign1'
+    - builder_table_create_san_san_campaign1.php
+1.0.48:
+    - 'Updated table san_san_campaign1'
+    - builder_table_update_san_san_campaign1.php
+1.0.49:
+    - 'Updated table san_san_campaign1'
+    - builder_table_update_san_san_campaign1_2.php
+1.0.50:
+    - 'Updated table san_san_campaign1'
+    - builder_table_update_san_san_campaign1_3.php
+1.0.51:
+    - 'Updated table san_san_campaign1'
+    - builder_table_update_san_san_campaign1_4.php
+1.0.52:
+    - 'Created table san_san_campaign_test'
+    - builder_table_create_san_san_campaign_test.php
+1.0.53:
+    - 'Updated table san_san_campaign_test'
+    - builder_table_update_san_san_campaign_test.php
+1.0.54:
+    - 'Created table san_san_swisssummercampaign'
+    - builder_table_create_san_san_swisssummercampaign.php
+1.0.55:
+    - 'Updated table san_san_swisssummercampaign'
+    - builder_table_update_san_san_swisssummercampaign.php
+1.0.56:
+    - 'Updated table san_san_test270224'
+    - builder_table_update_san_san_test270224.php
+1.0.57:
+    - 'Updated table san_san_destinations'
+    - builder_table_update_san_san_destinations_6.php
+1.0.58:
+    - 'Updated table san_san_destinations'
+    - builder_table_update_san_san_destinations_7.php
+1.0.59:
+    - 'Created table san_san_blog_share_links'
+    - builder_table_create_san_san_blog_share_links.php
+1.0.60:
+    - 'Updated table san_san_offices'
+    - builder_table_update_san_san_offices.php
+1.0.61:
+    - 'Updated table san_san_blog_share_links'
+    - builder_table_update_san_san_blog_share_links.php
+1.0.62:
+    - 'Updated table san_san_enquiry'
+    - builder_table_update_san_san_enquiry_3.php
+1.0.63:
+    - 'Updated table san_san_enquiry'
+    - builder_table_update_san_san_enquiry_4.php
+1.0.64:
+    - 'Created table san_san_mohoman_form'
+    - builder_table_create_san_san_mohoman_form.php
+1.0.65:
+    - 'Created table san_san_aramco'
+    - builder_table_create_san_san_aramco.php
+1.0.66:
+    - 'Updated table san_san_campaign1'
+    - builder_table_update_san_san_campaign1_5.php
+1.0.67:
+    - 'Updated table san_san_services'
+    - builder_table_update_san_san_services_8.php
+1.0.68:
+    - 'Updated table san_san_packages'
+    - builder_table_update_san_san_packages_3.php

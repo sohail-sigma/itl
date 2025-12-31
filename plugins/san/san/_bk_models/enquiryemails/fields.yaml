@@ -1,0 +1,25 @@
+fields:
+    content_1:
+        label: 'About Us Enquiry Email'
+        span: full
+        type: text
+    content_2:
+        label: 'Packages Enquiry Email'
+        span: full
+        type: text
+    content_3:
+        label: 'Travel Management Enquiry Email'
+        span: full
+        type: text
+    content_4:
+        label: 'Services Enquiry Email'
+        span: full
+        type: text
+    content_5:
+        label: 'Contact Us Enquiry Email'
+        span: full
+        type: text
+    content_6:
+        label: 'Careers Enquiry Email'
+        span: full
+        type: text

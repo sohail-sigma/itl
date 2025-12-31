@@ -1,0 +1,28 @@
+columns:
+    first_name:
+        label: 'First Name'
+        type: text
+    last_name:
+        label: 'Last Name'
+        type: text
+    email:
+        label: email
+        type: text
+    c_name:
+        label: 'Company Name'
+        type: text
+    designation:
+        label: designation
+        type: text
+    phone:
+        label: phone
+        type: text
+    country:
+        label: country
+        type: text
+    contact_type:
+        label: 'Contact Type'
+        type: text
+    message:
+        label: message
+        type: text

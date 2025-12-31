@@ -1,0 +1,11 @@
+name: EnquiryEmails
+modelClass: san\San\Models\EnquiryEmails
+form: $/san/san/models/enquiryemails/fields.yaml
+defaultRedirect: san/san/enquiryemails
+create:
+    redirect: 'san/san/enquiryemails/update/:id'
+    redirectClose: san/san/enquiryemails
+update:
+    redirect: san/san/enquiryemails
+    redirectClose: san/san/enquiryemails
+preview: {  }

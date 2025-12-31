@@ -1,0 +1,4 @@
+title: BlogsharelLinks
+modelClass: san\San\Models\BlogshareLinks
+toolbar:
+    buttons: reorder_toolbar

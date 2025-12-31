@@ -1,0 +1,205 @@
+[viewBag]
+
+[apiFunction]
+==
+{% framework extras %}
+
+<style type="text/css">
+    .radio-button {
+        float: left;
+        margin: 0 5px 0 0;
+        width: 48%;
+        height: 55px;
+        position: relative;
+        line-height: 46px;
+        text-align: center;
+        background: #EFEFEF;
+        box-shadow: none;
+        border: 0;
+        border-radius: 7px;
+        overflow: hidden;
+    }
+
+    .radio-button label,
+    .radio-button input {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .radio-button input[type="radio"] {
+        opacity: 0.01;
+        z-index: 100;
+    }
+
+    .radio-button input[type="radio"]:checked+label,
+    .Checked+label {
+        background: rgb(16, 40, 56);
+        background: linear-gradient(180deg, rgba(16, 40, 56, 1) 0%, rgba(2, 73, 121, 1) 100%);
+        color: #fff;
+    }
+
+    .radio-button label {
+        padding: 5px;
+        cursor: pointer;
+        z-index: 90;
+    }
+
+    .radio-button label:hover {
+        background: #DDD;
+    }
+</style>
+
+<div id="sign-in-dialog" class="zoom-anim-dialog">
+    <div class="modalbody">
+        <div class="small-dialog-header">
+            <h3><img src="{{'assets/images/mail.svg'|theme }}" class="img-fluid mail" alt="">Get In Touch...</h3>
+        </div>
+        {{ message }}
+        {% flash %}
+        <div data-control="flash-message" class="flash-message fade {{ type }}" data-interval="5">
+        </div>
+        {% endflash %}
+        <form data-request="onSubmitTransportForm" data-request-validate data-request-flash class="form-str"
+            data-request-files="true" data-request-success="document.getElementById('aboutform').reset(); $.magnificPopup.close(); $.magnificPopup.open({
+                items: {     src: '#after-submit-popup'  },
+                type: 'inline',
+                showCloseBtn: true,
+                callbacks: {
+                    open: function () {
+                        $('#sign-in-dialog').append($('.mfp-close'))
+                    },
+                },
+                midClick: true
+            });" id="aboutform">
+            <!-- $.magnificPopup.open({ items: {     src: '#after-submit-popup'  }, type: 'inline'   }); -->
+            <input type="hidden" name="form" value="popup" />
+            <div class="row form-group">
+                <div class="col">
+                    <label>Select area of interest *</label>
+                    <div class="popup-select">
+                        <select class="custom-select" name="area_of_interest" id="area_of_interest">
+                            <option value="">Select</option>
+                            <option value="Visa support">Visa Support</option>
+                            <option value="Flight booking">Flight Booking</option>
+                            <option value="Hotel reservation">Hotel Reservation</option>
+                            <option value="Meet & assist">Meet & Greet</option>
+                            <option value="Ground transportation">Ground Transportation</option>
+                            <option value="Sightseeing tours">Sightseeing Tours</option>
+                            <option value="Cruise experience">Luxury Cruise</option>
+                            <option value="Travel insurance">Travel Insurance</option>
+                            <option value="Medical assistance">Medical Assistance</option>
+                            <option value="Elite travel">Elite Travel</option>
+                            <option value="Chartered flights">Chartered Flight</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="sign-in-wrapper">
+                <div class="row form-group">
+                    <div class="col">
+                        <label class="checkboxes-label">First name*</label>
+                        <input type="text" name="first_name" class="form-control" placeholder="eg. Jhon" value="">
+                        <span data-validate-for="first_name" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                    <div class="col">
+                        <label class="checkboxes-label">Last name*</label>
+                        <input type="text" name="last_name" class="form-control" placeholder="eg. David" value="">
+                        <span data-validate-for="last_name" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label class="checkboxes-label">Business Email*</label>
+                        <input type="email" class="form-control" name="email" id="email"
+                            placeholder="eg. jhondavid@company.com" value="">
+                        <span data-validate-for="email" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label class="checkboxes-label">Company name*</label>
+                        <input type="text" class="form-control" name="c_name" id="c_name"
+                            placeholder="eg. Company name">
+                        <span data-validate-for="c_name" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label class="checkboxes-label">Designation*</label>
+                        <input type="text" class="form-control" name="designation" id="designation"
+                            placeholder="eg. Procurement Manager" value="">
+                        <span data-validate-for="designation" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label class="checkboxes-label">Country*</label>
+                        <select id="" class="form-control address-country" name="country"></select>
+                        <span data-validate-for="country" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group onlyforcity">
+                    <div class="col">
+                        <label class="checkboxes-label">City*</label>
+                        <input type="text" class="form-control" name="city" id="city"
+                            placeholder="City" value="">
+                        <span data-validate-for="city" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group onlyforgp">
+                    <div class="col">
+                        <label class="checkboxes-label">From City*</label>
+                        <input type="text" class="form-control" name="fromcity" id="from-city"
+                            placeholder="From City" value="">
+                        <span data-validate-for="fromcity" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                    <div class="col">
+                        <label class="checkboxes-label">To City*</label>
+                        <input type="text" class="form-control" name="tocity" id="to-city"
+                            placeholder="To City" value="">
+                        <span data-validate-for="tocity" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group onlyforgp">
+                    <div class="col">
+                        <label class="checkboxes-label">Date*</label>
+                        <input type="date" class="form-control" name="date" id="date"
+                            placeholder="Date" value="">
+                        <span data-validate-for="date" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                    <div class="col">
+                        <label class="checkboxes-label">Time*</label>
+                        <input type="time" class="form-control" name="time" id="time"
+                            placeholder="Time" value="">
+                        <span data-validate-for="time" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <label class="checkboxes-label">Mobile Number*</label>
+                        <input type="number" class="form-control phone" name="phone" id="" placeholder="eg. 55333666" value="" onKeyDown="if(this.value.length==13 && event.keyCode!=8) return false;">
+                        <span data-validate-for="phone" class="text-danger pt-1 font-size-small"></span>
+                    </div>
+                </div>
+                <div class="clearfix add_bottom_15">
+                    <div class="checkboxes float-left">
+                        <label class="container_check checkboxes-label">Subscribe for our latest updates
+                            <input type="checkbox" name="newsletter" value="yes">
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+                <p>By submitting your information, you’re agreeing that ITL World can use this information to tell you
+                    more about ITL World and selected third party products and services by email, telephone and SMS. We
+                    process all information we receive in accordance with our <a href="https://itlworld.com/privacy-policy" target="_blank">Privacy Policy</a>.</p>
+                <div class="text-center">
+                    <button data-attach-loading type="submit" class="btn_1 full-width"><img src="/themes/SAN/assets/img/send-arrow.svg"> Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,12 @@
+columns:
+    title:
+        label: Title
+        type: partial
+        searchable: true
+        sortable: true
+        path: ~/plugins/san/san/models/themes/_banner_column.html
+    status:
+        label: Published
+        type: switch
+        searchable: true
+        sortable: true

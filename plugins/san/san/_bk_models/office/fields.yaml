@@ -1,0 +1,43 @@
+fields:
+    location:
+        label: Location
+        span: auto
+        type: text
+    country:
+        label: Country
+        showSearch: true
+        span: auto
+        type: dropdown
+    address:
+        label: Address
+        size: ''
+        span: full
+        type: richeditor
+tabs:
+    fields:
+        email:
+            label: List
+            prompt: 'Add new item'
+            style: default
+            span: auto
+            type: repeater
+            tab: Email
+            form:
+                fields:
+                    item:
+                        label: Item
+                        span: full
+                        type: text
+        phone:
+            label: List
+            prompt: 'Add new item'
+            style: default
+            span: auto
+            type: repeater
+            tab: Phone
+            form:
+                fields:
+                    item:
+                        label: Item
+                        span: full
+                        type: text

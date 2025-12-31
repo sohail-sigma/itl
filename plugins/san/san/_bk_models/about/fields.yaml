@@ -1,0 +1,250 @@
+fields:
+    title:
+        label: Title
+        span: auto
+        type: text
+tabs:
+    fields:
+        is_desc:
+            label: 'Show Description'
+            span: auto
+            type: switch
+            tab: Content
+        content_1:
+            label: Description
+            size: large
+            span: full
+            trigger:
+                action: show
+                field: is_desc
+                condition: ''
+            type: richeditor
+            tab: Content
+        is_vision_mission:
+            label: 'Show Vision Mission'
+            span: full
+            type: switch
+            tab: Content
+        content_6:
+            label: Vision/Mission
+            size: large
+            span: full
+            hidden: 0
+            type: richeditor
+            tab: Content
+        is_chairman_msg:
+            label: 'Show Chairman Message'
+            span: full
+            type: switch
+            tab: Content
+        content_2:
+            label: 'Chairman''s Message'
+            size: large
+            span: full
+            type: richeditor
+            tab: Content
+        is_awards_details:
+            label: 'Show Awards Details'
+            span: left
+            type: switch
+            tab: Content
+        content_3:
+            label: 'Awards Details'
+            size: large
+            span: full
+            type: richeditor
+            tab: Content
+        is_sffiliate_description:
+            label: 'Show Affiliate Description'
+            span: left
+            type: switch
+            tab: Content
+        content_4:
+            label: 'Affiliate Description'
+            size: large
+            span: full
+            type: richeditor
+            tab: Content
+        is_our_values:
+            label: 'Show Our Values'
+            span: left
+            type: switch
+            tab: Content
+        content_5:
+            label: 'Our Values'
+            size: large
+            span: full
+            type: richeditor
+            tab: Content
+        is_affiliates_partners:
+            label: 'Show Affiliates & Partners'
+            span: left
+            type: switch
+            tab: Content
+        content_7:
+            label: 'Affiliates & Partners'
+            size: large
+            span: full
+            type: richeditor
+            tab: Content
+        meta_title:
+            label: 'Meta TItle'
+            span: auto
+            type: text
+            tab: SEO
+        meta_desc:
+            label: 'Meta Description'
+            size: ''
+            span: auto
+            type: textarea
+            tab: SEO
+        meta_image:
+            label: 'OG Image (1200 x 630 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            comment: 'jpg/png The recommended size for a lowdown OG image is 1200×630 pixels'
+            tab: SEO
+        is_our_portfolio:
+            label: 'Show Our Portfolio'
+            span: auto
+            type: switch
+            tab: Experiences
+        content_9:
+            label: Repeater
+            prompt: 'Add new item'
+            style: default
+            span: full
+            type: repeater
+            tab: Experiences
+            form:
+                fields:
+                    iteme:
+                        label: Item
+                        span: full
+                        type: text
+        banner:
+            label: 'Banner (1920 x 680 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            commentAbove: '1600 x 715 px'
+            tab: Image
+        experience:
+            label: 'Experience (312 x 414 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            tab: Image
+        chairman:
+            label: 'Chairman (1920 x 857 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            fileTypes: 'svg, jpeg, jpg, png'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            tab: Image
+        affiliates_partners:
+            label: 'Affiliates Partners (530 x 125 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            fileTypes: 'svg, jpeg, jpg, png'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            tab: Image
+        values:
+            label: 'Values (495 x 725 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            fileTypes: 'svg, jpeg, jpg, png'
+            type: fileupload
+            tab: Image
+        award:
+            label: 'Awards (1050 x 131 px)'
+            mode: image
+            fileTypes: 'svg, jpeg, jpg, png'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            tab: Image
+        banner_type:
+            label: 'Select Banner Slider Option'
+            options:
+                image: image
+                video: video
+            showSearch: true
+            span: full
+            type: dropdown
+            tab: 'Banner images/video slider'
+        banner_image:
+            label: 'Banner Images'
+            mode: image
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: full
+            trigger:
+                action: show
+                field: banner_type
+                condition: 'value[image]'
+            type: fileupload
+            tab: 'Banner images/video slider'
+        banner_iframe:
+            label: 'Add Video'
+            prompt: 'Add Video Link'
+            style: default
+            span: full
+            trigger:
+                action: show
+                field: banner_type
+                condition: 'value[video]'
+            type: repeater
+            tab: 'Banner images/video slider'
+            form:
+                fields:
+                    iframe:
+                        label: 'Add URL for video'
+                        span: auto
+                        type: text
+                    video_duration:
+                        label: 'Video Duration (in seconds)'
+                        span: auto
+                        type: number

@@ -1,0 +1,20 @@
+<ul>
+    <?php 
+        $ques = json_decode($record->all_questions, true); // Decode as array
+        foreach($ques as $index => $questions) { 
+    ?>
+    <li>
+        <?php echo $questions['q']; ?> (
+        <?php echo $questions['a']; ?>)
+        <?php if (!empty($questions['subquestions'])) { ?>
+            <ul>
+                <?php foreach ($questions['subquestions'] as $sub_qa) { ?>
+                    <li>
+                        <?php echo $sub_qa['sub_q']; ?>: <?php echo $sub_qa['sub_a']; ?>
+                    </li>
+                <?php } ?>
+            </ul>
+        <?php } ?>
+    </li>
+    <?php } ?>
+</ul>

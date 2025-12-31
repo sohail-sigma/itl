@@ -1,0 +1,10 @@
+name: CareerPositions
+form: $/san/san/models/careerpositions/fields.yaml
+modelClass: san\San\Models\CareerPositions
+defaultRedirect: san/san/careerpositions
+create:
+    redirect: 'san/san/careerpositions/update/:id'
+    redirectClose: san/san/careerpositions
+update:
+    redirect: san/san/careerpositions
+    redirectClose: san/san/careerpositions

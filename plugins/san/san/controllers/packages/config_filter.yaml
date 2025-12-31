@@ -1,0 +1,31 @@
+scopes:
+    status:
+        label: Published
+        type: switch
+        conditions: status != (:filtered)
+        options:
+            1: Published
+            0: Not Published
+    months:
+      label: Months
+      type: group
+      conditions: months in (:filtered)
+      options:
+          January: January
+          February: February
+          March: March
+          April: April
+          May: May
+          Jun: Jun
+          July: July
+          August: August
+          September: September
+          October: October
+          November: November
+          December: December
+    theme:
+      label: Themes
+      type: group
+      conditions: theme_id in (:filtered)
+      modelClass: San\San\Models\Themes
+      options: getThemeOptions

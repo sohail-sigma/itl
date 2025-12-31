@@ -1,0 +1,213 @@
+1767162277a:1:{s:15:"test-23-may.htm";a:9:{s:8:"fileName";s:15:"test-23-may.htm";s:7:"content";s:6131:"title = "test 23 may"
+url = "/test-23-may"
+layout = "default"
+is_hidden = 0
+==
+<?php
+function onSubmitCompg1()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = post();
+            $rules = [
+                'f_name' => 'required',
+                'l_name' => 'required',
+                
+            ];
+            $errorMessages = [
+                'f_name.required' => 'Enter your first name',
+                'l_name.required' => 'Enter your last name',
+            ];
+            $validation = Validator::make($data, $rules, $errorMessages);
+            if ($validation->fails()) {
+                throw new ValidationException($validation);
+            }else{
+                $input = Input::all();
+                $enq = new  san\San\Models\DefaultLayout;
+                $enq->first_name = $input['f_name']; 
+                $enq->last_name = $input['l_name'];
+                $enq->save();
+                Flash::success('Submitted successfully!');
+                unset($_POST);
+            }
+        }
+    }
+?>
+==
+<!-- /hero_single -->
+<div class="clearfix"></div>
+<div class="container">
+{% framework extras %}
+
+<article style="margin-top: 16%">
+   <p
+     class="paragraph-one"
+     style="color: darkmagenta; font-size: 2rem; text-align: center"
+   >
+     <a href="freecodecamp.org" style="text-decoration: none; color: crimson"
+       >freeCodeCamp</a
+     >
+     is one of the best platforms to learn how to code
+   </p>
+   <p class="paragraph-two">
+     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+   </p>
+   <p class="paragraph-three">
+     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+   </p>
+   <p id="paragraph-four">
+     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+   </p>
+   <p class="paragraph-five">
+     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+   </p>
+ </article>
+<form data-request="onSubmitCompg1" data-request-validate data-request-flash class="form-str"
+   data-request-files="true" data-request-success="document.getElementById('aboutform').reset(); $.magnificPopup.open({
+                items: {     src: '#after-submit-popup'  },
+                type: 'inline',
+                showCloseBtn: true,
+                callbacks: {
+                    open: function () {
+                        $('#contact').append($('.mfp-close'))
+                    },
+                },
+                midClick: true
+            });" id="aboutform">
+   <div class="row">
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="text" name="f_name" placeholder="First Name" value="">
+            <span data-validate-for="f_name" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="text" name="l_name" placeholder="Last Name" value="">
+            <span data-validate-for="l_name" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+   </div>
+   <p class="add_top_30">
+      <button data-attach-loading type="submit" value="SUBMIT FORM" class="btn_contact btn contact-submit"
+         id="submit-contact"><i class="icon"><img src="/themes/SAN/assets/img/send-arrow.svg"></i> Submit
+         Form</button>
+   </p>
+</form>
+
+ </div>
+ <div id="after-submit-popup" class="white-popup mfp-hide">
+    <div id="sign-in-dialog" class="zoom-anim-dialog">
+        <div class="modalbody">
+            <div class="small-dialog-header">
+                <h3><img src="themes/SAN/assets/images/mail.svg" class="img-fluid mail"
+                        alt="">Successfully sent</h3>
+            </div>
+        </div>
+        <div style="padding: 80px 10px;">
+            <h4>Form has been submitted successfully!</h4>
+        </div>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+    </div>
+</div>";s:5:"mtime";i:1724849899;s:6:"markup";s:5042:"<!-- /hero_single -->
+<div class="clearfix"></div>
+<div class="container">
+{% framework extras %}
+
+<article style="margin-top: 16%">
+   <p
+     class="paragraph-one"
+     style="color: darkmagenta; font-size: 2rem; text-align: center"
+   >
+     <a href="freecodecamp.org" style="text-decoration: none; color: crimson"
+       >freeCodeCamp</a
+     >
+     is one of the best platforms to learn how to code
+   </p>
+   <p class="paragraph-two">
+     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+   </p>
+   <p class="paragraph-three">
+     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+   </p>
+   <p id="paragraph-four">
+     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+   </p>
+   <p class="paragraph-five">
+     Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+   </p>
+ </article>
+<form data-request="onSubmitCompg1" data-request-validate data-request-flash class="form-str"
+   data-request-files="true" data-request-success="document.getElementById('aboutform').reset(); $.magnificPopup.open({
+                items: {     src: '#after-submit-popup'  },
+                type: 'inline',
+                showCloseBtn: true,
+                callbacks: {
+                    open: function () {
+                        $('#contact').append($('.mfp-close'))
+                    },
+                },
+                midClick: true
+            });" id="aboutform">
+   <div class="row">
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="text" name="f_name" placeholder="First Name" value="">
+            <span data-validate-for="f_name" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+      <div class="col-md-6">
+         <div class="form-group field-group">
+            <input class="form-control" type="text" name="l_name" placeholder="Last Name" value="">
+            <span data-validate-for="l_name" class="text-danger pt-1 font-size-small"></span>
+         </div>
+      </div>
+   </div>
+   <p class="add_top_30">
+      <button data-attach-loading type="submit" value="SUBMIT FORM" class="btn_contact btn contact-submit"
+         id="submit-contact"><i class="icon"><img src="/themes/SAN/assets/img/send-arrow.svg"></i> Submit
+         Form</button>
+   </p>
+</form>
+
+ </div>
+ <div id="after-submit-popup" class="white-popup mfp-hide">
+    <div id="sign-in-dialog" class="zoom-anim-dialog">
+        <div class="modalbody">
+            <div class="small-dialog-header">
+                <h3><img src="themes/SAN/assets/images/mail.svg" class="img-fluid mail"
+                        alt="">Successfully sent</h3>
+            </div>
+        </div>
+        <div style="padding: 80px 10px;">
+            <h4>Form has been submitted successfully!</h4>
+        </div>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+    </div>
+</div>";s:4:"code";s:991:"
+function onSubmitCompg1()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = post();
+            $rules = [
+                'f_name' => 'required',
+                'l_name' => 'required',
+                
+            ];
+            $errorMessages = [
+                'f_name.required' => 'Enter your first name',
+                'l_name.required' => 'Enter your last name',
+            ];
+            $validation = Validator::make($data, $rules, $errorMessages);
+            if ($validation->fails()) {
+                throw new ValidationException($validation);
+            }else{
+                $input = Input::all();
+                $enq = new  san\San\Models\DefaultLayout;
+                $enq->first_name = $input['f_name']; 
+                $enq->last_name = $input['l_name'];
+                $enq->save();
+                Flash::success('Submitted successfully!');
+                unset($_POST);
+            }
+        }
+    }";s:5:"title";s:11:"test 23 may";s:3:"url";s:12:"/test-23-may";s:6:"layout";s:7:"default";s:9:"is_hidden";s:1:"0";}}

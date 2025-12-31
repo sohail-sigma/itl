@@ -1,0 +1,9 @@
+
+<?php if($record->area_of_interest == "Ground transportation") { ?>
+    <div style="padding-bottom: 10px;" ><b>From City: </b><?php echo $record->city; ?></div>
+    <div style="padding-bottom: 10px;" ><b>To City: </b><?php echo $record->tocity; ?></div>
+    <div style="padding-bottom: 10px;" ><b>Date: </b><?php echo $record->date; ?></div>
+    <div style="padding-bottom: 10px;" ><b>Time: </b><?php echo $record->time; ?></div>
+<?php } else {?>
+    <div style="padding-bottom: 10px;" ><?php echo $record->city; ?></div>
+<?php } ?>

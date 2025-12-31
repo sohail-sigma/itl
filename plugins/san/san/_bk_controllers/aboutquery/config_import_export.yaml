@@ -1,0 +1,7 @@
+export:
+    # useList: true
+    title: Export Enquiry
+    modelClass: San\San\Models\ExportAQModel
+    list: $/san/san/models/aboutenquiry/columns.yaml
+    fileName: about-query.csv 
+    redirect: san/san/aboutquery

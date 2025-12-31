@@ -1,0 +1,11 @@
+columns:
+    title:
+        label: Title
+        type: text
+        searchable: true
+        sortable: true
+    sort_order:
+        label: 'Sort order'
+        type: text
+        searchable: true
+        sortable: true

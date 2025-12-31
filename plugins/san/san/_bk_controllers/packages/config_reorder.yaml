@@ -1,0 +1,5 @@
+title: Packages
+modelClass: san\San\Models\Packages
+nameFrom: title
+toolbar:
+    buttons: reorder_toolbar

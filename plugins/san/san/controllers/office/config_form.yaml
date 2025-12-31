@@ -1,0 +1,10 @@
+name: Office
+form: $/san/san/models/office/fields.yaml
+modelClass: san\San\Models\Office
+defaultRedirect: san/san/office
+create:
+    redirect: 'san/san/office/update/:id'
+    redirectClose: san/san/office
+update:
+    redirect: san/san/office
+    redirectClose: san/san/office

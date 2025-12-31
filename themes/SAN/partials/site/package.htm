@@ -1,0 +1,411 @@
+[viewBag]
+==
+<?php
+function onEnd()
+{
+    
+
+    $query = San\San\Models\Packages::query();
+
+    if (get('experience') != 'any') {
+        $e_ids = array();
+        $exp_id = San\San\Models\Destinations::select('id')->where('status', 1)->where('slug', get('experience'))->first();
+        if ($exp_id) {
+            $p_ids = DB::table('destinations_packages')->select('packages_id')->where('destinations_id', $exp_id->id)->get();
+            foreach ($p_ids as $ids) {
+                $e_ids[] = $ids->packages_id;
+            }
+        }
+        // echo "<pre>";print_r($e_ids);die;
+        $query->whereIn('id', $e_ids);
+
+    }
+    if (get('package') != 'any') {
+        $p_ids = array();
+        $s_pack = san\San\Models\Packages::where('countries', 'like', '%' . get('package') . '%')->get();
+        foreach ($s_pack as $all_p) {
+            $p_ids[] = $all_p->id;
+        }
+        
+        $query->whereIn('id', $p_ids);
+    }
+    if (get('month') != 'any') {
+        $m_ids = array();
+        $with_month_id = San\San\Models\Packages::query()->select('id')->where('status', 1)->where('months', 'like', '%' . get('month') . '%')->get();
+        foreach ($with_month_id as $with_month) {
+            $m_ids[] = $with_month->id;
+        }
+        // echo "<pre>";echo get('month')."<br>";print_r($m_ids);die;
+        $query->whereIn('id', $m_ids);
+    }
+
+    $query->where('status', 1)->paginate(10);
+    $this['searchList'] = $query->get();
+    
+    // Pass country name to template for filtering
+    $this['countryName'] = isset($_SESSION['countryName']) ? $_SESSION['countryName'] : '';
+}
+?>
+==
+<!-- $theme = DB::table('destinations_packages')->select('packages_id')->where('destinations_id',
+        get('experience'))->first();
+        if ($m) $data = $data->whereJsonContains('months', $m);
+$this['destinations_List'] = San\San\Models\Destinations::where('status', 1)->get(); -->
+<div class="row">
+    {% if searchList|length %}
+    {% for record in searchList %}
+    {% set packageIdMatch = false %}
+    {% if record.package_country_select and record.package_country_select|length > 0 %}
+        {# Package has countries tagged - only show if current country matches #}
+        {% if countryName %}
+            {% for country in record.package_country_select %}
+                {% if country == countryName %}
+                    {% set packageIdMatch = true %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% else %}
+        {# Package has no countries tagged - show for all countries #}
+        {% set packageIdMatch = true %}
+    {% endif %}
+    {% if packageIdMatch == true %}
+    {% set dslug = "" %}
+    <div class="col-xl-6 col-lg-6 col-md-6">
+        <div class="package_grid">
+            {% if(record.overview_image.path) %}
+                <figure>
+                    <a href="{{ post.url }}/package/{{record.slug}}">
+                        <img src="{{record.banner.getThumb(475,210,{mode:'crop'})}}" class="img-fluid" alt="" width="800"
+                            height="533"></a>
+                </figure>
+                {% else %}
+                <figure>
+                    <a href="{{ post.url }}/package/{{record.slug}}">
+                        <img src="{{ 'assets/img/logo.jpg'|theme }}" class="img-fluid" alt="" width="800" height="533"></a>
+                </figure>
+                {% endif %}
+            <div class="wrapper-package">
+                
+                <h3 class="m-0"><a href="{{ post.url }}/package/{{record.slug}}">{{record.title |capitalize}}</a> </h3>
+				     <span class="pcountry">{% if record.countries %}{% set ccount = 1 %}{% for scountry in record.countries %}{{ scountry.country|upper }}{% if ccount < record.countries|length %} |{% endif %}{% set ccount=ccount + 1 %}{% endfor %}{% endif %}</span>
+					 
+                    <p class="pcities">Cities Included:
+					{% if record.cities %}{% set ccount = 1 %}{% for scity in record.cities %}{{ scity.city }}{% if ccount < record.cities|length %} |{% endif %}{% set ccount=ccount + 1 %}{% endfor %}{% endif %}</p>
+                    {% set price = 0 %}
+                    {% set currencyCode = 0 %}
+                    {% if record.price %}
+                        {% for Precord in record.price %}
+                            {% if Precord.currency == user_currency_code %}
+                                {% set currencyCode = Precord.currency|upper %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if currencyCode=="0" %}
+                            {% set currencyCode = 'USD' %}
+                        {% endif %}
+                        {% for Precord in record.price %}
+                            {% if Precord.currency|upper == currencyCode|upper %}
+                                {% set price = Precord.price %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+            <div class="packagePrice p-2 pl-4 pr-4">
+                <h3><span class="pr-3"> {% if record.night %} {{record.night}} NIGHTS / {% endif
+                        %}{% if record.days %} {{record.days}} DAYS {% endif %} </span>| <strong
+                        class="pl-3">{{currencyCode}} {{price| number_format}}*</strong></h3>
+            </div>
+                        <div class="facilities mt-3 d-block">
+                            
+                            {% if record.hotel_stay %}
+                            <span data-toggle="tooltip" title="Hotel Stay" {% if record.hotel_stay %} class="included"
+                                {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_hotel_stay.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.domestic_flights %}
+                            <span data-toggle="tooltip" title="Domestic Flights" {% if record.domestic_flights %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_domestic_flights.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.breakfast_meals %}
+                            <span data-toggle="tooltip" title="Breakfast/Meals" {% if record.breakfast_meals %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_breakfast_meals.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.airport_transfers %}
+                            <span data-toggle="tooltip" title="Airport Transfers" {% if record.airport_transfers %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18"
+                                    src="{{ 'assets/img/svg/b_airport_transfers.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.site_seeing %}
+                            <span data-toggle="tooltip" title="Site Seeing" {% if record.site_seeing %} class="included"
+                                {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_site_seeing.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.city_coach_tour %}
+                            <span data-toggle="tooltip" title="City Tour/Coach Tour" {% if record.city_coach_tour %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_city_coach_tour.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.tour_guide %}
+                            <span data-toggle="tooltip" title="Tour Guide" {% if record.tour_guide %} class="included"
+                                {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_tour_guide.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.train_tickets %}
+                            <span data-toggle="tooltip" title="Train Tickets" {% if record.train_tickets %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_train_tickets.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.entrance_fee_pass %}
+                            <span data-toggle="tooltip" title="Entrance Fee/ Pass" {% if record.entrance_fee_pass %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18"
+                                    src="{{ 'assets/img/svg/b_entrance_fee_pass.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.cruising %}
+                            <span data-toggle="tooltip" title="Cruising" {% if record.cruising %} class="included" {%
+                                endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_cruising.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.entertainment %}
+                            <span data-toggle="tooltip" title="Entertainment" {% if record.entertainment %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_entertainment.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.sailing %}
+                            <span data-toggle="tooltip" title="Sailing" {% if record.sailing %} class="included" {%
+                                endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_sailing.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.hiking_walking_tour %}
+                            <span data-toggle="tooltip" title="Hiking/Walking Tour" {% if record.hiking_walking_tour %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18"
+                                    src="{{ 'assets/img/svg/b_hiking_walking_tour.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.speed_boat %}
+                            <span data-toggle="tooltip" title="Speed Boat Transfers" {% if record.speed_boat %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_speed_boat.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.wellness %}
+                            <span data-toggle="tooltip" title="Wellness	Camping" {% if record.wellness %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_wellness.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.camping %}
+                            <span data-toggle="tooltip" title="Wellness	Camping" {% if record.camping %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_camping.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.canyoning %}
+                            <span data-toggle="tooltip" title="Canyoning" {% if record.canyoning %} class="included" {%
+                                endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_canyoning.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.campervan %}
+                            <span data-toggle="tooltip" title="Campervan" {% if record.campervan %} class="included" {%
+                                endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_campervan.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.para_gliding %}
+                            <span data-toggle="tooltip" title="Para Gliding" {% if record.para_gliding %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_para_gliding.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.bike_ride %}
+                            <span data-toggle="tooltip" title="Bike Ride" {% if record.bike_ride %} class="included" {%
+                                endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_bike_ride.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.diving %}
+                            <span data-toggle="tooltip" title="Diving" {% if record.diving %} class="included" {% endif
+                                %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_diving.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.scooter_ride %}
+                            <span data-toggle="tooltip" title="Scooter Ride" {% if record.scooter_ride %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_scooter_ride.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.zip_line %}
+                            <span data-toggle="tooltip" title="Zip line" {% if record.zip_line %} class="included" {%
+                                endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_zip_line.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.horse_ride %}
+                            <span data-toggle="tooltip" title="Horse Ride" {% if record.horse_ride %} class="included"
+                                {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_horse_ride.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.cooking_class %}
+                            <span data-toggle="tooltip" title="Cooking Class" {% if record.cooking_class %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_cooking_class.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                            {% if record.shopping_tour %}
+                            <span data-toggle="tooltip" title="Shopping Tour" {% if record.shopping_tour %}
+                                class="included" {% endif %}>
+                                <img width="18" height="18" src="{{ 'assets/img/svg/b_shopping_tour.png'|theme }}" />
+                            </span>
+                            {% endif %}
+                        </div>
+            </div>
+           
+            <div class="wrapper-package rating-star">
+                {% if record.accomodation %}
+                <p>
+                    <b>{{record.accomodation}} Star Accomodation</b>
+                    <span>
+                        {% for i in 1..record.accomodation %}
+                        <i class="fa fa-star"></i>
+                        {% endfor %}
+                    </span>
+                </p>
+                <small class="pb-2 d-block">*Price is starting from, per person on twin sharing</small>
+                {% else %}{% endif %}
+
+
+                {% if record.destinations %}
+                    {% for destination in record.destinations %}
+                    {% set dslug = destination.title %}
+                    {% endfor %}
+                {% endif %}
+
+                
+                <div class="clearfix"></div>
+                <a href="{{ post.url }}/package/{{record.slug}}"
+                    class="btn btn-secondary btn-lm packdetails">Details</a>
+                <a href="#enquiry-popup" class="open-popup-link btn btn-lm packenquiry enquiry-in"
+                    data-ptitle="{{record.title}}" data-ptitle="{{record.title}}" data-unique_caption="{{record.unique_caption}}" data-dslug="{{dslug}}" {% if(record.overview_image.path) %}
+                    data-pimage="{{record.banner.path}}" {% else %} data-pimage="{{ 'assets/img/logo.jpg'|theme }}" {%
+                    endif %}>Enquiry</a>
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <div class="col-12">
+        {% if searchList.total > 10 %}
+        <form action="" method="POST" class="paginationform news-pagination">
+            <ul class="pagination" style="justify-content: center !important;">
+                <input type="hidden" name="newscategories" value="{{p_category}}">
+                <input type="hidden" name="newstags" value="{{p_tags}}">
+                {% if searchList.currentPage != 1 %}
+                <li class="last">
+                    <a href="{{ '' | page }}?package={{get('package')}}&experience={{get('experience')}}&month={{get('month')}}&page=1"
+                        class="paginationbtn">
+                        <img src="/themes/SAN/assets/images/pagination-arrow.png" class="firstimg">
+                        <img src="/themes/SAN/assets/images/pagination-arrow.png" class="firstimg"> First
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if(searchList.currentPage != 1 ) %}
+
+                {% if(searchList.currentPage == searchList.lastPage ) %}
+                <li class="page">
+                    <a href="{{ '' | page }}?package={{get('package')}}&experience={{get('experience')}}&month={{get('month')}}&page={{searchList.currentPage-2}}"
+                        class="paginationbtn">
+                        {{searchList.currentPage - 2}}
+                    </a>
+                </li>
+                {% endif %}
+
+                <li class="page">
+                    <a href="{{ '' | page }}?package={{get('package')}}&experience={{get('experience')}}&month={{get('month')}}&page={{searchList.currentPage - 1}}"
+                        class="paginationbtn">{{searchList.currentPage - 1}} </a>
+                </li>
+                {% endif %}
+
+                <li class="page current">
+                    <a href="{{ '' | page }}?package={{get('package')}}&experience={{get('experience')}}&month={{get('month')}}&page={{searchList.currentPage}}"
+                        class="paginationbtn">{{searchList.currentPage}}</a>
+                </li>
+
+                {% if(searchList.currentPage != searchList.lastPage ) %}
+                <li class="page">
+                    <a href="{{ '' | page }}?package={{get('package')}}&experience={{get('experience')}}&month={{get('month')}}&page={{searchList.currentPage + 1}}"
+                        class="paginationbtn">{{searchList.currentPage + 1}}</a>
+                </li>
+                {% endif %}
+
+                {% if searchList.currentPage == 1 and searchList.total > 1 %}
+                <li class="page">
+                    <a href="{{ '' | page }}?package={{get('package')}}&experience={{get('experience')}}&month={{get('month')}}&page={{searchList.currentPage+2}}"
+                        class="paginationbtn">{{searchList.currentPage + 2 }} </a>
+                </li>
+                {% endif %}
+
+
+                {% if(searchList.currentPage != searchList.lastPage ) %}
+                <li class="last">
+                    <a href="{{ '' | page }}?package={{get('package')}}&experience={{get('experience')}}&month={{get('month')}}&page={{searchList.lastPage}}"
+                        class="paginationbtn">Last
+                        <img src="/themes/SAN/assets/images/pagination-arrow.png">
+                        <img src="/themes/SAN/assets/images/pagination-arrow.png">
+                    </a>
+                </li>
+                {% endif %}
+
+            </ul>
+        </form>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="col-12">
+        <p class="text-center">No results found!</p>
+    </div>
+    {% endif %}
+</div>
+<style>
+    .paginationform .firstimg {
+        transform: rotate(180deg);
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $(".packenquiry").on("click", function () {
+            var dslug = $(this).attr("data-dslug");
+            var ptitle = $(this).attr("data-ptitle");
+            var pimage = $(this).attr("data-pimage");
+            var unique_caption = $(this).attr("data-unique_caption");
+            var parentEl = $(this).closest('.package_grid');
+            var pcitieshtml = $(parentEl).find('.pcountry').html();//$(this).parent().parent().closest('.pcities').html();
+            console.log(pcitieshtml);
+            $("#p-title").html(ptitle);
+            $("#p-image").attr("src", pimage);
+            $("#pacage").val(ptitle+' ('+pcitieshtml+')');
+            $("#experiences").val(dslug);
+            // $("#dslug").val(dslug);
+            // $("#experiences option[value='" + dslug + "']").prop('selected', true);
+        });
+    });
+</script>

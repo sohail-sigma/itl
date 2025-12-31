@@ -1,0 +1,10 @@
+<div class="">
+    <?php 
+        $work_in = json_decode($record->supplier);
+        echo "<ul>"; 
+        foreach($work_in as $work) {
+            echo "<li>".$work."</li>";
+        }
+        echo "</ul>";
+    ?>
+</div>

@@ -1,0 +1,30 @@
+fields:
+    name:
+        label: Name
+        span: auto
+        type: text
+    email:
+        label: Email
+        span: auto
+        type: text
+    phone:
+        label: Phone
+        span: auto
+        type: text
+    subject:
+        label: Subject
+        span: auto
+        type: text
+    subscription:
+        label: Subscription
+        span: auto
+        type: switch
+    ip:
+        label: 'Customer IP'
+        span: auto
+        type: text
+    message:
+        label: Message
+        size: ''
+        span: auto
+        type: textarea

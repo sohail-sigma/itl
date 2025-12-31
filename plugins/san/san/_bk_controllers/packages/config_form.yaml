@@ -1,0 +1,11 @@
+name: Packages
+modelClass: san\San\Models\Packages
+form: $/san/san/models/packages/fields.yaml
+defaultRedirect: san/san/packages
+create:
+    redirect: 'san/san/packages/update/:id'
+    redirectClose: san/san/packages
+update:
+    redirect: san/san/packages
+    redirectClose: san/san/packages
+preview: {  }

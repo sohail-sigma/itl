@@ -1,0 +1,11 @@
+name: CorporateTravel
+modelClass: san\San\Models\CorporateTravel
+form: $/san/san/models/corporatetravel/fields.yaml
+defaultRedirect: san/san/corporatetravel
+create:
+    redirect: 'san/san/corporatetravel/update/:id'
+    redirectClose: san/san/corporatetravel
+update:
+    redirect: san/san/corporatetravel
+    redirectClose: san/san/corporatetravel
+preview: {  }

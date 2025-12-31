@@ -1,0 +1,131 @@
+fields:
+    title:
+        label: Title
+        span: auto
+        type: text
+    content_10:
+        label: 'Sub Title'
+        span: auto
+        type: text
+    content_11:
+        label: 'Subscribe content'
+        size: large
+        language: php
+        span: auto
+        type: codeeditor
+tabs:
+    fields:
+        content_1:
+            label: Facebook
+            span: auto
+            type: text
+            tab: 'Social Media'
+        content_2:
+            label: Twitter
+            span: auto
+            type: text
+            tab: 'Social Media'
+        content_3:
+            label: Instagram
+            span: auto
+            type: text
+            tab: 'Social Media'
+        content_4:
+            label: LinkedIn
+            span: auto
+            type: text
+            tab: 'Social Media'
+        content_5:
+            label: Snapchat
+            span: auto
+            type: text
+            tab: 'Social Media'
+        content_6:
+            label: YouTube
+            span: auto
+            type: text
+            tab: 'Social Media'
+        content_7:
+            label: Tiktok
+            span: auto
+            type: text
+            tab: 'Social Media'
+        content_8:
+            label: Pinterest
+            span: auto
+            type: text
+            tab: 'Social Media'
+        content_9:
+            label: Reddit
+            span: auto
+            type: text
+            tab: 'Social Media'
+        meta_title:
+            label: 'Meta Title'
+            span: auto
+            type: text
+            tab: SEO
+        meta_desc:
+            label: 'Meta Description'
+            size: ''
+            span: auto
+            type: textarea
+            tab: SEO
+        meta_image:
+            label: 'OG Image (1200 x 630 px)'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            comment: 'jpg/png The recommended size for a lowdown OG image is 1200×630 pixels'
+            tab: SEO
+        banner_type:
+            label: 'Select Banner Slider Option'
+            options:
+                image: image
+                video: video
+            showSearch: true
+            span: full
+            type: dropdown
+            tab: 'Banner images/video slider'
+        banner_image:
+            label: 'Banner Images (1920 x 680 px)'
+            mode: image
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: full
+            trigger:
+                action: show
+                field: banner_type
+                condition: 'value[image]'
+            oc.commentPosition: above
+            type: fileupload
+            tab: 'Banner images/video slider'
+        banner_iframe:
+            label: 'Add Video'
+            prompt: 'Add Video Link'
+            style: default
+            span: full
+            trigger:
+                action: show
+                field: banner_type
+                condition: 'value[video]'
+            type: repeater
+            tab: 'Banner images/video slider'
+            form:
+                fields:
+                    iframe:
+                        label: 'Add URL for video'
+                        span: auto
+                        type: text
+                    video_duration:
+                        label: 'Video Duration (in seconds)'
+                        span: auto
+                        type: number

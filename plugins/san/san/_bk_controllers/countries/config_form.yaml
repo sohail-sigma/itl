@@ -1,0 +1,11 @@
+name: Countries
+modelClass: san\San\Models\Countries
+form: $/san/san/models/countries/fields.yaml
+defaultRedirect: san/san/countries
+create:
+    redirect: 'san/san/countries/update/:id'
+    redirectClose: san/san/countries
+update:
+    redirect: san/san/countries
+    redirectClose: san/san/countries
+preview: {  }

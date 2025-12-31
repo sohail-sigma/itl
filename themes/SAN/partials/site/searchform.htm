@@ -1,0 +1,2145 @@
+[viewBag]
+==
+<?php
+function onStart()
+{
+	$this['backendUrl'] = Backend::url('/');
+	$s_pack = san\San\Models\Packages::where('status', 1)->get();
+	$cList = array();
+	$cListFinal = array();
+	foreach ($s_pack as $sPackage) {
+		foreach ($sPackage->countries as $countries) {
+			$cname = ltrim($countries['country']);
+			$isInArray = in_array($cname, array_column($cListFinal, 'country'));
+			if (!$isInArray) {
+				$cList['country'] = $cname;
+				$cList['slug'] = $sPackage->slug;
+				$cListFinal[] = $cList;
+			}
+		}
+	}
+	$this['countryListFinal'] = $cListFinal;
+
+	//$this['allairports'] = san\San\Models\Airports::get();
+	$this['airlines'] = san\San\Models\Airlines::get();
+}
+?>
+==
+{% set packages = packagesList.records %}
+{% set experience = experienceList.records %}
+
+{% framework %}
+{% framework extras %}
+
+<style type="text/css">
+
+	button.reset_country {
+		border: none;
+		font-size: 14px;
+		background: transparent;
+		border: 1px solid #fff;
+		color: #fff;
+		border-radius: 4px;
+		z-index: 5;
+		margin-top: 15px;
+		line-height: 1;
+	   padding: 4px 10px;
+	}
+
+	button.addmore_room {
+		position: absolute;
+		top: 95px;
+		border: none;
+		left: 12%;
+		font-size: 16px;
+		background: transparent;
+		border: 1px solid #fff;
+		color: #fff;
+		border-radius: 4px;
+		z-index: 5;
+	}
+
+	button.addmore_room {
+		position: absolute;
+		top: 95px;
+		border: none;
+		left: 12%;
+		font-size: 16px;
+		background: transparent;
+		border: 1px solid #fff;
+		color: #fff;
+		border-radius: 4px;
+		z-index: 5;
+	}
+	div#rooms_list {
+		z-index: 0 !important;
+	}
+	.dest-list ul li {
+		cursor: pointer;
+	}
+	.custom-filters .p-airlines-select .select2-container .select2-selection {
+		background: transparent;
+		color: #fff;
+		border: 1px solid #fff;
+		height: 25px;
+		width: 115px;
+		margin-left: 10px;
+	}
+	.custom-filters .children-wrap {
+		margin: 0;
+	}
+	.custom-filters .children-wrap .select2-container .select2-selection {
+		width: 75px;
+	}
+	.tab-pane .custom-search-input-2 [type='submit'], .tab-pane .custom-search-input-2 select {
+		padding-right: 30px;
+	}
+	.custom-filters .p-airlines-select .select2-container .select2-selection span.select2-selection__rendered {
+		color: #fff;
+		font-size: 12px;
+	}
+
+	.custom-filters .p-airlines-select .select2-container .select2-selection span.select2-selection__arrow {
+		display: none;
+	}
+		input.searchinputc {
+		    box-shadow: 0px 3px 6px #0000006C;
+		    border-radius: 6px;
+		}
+		input.searchinputc::placeholder { 
+		  color: #495057;
+		  opacity: 1; 
+		}
+
+		input.searchinputc:-ms-input-placeholder { 
+		  color: #495057;
+		  opacity: 1; 
+		}
+
+		input.searchinputc::-ms-input-placeholder { 
+		  color: #495057;
+		  opacity: 1; 
+		}
+		.custom-filters .select2-container {
+			width: 100% !important;
+		}
+	.custom-filters .select2-container .select2-selection {
+	    border-radius: 5px !important;
+	    height: 50px;
+	    border: 0px;
+	    outline: none !important;
+	    appearance: none;
+	    -webkit-appearance: none;
+	    font-size: 18px;
+	    line-height: 50px;
+	    display: flex;
+	    align-items: center;
+	}
+	.custom-filters .select2-container .select2-selection span {display: block;align-items: center;}
+
+	.custom-filters .select2-container--default .select2-selection--single .select2-selection__arrow {
+	    top: 50%;
+	    transform: translateY(-50%);
+	}
+	.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+	    background-color: #da4e41;
+	    color: white;
+	}
+	.select2-results__option--selectable {
+	    cursor: pointer;
+	    font-size: 15px;
+	}
+
+	.hotel-options {
+		flex: 0 0 100%;
+		justify-content: center;
+	}
+
+	.remove-city-wrap .remove-room {
+	    background: transparent;
+	    box-shadow: none;
+	    border: 0;
+	}
+
+	.remove-city-wrap {
+	    display: flex;
+	    align-items: flex-end;
+	    padding-bottom: 5px;
+	    position: relative;
+	    right: 10px;
+	    margin-right: -40px !important;
+	}
+
+	.hotel-options {
+	    position: relative;
+	}
+
+	.field-error {
+		border: 2px solid red !important;
+	}
+
+	.daterangepicker.show-calendar .drp-buttons {
+		display: none;
+	}
+
+	.custom-check .checkmark {
+		border-radius: 3px;
+	}
+	.multicity-form-mobile-btn {
+		display: none;
+	}
+	
+	@media (max-width: 800px) {
+		.modal-body {
+			padding-bottom: 0;
+		}
+		.number input {
+			width: 20px;
+		}
+		label.total-passengers+.form-dropdown.show {
+		    display: block;
+		    background: #102838;
+		    z-index: 9;
+		    border: 1px solid #fff;
+		}
+		.filter-modal .custom-search-input-2>.hotel-options:last-child {
+/*		    padding-bottom: 50px;*/
+		}
+		/*.third-order {
+		    order: 3;
+		}
+
+		.first-order {
+		    order: 1;
+		}
+
+		.second-order {
+		    order: 2;
+		}*/
+		.multicity-form-desktop-btn {
+			display: none;
+		}
+		.multicity-form-mobile-btn {
+		display: block;
+	}
+	}
+	@media (max-width: 768px) {
+		button.addmore_room {
+			position: relative;
+			top: 0;
+			border: none;
+			left: 0;
+			font-size: 16px;
+			background: transparent;
+			border: 1px solid #fff;
+			color: #fff;
+			border-radius: 4px;
+			z-index: 5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			margin: 0 auto;
+		}
+	}
+	.select2-search--dropdown .select2-search__field,
+	.select2-results__option--selectable {
+	    padding: 4px;
+	    width: 100%;
+	    box-sizing: border-box;
+	    font-size: 18px;
+	    color: #444;
+	    line-height: 28px;
+	}
+	.select2-results__option--selectable{
+		font-size: 12px;
+	}
+	.searchinputc{
+		width: 100%;
+		border-radius: 8px !important;
+		height: 50px;
+		border: 0px;
+		outline: none !important;
+		appearance: none;
+		-webkit-appearance: none;
+		font-size: 18px;
+		line-height: 50px;
+		display: flex;
+		align-items: center;
+		padding-left: 8px;
+		padding-right: 20px;
+		color: #444;
+		line-height: 28px;
+	}
+	div#pills-tabContent .custom-search-input-2 {
+		z-index: auto;
+	}
+   .dest-list ul li {
+      font-size: 16px;
+      border-bottom: 1px solid #e6e6e6;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #495057;
+   }
+   .dest-list ul li:hover {
+      background-color: #f2f2f2;
+   }
+
+   .dest-list ul li:last-child {
+      border-bottom: none;
+   }
+
+   .dest-list {
+      background-color: #fff;
+      border-radius: 6px;
+      padding: 10px;
+      max-height: 300px;
+      overflow: auto;
+      overflow-x: hidden;
+      position: absolute;
+      width: 100%;
+      z-index: 9999;
+      box-shadow: 0px 3px 6px #0000006C;
+   }
+   .mobile-btns button {
+   	display: none;
+   }
+   .h-mobile-btns {
+   	display: none;
+   }
+   .mobile-btns {
+   	display: none;
+   }
+
+
+   @media (max-width: 800px) {
+   	.mobile-btns {
+   		display: block;
+   	}
+   	div#pills-hotel {
+   		flex-direction: column;
+   	}
+   	.h-mobile-btns {
+   		display: block;
+   	}
+   	.h-desktop-btns {
+   		display: none;
+   	}
+   	.desktop-btns {
+   		display: none !important;
+   	}
+   	.empty-div.mobile-btns-wrap {
+   		display: block;
+   	}
+   	.filter-modal .second-order  .flight-nav {
+   		margin-top: -30px;
+   		margin-bottom: 15px;
+   	}
+   	    .filter-modal .modal-content {
+        background: #102838;
+        height: auto;
+        min-height: 100%;
+    }
+   }
+   
+  
+</style>
+<section class="home-filter" data-aos="fade-down" data-aos-easing="linear" data-aos-duration="1500" id="holidays">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="custom-filters d-filters">
+					<ul class="nav nav-pills" id="pills-tab" role="tablist" style="display:none;">
+						<li class="nav-item">
+							<a class="nav-link active" id="pills-flight-tab" data-toggle="pill" href="#pills-flight" role="tab"
+								aria-controls="pills-flight" aria-selected="false"><img
+									src="/themes/SAN/assets/img/flight-icon.svg"> Flight</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="pills-hotel-tab" data-toggle="pill" href="#pills-hotel" role="tab"
+								aria-controls="pills-hotel" aria-selected="false"><img
+									src="/themes/SAN/assets/img/hotel-icon.svg"> Hotel</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="pills-holiday-tab" data-toggle="pill" href="#pills-holiday" role="tab"
+								aria-controls="pills-holiday" aria-selected="true"><img
+									src="/themes/SAN/assets/img/holidays-icon.svg"> Holidays</a>
+						</li>
+					</ul>
+					<div class="tab-content" id="pills-tabContent">
+						<div class="tab-pane fade" id="pills-flight" role="tabpanel"
+							aria-labelledby="pills-flight-tab">
+
+							<!-- flight hidden fields -->
+							<input type="hidden" name="triptype" value="1" data-title="Trip Type">
+							<input type="hidden" name="key" value="IST" data-title="Journey Type Key">
+							<input type="hidden" name="adult" value="1" data-title="Adult Count">
+							<input type="hidden" name="child" value="1" data-title="Child Count">
+							<input type="hidden" name="infant" value="1" data-title="Infant Count">
+							<input type="hidden" name="langCode" value="EN" data-title="Language Code">
+							<input type="hidden" name="airlines" value="" data-title="Airlines">
+							<input type="hidden" name="cl1" value="Y" data-title="Cabin Class">
+							<input type="hidden" name="direct" value="true" data-title="Direct Flights Only">
+							<input type="hidden" name="refundable" value="false" data-title="Refundable">
+							<!-- flight hidden fields -->
+
+							<div class="row custom-search-input-2">
+								<div class="col-md-2 empty-div"></div>
+								<div class="col-lg-8 col-md-12 first-order">
+									<div class="flight-nav">
+										<ul class="nav nav-pills" id="pills-tab-child" role="tablist">
+											<li class="nav-item">
+												<a class="nav-link active" id="pills-roundtrip-tab" data-toggle="pill"
+													href="#pills-roundtrip" role="tab" aria-controls="pills-roundtrip"
+													aria-selected="true" area-value="2">Round Trip</a>
+											</li>
+											<li class="nav-item">
+												<a class="nav-link" id="pills-oneway-tab" data-toggle="pill" href="#pills-oneway"
+													role="tab" aria-controls="pills-oneway" aria-selected="false" area-value="1">One
+													Way</a>
+											</li>
+											<li class="nav-item">
+												<a class="nav-link" id="pills-multicity-tab" data-toggle="pill"
+													href="#pills-multicity" role="tab" aria-controls="pills-multicity"
+													aria-selected="false" area-value="3">Multi City</a>
+											</li>
+										</ul>
+										<div class="class-of-travel">
+										<span>Cabin class</span>
+											<div class="form-group form-select withicon">
+												<select name="travel-class" class="form-control">
+													<option value="Y">Economy</option>
+													<option value="W">Premium Economy</option>
+													<option value="C">Business</option>
+													<option value="F">First</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2 empty-div"></div>
+								<div class="col-md-12 third-order">
+									<div class="tab-content" id="pills-tabContent-child">
+										<div class="tab-pane fade show active" id="pills-roundtrip" role="tabpanel"
+											aria-labelledby="pills-roundtrip-tab">
+
+											<input type="hidden" name="rt-from" value="" data-title="from">
+											<input type="hidden" name="rt-to" value="" data-title="to">
+											<input type="hidden" name="rr-dd1" value="" data-title="Departure date 1">
+											<input type="hidden" name="rr-dd2" value="" data-title="Departure date 2">
+
+											<div class="row custom-search-input-2">
+												<div class="col-5 col-sm-3">
+													<div class="form-groups">
+														<input type="hidden" class="airportsearch" name="rt-dep" />
+														<input type="text" class="search-airport-js search-airport searchinputc form-control" placeholder="Origin" name="search-rt-dep" autocomplete="off" />
+														<div class="allairport-result"></div>
+													</div>
+												</div>
+												<div class="col-5 col-sm-3 col-lg-3">
+													<div class="form-groups">
+														<input type="hidden" class="airportsearch" name="rt-arrival" />
+														<input type="text" class="search-airport-js search-airport searchinputc form-control" placeholder="Destination" name="search-rt-arrival" autocomplete="off" />
+														<div class="allairport-result"></div>
+													</div>
+												</div>
+												<div class="col-10 col-sm-2 col-lg-2">
+													<div class="form-group form-select withicon">
+														<div class="daterangeselect">
+															<div class="checkin">
+																<input type="text" name="roundtrip-in" class="form-control"
+																	value="01/01/2018" id="" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-10 col-sm-2 col-lg-2">
+													<div class="form-group form-select withicon">
+														<div class="daterangeselect">
+															<div class="checkout">
+																<input type="text" name="roundtrip-out" class="form-control"
+																	value="01/15/2018" id="" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-5 col-sm-2 col-lg-2">
+													<button type="submit" class="btn_search rounded-0 p-0 roundtrip_submit  desktop-btns" id="roundtrip_submit"><span
+															class="icon-search d-lg-none"></span><span
+															class="d-lg-block">SEARCH</span></button>
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane fade" id="pills-oneway" role="tabpanel"
+											aria-labelledby="pills-oneway-tab">
+											<input type="hidden" name="o-from" value="" data-title="Departure">
+											<input type="hidden" name="o-to" value="" data-title="Arrival">
+											<div class="row custom-search-input-2">
+												<div class="col-5 col-sm-4">
+													<div class="form-groups">
+														<input type="hidden" class="airportsearch" name="departure-oneway" />
+														<input type="text" class="search-airport-js search-airport searchinputc form-control" placeholder="Origin" name="search-departure-oneway" autocomplete="off" />
+														<div class="allairport-result"></div>
+
+														<!-- <input type="text" class="search-airport searchinputc" placeholder="Origin" name="search-departure-oneway"
+															class="form-control" data-request="onKeyPressAirport" data-track-input
+															data-request-update="'feilds/airport': '#allairport-departure-oneway'" autocomplete="off" />
+														<div id="allairport-departure-oneway"></div> -->
+													</div>
+													<!-- <div class="form-group form-select withicon">
+														<select name="departure-oneway" class="form-control itlselect">
+															<option value="any">Origin</option>
+															{% for airport in allairports %}
+																<option value="{{airport.airport_code}}">{{airport.airport_name}} ({{airport.airport_code}}) - {{airport.country_name}}</option>
+            											{% endfor %}
+														</select>
+													</div> -->
+												</div>
+												<div class="col-5 col-sm-4 col-lg-4">
+													<div class="form-groups">
+														<input type="hidden" class="airportsearch" name="arrival-oneway" />
+														<input type="text" class="search-airport-js search-airport searchinputc form-control" placeholder="Destination" name="search-arrival-oneway" autocomplete="off" />
+														<div class="allairport-result"></div>
+														<!-- <input type="text" class="search-airport searchinputc" placeholder="Destination" name="search-arrival-oneway"
+															class="form-control" data-request="onKeyPressAirport" data-track-input
+															data-request-update="'feilds/airport': '#allairport-arrival-oneway'" autocomplete="off" />
+														<div id="allairport-arrival-oneway"></div> -->
+													</div>
+													<!-- <div class="form-group form-select withicon">
+														<select name="arrival-oneway" class="form-control itlselect">
+															<option value="any">Destination</option>
+															{% for airport in allairports %}
+																<option value="{{airport.airport_code}}">{{airport.airport_name}} ({{airport.airport_code}}) - {{airport.country_name}}</option>
+            											{% endfor %}
+														</select>
+													</div> -->
+												</div>
+												<div class="col-10 col-sm-2 col-lg-2">
+													<div class="form-group form-select withicon">
+														<div class="daterangeselect">
+															<div class="checkin">
+																<input type="text" name="oneway" class="form-control oneway-d-date"
+																	value="01/01/2018" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-5 col-sm-2 col-lg-2">
+													<button type="submit" class="btn_search rounded-0 p-0 oneway_submit desktop-btns"><span
+															class="icon-search d-lg-none"></span><span
+															class="d-lg-block">SEARCH</span></button>
+												</div>
+											</div>
+										</div>
+										<div class="tab-pane fade" id="pills-multicity" role="tabpanel"
+											aria-labelledby="pills-multicity-tab">
+
+											<input type="hidden" name="m-dep1" value="" data-title="Departure">
+											<input type="hidden" name="m-ret1" value="" data-title="Arrival">
+											<input type="hidden" name="m-ddt1" value="" data-title="Departure Date">
+
+											<input type="hidden" name="m-dep2" value="" data-title="Departure">
+											<input type="hidden" name="m-ret2" value="" data-title="Arrival">
+											<input type="hidden" name="m-ddt2" value="" data-title="Departure Date">
+
+											<div class="multicity-form">
+												<div class="row custom-search-input-2 multicity1" id="milticity-1">
+													<div class="col-5 col-sm-4">
+													<div class="form-groups">
+														<input type="hidden" class="airportsearch" name="mc-dep1" />
+														<input type="text" class="search-airport-js search-airport searchinputc mcdep1 form-control" placeholder="Origin" name="search-mc-dep1" autocomplete="off" />
+														<div class="allairport-result"></div>
+														<!-- <input type="text" class="search-airport searchinputc mcdep1" placeholder="Origin" name="search-mc-dep1"
+															class="form-control" data-request="onKeyPressAirport" data-track-input
+															data-request-update="'feilds/airport': '#allairport-mc-dep1'" autocomplete="off" />
+														<div id="allairport-mc-dep1"></div> -->
+													</div>
+														<!-- <div class="form-group form-select withicon">
+															<select name="mc-dep1" class="form-control itlselect mc-select">
+																<option value="any">Origin</option>
+																{% for airport in allairports %}
+																	<option value="{{airport.airport_code}}">{{airport.airport_name}} ({{airport.airport_code}}) - {{airport.country_name}}</option>
+																{% endfor %}
+															</select>
+														</div> -->
+													</div>
+													<div class="col-5 col-sm-4 col-lg-4">
+														<div class="form-groups">
+															<input type="hidden" class="airportsearch" name="mc-arr1" />
+															<input type="text" class="search-airport-js search-airport searchinputc mcdest1 form-control" placeholder="Destination" name="search-mc-arr1" autocomplete="off" />
+															<div class="allairport-result"></div>
+															<!-- <input type="text" class="search-airport searchinputc mcdest1" placeholder="Destination" name="search-mc-arr1"
+																class="form-control" data-request="onKeyPressAirport" data-track-input data-request-update="'feilds/airport': '#allairport-mc-arr1'" autocomplete="off" />
+															<div id="allairport-mc-arr1"></div> -->
+														</div>
+														<!-- <div class="form-group form-select withicon">
+															<select name="mc-arr1" class="form-control itlselect mc-select">
+																<option value="any">Destination</option>
+																{% for airport in allairports %}
+																	<option value="{{airport.airport_code}}">{{airport.airport_name}} ({{airport.airport_code}}) - {{airport.country_name}}</option>
+																{% endfor %}
+															</select>
+														</div> -->
+													</div>
+													<div class="col-10 col-sm-2 col-lg-2">
+														<div class="form-group form-select withicon">
+															<div class="daterangeselect">
+																<div class="checkin">
+																	<input type="text" name="multicity1" class="form-control"
+																		value="01/01/2018" />
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="col-5 col-sm-2 col-lg-2">
+														<button type="submit" class="btn_search multicity-search rounded-0 p-0 multicity-form-desktop-btn  desktop-btns"><span
+																class="icon-search d-lg-none"></span><span
+																class="d-lg-block">SEARCH</span></button>
+													</div>
+												</div>
+												<div class="row custom-search-input-2 single-multicity multicity2" id="milticity-2">
+													<div class="col-5 col-sm-4">
+														<div class="form-groups">
+															<input type="hidden" class="airportsearch" name="mc-dep2" />
+															
+															<input type="text" class="search-airport-js search-airport searchinputc mcdep2 form-control" placeholder="Origin" name="search-mc-dep2" autocomplete="off" />
+															<div class="allairport-result"></div>
+															<!-- <input type="text" class="search-airport searchinputc mcdep2" placeholder="Origin" name="search-mc-dep2"
+																class="form-control" data-request="onKeyPressAirport" data-track-input data-request-update="'feilds/airport': '#allairport-mc-dep2'" autocomplete="off" />
+															<div id="allairport-mc-dep2"></div> -->
+														</div>
+														<!-- <div class="form-group form-select withicon">
+															<select name="mc-dep2" class="form-control itlselect mc-select">
+																<option value="any">Origin</option>
+																{% for airport in allairports %}
+																	<option value="{{airport.airport_code}}">{{airport.airport_name}} ({{airport.airport_code}}) - {{airport.country_name}}</option>
+																{% endfor %}
+															</select>
+														</div> -->
+													</div>
+													<div class="col-5 col-sm-4 col-lg-4">
+														<div class="form-groups">
+															<input type="hidden" class="airportsearch" name="mc-arr2" />
+
+															<input type="text" class="search-airport-js search-airport searchinputc mcdest2 form-control" placeholder="Destination" name="search-mc-arr2" autocomplete="off" />
+															<div class="allairport-result"></div>
+
+															<!-- <input type="text" class="search-airport searchinputc mcdest2" placeholder="Destination" name="search-mc-arr2"
+																class="form-control" data-request="onKeyPressAirport" data-track-input
+																data-request-update="'feilds/airport': '#allairport-mc-arr2'" autocomplete="off" />
+															<div id="allairport-mc-arr2"></div> -->
+														</div>
+														<!-- <div class="form-group form-select withicon">
+															<select name="mc-arr2" class="form-control itlselect mc-select">
+																<option value="any">Destination</option>
+																{% for airport in allairports %}
+																	<option value="{{airport.airport_code}}">{{airport.airport_name}} ({{airport.airport_code}}) - {{airport.country_name}}</option>
+																{% endfor %}
+															</select>
+														</div> -->
+													</div>
+													<div class="col-10 col-sm-2 col-lg-2">
+														<div class="form-group form-select withicon">
+															<div class="daterangeselect">
+																<div class="checkout">
+																	<input type="text" name="multicity2" class="form-control"
+																		value="01/01/2018" />
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="col-5 col-sm-2 col-lg-2">
+														<div class="multicity-add-remove">
+															<button class="remove-city">
+																<img src="/themes/SAN/assets/img/multicity.svg">
+															</button>
+															<button class="addmore-city">
+																<img src="/themes/SAN/assets/img/add-multicity.svg">
+															</button>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="multicity-form-mobile-btn">
+												<button type="submit" class="btn_search multicity-search rounded-0 p-0  desktop-btns"><span class="icon-search d-lg-none"></span><span class="d-lg-block">SEARCH</span></button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2 empty-div"></div>
+								<div class="col-lg-8 col-md-12 second-order">
+									<div class="flight-nav">
+										<div class="class-of-travel">
+											<span>Passengers</span>
+											<div class="form-group form-select withicon">
+												<label class="total-passengers"><span class="passengers-count">1</span>
+													Passenger</label>
+												<div class="form-dropdown t-p-count">
+													<div class="counter">
+														<label>Adults</label>
+														<div class="number c_adults">
+															<span class="minus"></span>
+															<input type="text" value="1" class="adults" id="adults" autocomplete="off">
+															<span class="plus"></span>
+														</div>
+													</div>
+													<div class="counter">
+														<label>Children</label>
+														<div class="number c_childs">
+															<span class="minus"></span>
+															<input type="text" class="children" id="children" value="0"
+																autocomplete="off">
+															<span class="plus"></span>
+														</div>
+													</div>
+													<div class="counter">
+														<label>Infants</label>
+														<div class="number c_infants">
+															<span class="minus"></span>
+															<input type="text" class="infants" id="infants" value="0"
+																autocomplete="off">
+															<span class="plus"></span>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="class-of-travel">
+										<span>Preffered Airline</span>
+											<div class="form-group form-select p-airlines-select withicon">
+												<select name="p-airlines" class="form-control itlselect">
+													<option value="">Select Airline</option>
+														{% for airline in airlines %}
+															<option value="{{airline.airline_code}}">{{airline.airline_name}}</option>
+            										{% endfor %}
+												</select>
+											</div>
+										</div>
+										<div class="class-of-travel">
+											<label class="custom-check direct-flight-check">Direct Flight
+												<input type="checkbox" checked="checked">
+												<span class="checkmark"></span>
+											</label>
+											<label class="custom-check refundable-check">Refundable
+												<input type="checkbox">
+												<span class="checkmark"></span>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2 empty-div mobile-btns-wrap">
+									<div class="mobile-btns">
+										<button type="submit" class="btn_search rounded-0 p-0 oneway_submit"><span
+															class="icon-search d-lg-none"></span><span
+															class="d-lg-block">SEARCH</span></button>
+<button type="submit" class="btn_search multicity-search rounded-0 p-0"><span class="icon-search d-lg-none"></span><span class="d-lg-block">SEARCH</span></button>
+
+<button type="submit" class="btn_search rounded-0 p-0 roundtrip_submit" style="display: block;"><span
+															class="icon-search d-lg-none"></span><span
+															class="d-lg-block">SEARCH</span></button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="pills-hotel" role="tabpanel" aria-labelledby="pills-hotel-tab">
+							<!-- hotel hidden fields -->
+							<input type="hidden" name="h-city-code" value="1" data-title="City Code">
+							
+							<input type="hidden" name="langCode" value="EN" data-title="Hotel langCode">
+							<input type="hidden" name="h-rooms-url" value="">
+							<input type="hidden" name="hh-checkin" value="">
+							<input type="hidden" name="hh-checkout" value="">
+							<div class="row custom-search-input-2">
+								<div class="col-3 col-sm-3">
+									<div class="form-groups">
+										<input type="hidden" id="hotel-destination" name="hotel-destination" />
+										<!-- <input type="text" id="search-destination" placeholder="Destination" name="search-destination"
+											class="form-control searchinputc" data-request="onKeyPressCity" data-track-input
+											data-request-update="'feilds/cities': '#allcities'" autocomplete="off" /> -->
+
+										<input type="text" id="search-destination" placeholder="Destination" name="search-destination"
+											class="form-control searchinputc" autocomplete="off" />
+										<div id="allcities"></div>
+									</div>
+								</div>
+								<div class="col-2 col-sm-2 col-lg-2">
+									<div class="form-groups">
+										<input type="hidden" id="nationality" name="nationality" />
+										<input type="text" id="search-nationality" placeholder="Nationality" name="search-nationality"
+											class="form-control searchinputc" data-request="onKeyPressNationality" data-track-input
+											data-request-update="'feilds/nationality': '#allnationality'" autocomplete="off" />
+										<div id="allnationality"></div>
+									</div>
+									<!-- <div class="form-group form-select withicon">
+										<select id="nationality-list" name="nationality" class="form-control">
+											<option value="any">Nationality</option>
+											<option value="KW">Kuwait</option>
+											<option value="BH">Bahrain</option>
+											<option value="OM">Oman</option>
+											<option value="QA">Qatar</option>
+											<option value="EG">Egypt</option>
+											<option value="MA">Morocco</option>
+											<option value="NG">Nigeria</option>
+											<option value="SA">Saudi Arabia</option>
+											<option value="TN">Tunisia</option>
+											<option value="AE">United Arab Emirates</option>
+										</select>
+									</div> -->
+								</div>
+								<div class="col-4 col-sm-4 col-lg-4">
+									<div class="form-group withicon">
+										<div class="daterangeselect">
+											<div class="checkin">
+												<input type="text" name="h-checkin" class="form-control" value="01/01/2018" />
+											</div>
+											<span class="selected-nights"><strong>1</strong> Nights</span>
+											<div class="checkout">
+												<input type="text" name="h-checkout" class="form-control" value="01/15/2018" />
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-5 col-sm-3 col-lg-3 h-desktop-btns">
+									<button type="submit" class="btn_search rounded-0 p-0 hotel_search" id="hotel_search"><span
+											class="icon-search d-lg-none"></span><span class="d-lg-block">
+											SEARCH</span></button>
+								</div>
+							</div>
+							<button class="addmore_room">Add more rooms</button>
+							<div class="row custom-search-input-2" id="rooms_list">
+								<div class="hotel-options hotel-1" hotel-id="1">
+									<input type="hidden" name="room_no" value="room1">
+									<input type="hidden" name="adult_count" value="1">
+									<input type="hidden" name="child_count" value="1">
+									<div class="hotel-rooms">
+										Room 1
+									</div>
+									<div class="h-adults">
+										Adults (6)
+										<div class="number h-counter">
+											<span class="minus"></span>
+											<input type="text" value="1" class="adults" id="adults" autocomplete='off'>
+											<span class="plus"></span>
+										</div>
+									</div>
+									<div class="h-adults childrens">
+										Child (0-4)
+										<div class="number c-counter">
+											<span class="minus"></span>
+											<input type="text" value="0" class="child" id="child" autocomplete='off'>
+											<span class="plus"></span>
+										</div>
+									</div>
+
+
+									<!-- <div class="children-wrap">
+										<div class="h-adults childrens">
+											Child 1
+											<div class="form-group form-select withicon">
+												<select name="country" class="form-control">
+													<option value="any">Under 1</option>
+													<option value="1">1</option>
+													<option value="2">2</option>
+													<option value="3">3</option>
+													<option value="4">4</option>
+													<option value="5">5</option>
+													<option value="6">6</option>
+													<option value="7">7</option>
+													<option value="8">8</option>
+													<option value="9">9</option>
+													<option value="10">10</option>
+													<option value="11">11</option>
+												</select>
+											</div>
+										</div>
+									</div> -->
+								</div>
+							</div>
+							<div class="h-mobile-btns custom-search-input-2">
+								<button type="submit" class="btn_search rounded-0 p-0 hotel_search" id="hotel_search"><span
+											class="icon-search d-lg-none"></span><span class="d-lg-block">
+											SEARCH</span></button>
+							</div>
+						</div>
+						<div class="tab-pane fade show active" id="pills-holiday" role="tabpanel" aria-labelledby="pills-holiday-tab">
+							<form action="{{ 'search'|page }}/#searching" method="GET" >
+
+								<input type="hidden" name="package_change" value="no">
+								<input type="hidden" name="experience_change" value="no">
+								<input type="hidden" name="month_change" value="no">
+								<input type="hidden" name="package_value" value="any">
+								<input type="hidden" name="experience_value" value="any">
+								<input type="hidden" name="month_value" value="any">
+
+								<div class="row custom-search-input-2">
+									<div class="col-5 col-sm-3">
+										<div class="form-groups form-select withicon">
+											<select name="package" class="form-control countrylist" id="hcountrylist" data-request="onGetAllExp" data-request-update="'feilds/experiences': '#experience','feilds/months': '#months'">
+												<option value="any">Country</option>
+												{% if(allpackages) %}
+												{% partial 'feilds/packages' allpackages=allpackages %}
+												{% else %}
+												{% for countryname in countryListFinal | sort((a, b) => a.country <=> b.country ) %}
+													<option value="{{countryname.country}}" {% if get("package")==countryname.country
+														%} selected="selected" {% endif %}>{{countryname.country}}
+													</option>
+													{% endfor %}
+													{% endif %}
+											</select>
+											 <div id="country-error" class="error-message"></div>
+										</div>
+									</div>
+									<div class="col-5 col-sm-3 col-lg-3">
+										<div class="form-group form-select withicon">
+											<select name="experience" class="form-control" id="experience" data-request="onChangeExp" data-request-update="'feilds/packages': '#hcountrylist'">
+												<option value="any">Experience</option>
+												{% if(allexp) %}
+												{% partial 'feilds/experiences' allexp=allexp %}
+												{% else %}
+											
+												{% for single_exp in experience | sort((a, b) => a.title <=> b.title ) %}
+												{% if single_exp.id in allowedids %}
+													<option value="{{single_exp.slug}}">{{single_exp.id}} {{single_exp.title | capitalize}}
+													</option>
+													    {% endif %}
+
+													{% endfor %}
+													{% endif %}
+											</select>
+																					<button class="reset_country d-none" id="reset_experience" data-request="onResetExperience" data-request-update="'feilds/experiences': '#experience'">Reset Experience</button>
+
+											<!-- <i class="icon-bicycle"></i> -->
+										</div>
+									</div>
+									<div class="col-10 col-sm-3 col-lg-3">
+										<div class="form-group form-select withicon">
+											<select name="month" class="form-control" id="months" data-request="onChangeExp"
+												data-request-update="'feilds/packages': '#hcountrylist'">
+												<option value="any">Month</option>
+												{% set pmonths = {1:'January', 2:'February', 3:'March', 4:'April', 5:'May', 6:'Jun',
+												7:'July', 8:'August', 9:'September', 10:'October', 11:'November', 12:'December'} %}
+												{% if(allmonths) %}
+												{% partial 'feilds/months' allmonths=allmonths %}
+												{% else %}
+												{% for k, record in pmonths %}
+												<option {% if get("month")==k %}selected="selected" {% endif %} value="{{record}}">
+													{{record}}</option>
+												{% endfor %}
+												{% endif %}
+											</select>
+										</div>
+									</div>
+									<div class="col-5 col-sm-3 col-lg-3">
+										<button type="submit" class="btn_search rounded-0 p-0" ><span
+												class="icon-search d-lg-none"></span><span class="d-lg-block">SEARCH</span></button>
+									</div>
+											<div class="reset_wrap">
+												<button class="reset_country" id="reset_country" data-request="onResetContry" data-request-update="'feilds/packages': '#hcountrylist'">Reset <img src="/themes/SAN/assets/images/Refresh.svg"></button>
+											</div>
+								</div>
+							</form>
+						</div>
+
+					</div>
+				</div>
+				<div class="custom-filters m-filters">
+					<ul class="nav nav-pills" id="pills-tab" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link" id="pills-flight-tab" data-toggle="modal" data-target="#flightModal"><img
+									src="/themes/SAN/assets/img/flight-icon.svg"> Flight</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="pills-hotel-tab" data-toggle="modal" data-target="#hotelModal"><img
+									src="/themes/SAN/assets/img/hotel-icon.svg"> Hotel</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" id="pills-holiday-tab" data-toggle="modal" data-target="#holidayModal"><img
+									src="/themes/SAN/assets/img/holidays-icon.svg">
+								Holidays</a>
+						</li>
+
+
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Modal -->
+<div class="modal filter-modal fade" id="holidayModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Holiday</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body custom-filters">
+				<div class=""></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal filter-modal fade" id="flightModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Flight</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body custom-filters">
+				<div class=""></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal filter-modal fade" id="hotelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Hotel</h3>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body custom-filters">
+				<div class=""></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+
+   $(document).ready(function(){
+
+		jQuery(document).on('keyup', '#search-destination', function() {
+         var keywordFilter = $(this).val();
+			var allairportDiv = $(this).siblings('#allcities');
+			if(keywordFilter.length > 2){
+				$.getJSON("/storage/app/media/hotels-api.json", function(data) {
+				
+					data.sort(function(a, b) {
+						return a.cn.localeCompare(b.cn)
+					});
+					allairportDiv.empty();
+					var airhtml = '<div class="dest-list"><ul style="margin: 0;">';
+					$.each(data, function(key, value) {
+						// console.log(value.cn.toLowerCase());
+						if(value.cn != "" || value.cn != null){
+							var inputText   = keywordFilter.toLowerCase();
+							var cityName     = value.cn.toLowerCase();
+							var countryName     = value.con.toLowerCase();
+							if(cityName.indexOf(inputText) != -1 || countryName.indexOf(inputText) != -1){
+								airhtml += '<li class="destination" data-city_code="'+value.cc+'" >'+value.cn+' ('+value.con+')</li>';
+							}
+						}
+					});
+					airhtml += '</ul></div>';
+					allairportDiv.html(airhtml);
+				});
+			}else{
+				allairportDiv.html('');
+			}
+      });
+
+		jQuery(document).on('keyup', '.search-airport-js', function() {
+         var keywordFilter = $(this).val();
+			var allairportDiv = $(this).siblings('.allairport-result');
+			if(keywordFilter.length > 2){
+				$.getJSON("/storage/app/media/airport-api.json", function(data) {
+					data.sort(function(a, b) {
+						return a.an.localeCompare(b.an)
+					});
+					allairportDiv.empty();
+					var airhtml = '<div class="dest-list"><ul style="margin: 0;">';
+					$.each(data, function(key, value) {
+						var inputText   = keywordFilter.toLowerCase();
+						var airname     = value.an.toLowerCase();
+						var aircode     = value.ac.toLowerCase();
+						if(airname.indexOf(inputText) != -1 || aircode.indexOf(inputText) != -1){
+						airhtml += '<li class="airport" data-city_code="'+value.ac+'" >'+value.an+' ('+value.ac+')</li>';
+						}
+					});
+					airhtml += '</ul></div>';
+					allairportDiv.html(airhtml);
+				});
+			}else{
+				allairportDiv.html('');
+			}
+      });
+
+		$("body").on("click", ".airport", function(){
+			var pdiv = $(this).closest('.form-groups');
+			console.log(pdiv);
+			pdiv.find('.search-airport').attr("placeholder", $(this).text());
+			pdiv.find('.search-airport').val($(this).text());
+			pdiv.find('.airportsearch').val($(this).attr("data-city_code"));
+			$(this).parent().closest(".dest-list").hide();
+		});
+
+		$("body").on("click", ".destination", function(){
+			$("#search-destination").attr("placeholder", $(this).text());
+			$("#hotel-destination").val($(this).attr("data-city_code"));
+			$("#search-destination").val($(this).text());
+			$(".dest-list").hide();
+		});
+
+		$("body").on("click", "#milticity-1 .airport", function(){
+			$('#milticity-2 .mcdep2').attr("placeholder", $(this).text());
+			$('#milticity-2 .mcdep2').val($(this).text());
+		});
+
+		$("body").on("click", "#milticity-2 .airport", function(){
+			$('#milticity-3 .mcdep3').attr("placeholder", $(this).text());
+			$('#milticity-3 .mcdep3').val($(this).text());
+		});
+   });
+
+
+
+
+
+
+
+jQuery('#hcountrylist').on('change', function () {
+    var countrySelected = jQuery('#hcountrylist').val();
+
+    // Check if the country is selected (not 'any' or empty)
+    if (countrySelected === 'any' || countrySelected === '') {
+        // Add error class and show error message
+        jQuery('#hcountrylist').addClass('field-error');
+        jQuery('#country-error').text('');
+    } else {
+        // Remove error class and clear error message
+        jQuery('#hcountrylist').removeClass('field-error');
+        jQuery('#country-error').text('');
+    }
+
+    // Update hidden input fields only if country is valid
+    if (countrySelected !== 'any' && countrySelected !== '') {
+        jQuery('input[name="package_change"]').val('yes');
+        jQuery('input[name="package_value"]').val(countrySelected);
+        jQuery('input[name="month_value"]').val(jQuery('#months').val());
+    }
+});
+
+// Handle form submission
+jQuery('form').on('submit', function (e) {
+    var countrySelected = jQuery('#hcountrylist').val();
+
+    // Prevent form submission if country is invalid
+    if (countrySelected === 'any' || countrySelected === '') {
+        jQuery('#hcountrylist').addClass('field-error');
+        jQuery('#country-error').text('');
+        e.preventDefault(); // Prevent form submission
+    }
+});
+
+// Handle reset button click
+jQuery('#reset_country').on('click', function () {
+		jQuery('input[name="experience_change"]').val('no');
+		jQuery('input[name="package_change"]').val('no');
+		jQuery('input[name="month_change"]').val('no');
+		jQuery('input[name="package_value"]').val('any');
+		jQuery('input[name="experience_value"]').val('any');
+		$("#reset_experience").trigger("click");
+	});
+	jQuery('#reset_experience').on('click', function () {
+		jQuery('input[name="experience_change"]').val('no');
+		jQuery('input[name="package_change"]').val('no');
+		jQuery('input[name="month_change"]').val('no');
+		jQuery('input[name="package_value"]').val('any');
+		jQuery('input[name="experience_value"]').val('any');
+		jQuery('#months').val('any');
+	});
+
+
+	jQuery(function () {
+
+		jQuery('input[name="checkin"]').daterangepicker({
+			"startDate": moment().add(0, 'day'),
+			"endDate": moment().add(1, 'day'),
+			"linkedCalendars": false,
+			"autoUpdateInput": false,
+			"autoApply": true,
+		}, function (start, end, label) {
+			$('input[name="checkin"]').val(start.format('MM/DD/YYYY'));
+			$('input[name="checkout"]').val(end.format('MM/DD/YYYY'));
+			console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+		});
+
+		jQuery('input[name="roundtrip-in"]').daterangepicker({
+            "startDate": moment().add(0, 'day'),
+            "endDate": moment().add(1, 'day'),
+            "singleDatePicker": true,
+            "linkedCalendars": false,
+            "autoUpdateInput": true,
+            "autoApply": true,
+            "minDate": new Date(),
+            "locale": {
+                format: 'DD-MMM-YYYY'
+            }
+        }, function (start, end, label) {
+            var formattedDate = start.format('DD-MMM-YYYY');
+            jQuery('input[name="roundtrip-in"]').val(formattedDate);
+            console.log('New date selected: ' + formattedDate);
+            jQuery('input[name="rr-dd1"]').val(formattedDate);
+            
+            // Automatically set roundtrip-out date to the same as roundtrip-in
+            jQuery('input[name="roundtrip-out"]').daterangepicker({
+                "startDate": start,
+                "singleDatePicker": true,
+                "linkedCalendars": false,
+                "autoUpdateInput": true,
+                "autoApply": true,
+                "minDate": start, // Ensures round-out can't be before round-in
+                "locale": {
+                    format: 'DD-MMM-YYYY'
+                }
+            }, function (start, end, label) {
+                var formattedOutDate = start.format('DD-MMM-YYYY');
+                jQuery('input[name="roundtrip-out"]').val(formattedOutDate);
+                console.log('New round-out date selected: ' + formattedOutDate);
+                jQuery('input[name="rr-dd2"]').val(formattedOutDate);
+            });
+            
+            jQuery('input[name="roundtrip-out"]').val(formattedDate); // Default to same date
+            jQuery('input[name="rr-dd2"]').val(formattedDate);
+        });
+        
+        jQuery('input[name="roundtrip-out"]').daterangepicker({
+            "startDate": moment().add(1, 'day'),
+            "singleDatePicker": true,
+            "linkedCalendars": false,
+            "autoUpdateInput": true,
+            "autoApply": true,
+            "locale": {
+                format: 'DD-MMM-YYYY'
+            }
+        }, function (start, end, label) {
+            var formattedOutDate = start.format('MM/DD/YYYY');
+            jQuery('input[name="roundtrip-out"]').val(formattedOutDate);
+            console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+            jQuery('input[name="rr-dd2"]').val(start.format('YYYY-MM-DD'));
+        });
+
+		jQuery('input[name="oneway"]').daterangepicker({
+            "startDate": moment().add(0, 'day'),
+            "singleDatePicker": true,
+            "autoApply": true,
+            "minDate": new Date(),
+            "locale": {
+                format: 'DD-MMM-YYYY'
+            }
+        }, function (start, end, label) {
+            var formattedDate = start.format('DD-MMM-YYYY');
+            jQuery('input[name="oneway"]').val(formattedDate);
+            console.log('New oneway date selected: ' + formattedDate);
+        });
+		
+		$(document).ready(function() {
+    function initializeDatepicker(inputName, minDateInput, targetInput) {
+        var minDate = minDateInput ? $(minDateInput).val() : moment().add(0, 'day');
+        
+        jQuery(`input[name="${inputName}"]`).daterangepicker({
+            "startDate": minDate,
+            "singleDatePicker": true,
+            "autoApply": true,
+            "minDate": minDate,
+            "locale": {
+                format: 'DD-MMM-YYYY'
+            }
+        }, function(start, end, label) {
+            var formattedDate = start.format('DD-MMM-YYYY');
+            jQuery(`input[name="${targetInput}"]`).val(formattedDate);
+        });
+        
+        // Set initial formatted date
+        var initialDate = moment(minDate).format('DD-MMM-YYYY');
+        jQuery(`input[name="${targetInput}"]`).val(initialDate);
+    }
+    
+    initializeDatepicker("multicity1", null, "m-ddt1");
+    initializeDatepicker("multicity2", "input[name='multicity1']", "m-ddt2");
+    initializeDatepicker("multicity3", "input[name='multicity2']", "m-ddt3");
+    
+    $('body').on('focus', 'input[name="multicity1"]', function() {
+        initializeDatepicker("multicity1", null, "m-ddt1");
+    });
+    
+    $('body').on('focus', 'input[name="multicity2"]', function() {
+        initializeDatepicker("multicity2", "input[name='multicity1']", "m-ddt2");
+    });
+    
+    $('body').on('focus', 'input[name="multicity3"]', function() {
+        initializeDatepicker("multicity3", "input[name='multicity2']", "m-ddt3");
+    });
+});
+
+		
+	});
+
+	// jQuery('.h-counter .minus').click(function () {
+// jQuery('.h-counter .minus').click(function () {
+	jQuery('body').on('click', '.h-counter .minus', function () {
+		var $input = jQuery(this).parent().find('input');
+		var count = parseInt($input.val()) - 1;
+		count = count < 0 ? 0 : count;
+		$input.val(count);
+		$input.change();
+		var num = parseInt(jQuery('#child').val());
+		return false;
+	});
+	jQuery('body').on('click', '.h-counter .plus', function () {
+		// jQuery('.h-counter .plus').click(function () {
+		var $input = jQuery(this).parent().find('input');
+		if(parseInt($input.val())>5){
+		    return ;
+		    }
+		$input.val(parseInt($input.val()) + 1);
+		$input.change();
+		return false;
+	});
+
+	jQuery(document).ready(function () {
+    jQuery('#child, #children').val(0);
+});
+
+// Function to get total children per room
+function getRoomChildCount($room) {
+    return $room.find('.c-counter .child').val() ? parseInt($room.find('.c-counter .child').val()) : 0;
+}
+
+// Handle minus button click
+jQuery('body').on('click', '.c-counter .minus', function () {
+    var $input = jQuery(this).parent().find('input');
+    var count = parseInt($input.val()) - 1;
+    count = count < 0 ? 0 : count; // Ensure count doesn't go negative
+    $input.val(count);
+    $input.change();
+});
+
+// Handle plus button click (Limit set to 4 per room)
+jQuery('body').on('click', '.c-counter .plus', function () {
+    var $input = jQuery(this).parent().find('input');
+    var $room = jQuery(this).closest('.hotel-options'); // Get the parent room
+    var roomChildCount = getRoomChildCount($room); // Get child count for this room
+
+    if (roomChildCount < 4) { // Apply limit per room (4 children max)
+        $input.val(roomChildCount + 1);
+        $input.change();
+    }
+});
+
+
+	jQuery('.t-p-count .minus').click(function () {
+
+		var $input = jQuery(this).parent().find('input');
+		var count = parseInt($input.val()) - 1;
+		count = count < 0 ? 0 : count;
+		$input.val(count);
+		$input.change();
+		var num = parseInt(jQuery('#child').val());
+		var pass_count = parseInt(jQuery('#adults').val()) + parseInt(jQuery('#children').val()) + parseInt(jQuery('#infants').val());
+		jQuery('.passengers-count').text(pass_count);
+		return false;
+	});
+
+	jQuery('.t-p-count .plus').click(function () {
+		var $input = jQuery(this).parent().find('input');
+		$input.val(parseInt($input.val()) + 1);
+		$input.change();
+		var pass_count = parseInt(jQuery('#adults').val()) + parseInt(jQuery('#children').val()) + parseInt(jQuery('#infants').val());
+		jQuery('.passengers-count').text(pass_count);
+		return false;
+	});
+
+	
+
+	if (jQuery(window).width() <= 800) {
+	//	jQuery("#pills-hotel").appendTo("#hotelModal .modal-body");
+	//	jQuery("#pills-flight").appendTo("#flightModal .modal-body");
+	//	jQuery("#pills-holiday").appendTo("#holidayModal .modal-body");
+	}
+
+	jQuery('#holidayModal, #hotelModal, #flightModal').on('shown.bs.modal', function () {
+		jQuery('header.header').addClass('modal-open');
+	});
+	jQuery('#holidayModal, #hotelModal, #flightModal').on('hidden.bs.modal', function () {
+		jQuery('header.header').removeClass('modal-open');
+	});
+
+	jQuery(' a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+		console.log($(e.target).attr('area-value'));
+		var key = $(e.target).attr('area-value');
+		jQuery('input[name=triptype]').val(key);
+	});
+
+	jQuery('select[name="travel-class"]').change(function () {
+		jQuery('input[name=cl1]').val(jQuery(this).val());
+		console.log($(this).val())
+	});
+
+	jQuery('select[name="p-airlines"]').change(function () {
+		jQuery('input[name=airlines]').val(jQuery(this).val());
+		console.log($(this).val())
+	});
+
+	jQuery('.direct-flight-check input').change(function () {
+		if ($(this).is(":checked")) {
+			jQuery('input[name=direct]').val('true');
+		}
+		else {
+			jQuery('input[name=direct]').val('false');
+		}
+	});
+
+	jQuery('select[name="departure-oneway"]').change(function () {
+		var dep = jQuery(this).val();
+		jQuery('input[name=o-from]').val(dep);
+		console.log($(this).val())
+	});
+
+	jQuery('select[name="arrival-oneway"]').change(function () {
+		var arrival = jQuery(this).val();
+		jQuery('input[name=o-to]').val(arrival);
+		console.log($(this).val())
+	});
+
+	jQuery('select[name="rt-dep"]').change(function () {
+		var dep = jQuery(this).val();
+		jQuery('input[name=rt-from]').val(dep);
+		console.log($(this).val())
+	});
+
+	jQuery('select[name="rt-arrival"]').change(function () {
+		var arrival = jQuery(this).val();
+		jQuery('input[name=rt-to]').val(arrival);
+		console.log($(this).val())
+	});
+
+	jQuery('select[name="mc-dep1"]').change(function () {
+		var arrival = jQuery(this).val();
+		jQuery('input[name=m-dep1]').val(arrival);
+		console.log($(this).val())
+	});
+
+	$(document).ready(function() {
+            var hiddenInput = document.querySelector("input[name='mc-arr1']");
+            var depInput = $("input[name='mc-dep2']");
+
+            // Create a MutationObserver to detect changes to the hidden input's attributes
+            var observer = new MutationObserver(function(mutationsList) {
+                for (var mutation of mutationsList) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                        // When the value attribute changes, update the other input value
+                        var arrival = $(hiddenInput).val();
+                        depInput.val(arrival);
+                    }
+                }
+            });
+
+            // Configure the observer to watch for attribute changes
+            observer.observe(hiddenInput, {
+                attributes: true
+            });
+
+        });
+	jQuery('select[name="mc-dep2"]').change(function () {
+		var arrival = jQuery(this).val();
+		jQuery('input[name=m-dep2]').val(arrival);
+		console.log($(this).val())
+	});
+
+	
+
+	jQuery('select[name="mc-arr1"]').change(function () {
+		var arrival = jQuery(this).val();
+		jQuery('input[name=m-ret1]').val(arrival);
+		jQuery("select[name=mc-dep2]").val(arrival).trigger("change");
+		console.log($(this).val())
+	});
+	jQuery('select[name="mc-arr2"]').change(function () {
+		var arrival = jQuery(this).val();
+		jQuery('input[name=m-ret2]').val(arrival);
+		jQuery("select[name=mc-dep3]").val(arrival).trigger("change");
+		console.log($(this).val())
+	});
+
+
+    $(document).ready(function() {
+            var hiddenInput = document.querySelector("input[name='mc-arr2']");
+
+            // Create a MutationObserver to detect changes to the hidden input's attributes
+            var observer = new MutationObserver(function(mutationsList) {
+                for (var mutation of mutationsList) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+                    
+                        var arrival = $(hiddenInput).val();
+                        var depInput = $("input[name='mc-dep3']");
+                        if (depInput.length) {
+                            depInput.val(arrival);
+                        }
+                    }
+                }
+            });
+
+            // Configure the observer to watch for attribute changes
+            observer.observe(hiddenInput, {
+                attributes: true
+            });
+
+            // Example function to change the value of the hidden input after 2 seconds
+            setTimeout(function() {
+                // Simulate changing the value of the hidden input
+                $(hiddenInput).val('newValue').trigger('change');
+            }, 2000);
+        });
+
+
+	jQuery(".total-passengers").click(function () {
+		
+	});
+
+	jQuery(function() {
+	  jQuery(".total-passengers").on("click", function(e) {
+	    jQuery(this).next().toggleClass('show');
+	    e.stopPropagation()
+	  });
+	  jQuery(document).on("click", function(e) {
+	    if (jQuery(e.target).is(".total-passengers") === false) {
+	      jQuery(".t-p-count").removeClass("show");
+	    }
+	  });
+	});
+
+	jQuery(".oneway_submit").click(function () {
+
+		var adults = jQuery('.adults').val();
+		var children = jQuery('.children').val();
+		var infants = jQuery('.infants').val();
+		var cc1 = jQuery('input[name=cl1]').val();
+		var triptype = jQuery('input[name=triptype]').val();
+		var direct = jQuery('input[name=direct]').val();
+		var airlines = jQuery('input[name=airlines]').val();
+		var dep = jQuery('input[name=departure-oneway]').val();
+		var arrival = jQuery('input[name=arrival-oneway]').val();
+		var checkin = jQuery('input[name="oneway"].oneway-d-date').val();
+		var ref = jQuery('input[name=refundable]').val();
+
+		if( jQuery('select[name="departure-oneway"]').val() == 'any' || jQuery('select[name="arrival-oneway"]').val() == 'any' ){
+			if(jQuery('select[name="departure-oneway"]').val() == 'any') {
+				jQuery('select[name="departure-oneway"]').next('.select2-container').find('.select2-selection').addClass('field-error');
+			}
+			else {
+				jQuery('select[name="departure-oneway"]').next('.select2-container').find('.select2-selection').removeClass('field-error');
+			}
+
+			if(jQuery('select[name="arrival-oneway"]').val() == 'any') {
+				jQuery('select[name="arrival-oneway"]').next('.select2-container').find('.select2-selection').addClass('field-error');
+			}
+			else {
+				jQuery('select[name="arrival-oneway"]').next('.select2-container').find('.select2-selection').removeClass('field-error');
+			}
+		}
+		else {
+			setTimeout(function () {
+
+			// window.open('https://booking.itlworld.com/Flight/search?dep1=' + dep + '&ret1=' + arrival + '&dtt1=' + checkin + '&cl1=' + cc1 + '&triptype=1&adult=' + adults + '&child=' + children + '&infant=0&direct=' + direct + '&key=ICT&langcode=EN&airlines=' + airlines + '&ref=false');
+				window.open('https://booking.itlworld.com/Flight/search?dep1=' + dep + '&ret1=' + arrival + '&dtt1=' + checkin + '&cl1=' + cc1 + '&triptype=1&adult=' + adults + '&child=' + children + '&infant=' + infants + '&direct=' + direct + '&baggage=false&key=OW&airlines=' + airlines + '&ref='+ref+'&langcode=EN&curr=AED&ipc=false', '_blank')
+
+			}, 500);
+		}
+	});
+
+	jQuery(".roundtrip_submit").click(function (e) {
+    e.preventDefault(); // Prevent form submission by default
+
+    // Collect form data
+    var r_adults = jQuery('.adults').val();
+    var r_children = jQuery('.children').val();
+    var r_infants = jQuery('.infants').val();
+    var r_cc1 = jQuery('input[name=cl1]').val();
+    var r_triptype = jQuery('input[name=triptype]').val();
+    var r_direct = jQuery('input[name=direct]').val();
+    var r_airlines = jQuery('input[name=airlines]').val();
+    var r_dep = jQuery('input[name=rt-dep]').val();
+    var r_arrival = jQuery('input[name=rt-arrival]').val();
+    var r_dep_d_1 = jQuery('.checkin input[name="roundtrip-in"]').val();
+    var r_dep_d_2 = jQuery('.checkout input[name="roundtrip-out"]').val();
+    var ref = jQuery('input[name=refundable]').val();
+
+    // Validate departure and arrival 'any' condition
+    if (jQuery('select[name="rt-dep"]').val() == 'any' || jQuery('select[name="rt-arrival"]').val() == 'any') {
+        if (jQuery('select[name="rt-dep"]').val() == 'any') {
+            jQuery('select[name="rt-dep"]').next('.select2-container').find('.select2-selection').addClass('field-error');
+        } else {
+            jQuery('select[name="departure-oneway"]').next('.select2-container').find('.select2-selection').removeClass('field-error');
+        }
+
+        if (jQuery('select[name="rt-arrival"]').val() == 'any') {
+            jQuery('select[name="rt-arrival"]').next('.select2-container').find('.select2-selection').addClass('field-error');
+        } else {
+            jQuery('select[name="rt-arrival"]').next('.select2-container').find('.select2-selection').removeClass('field-error');
+        }
+
+        return false; // Stop further execution if 'any' is selected
+    }
+
+    // Validate destination input field
+    var arrivalDestination = jQuery('input[name=search-rt-arrival]').val().trim();
+    if (!arrivalDestination) {
+        jQuery('input[name=search-rt-arrival]').addClass('field-error');
+        return false; // Stop further execution if destination is not entered
+    } else {
+        jQuery('input[name=search-rt-arrival]').removeClass('field-error');
+    }
+
+    // Proceed with redirection if all validation passes
+    var finalURL = 'https://booking.itlworld.com/Flight/search?dep1=' + r_dep + '&ret1=' + r_arrival + '&dtt1=' + r_dep_d_1 + '&cl1=' + r_cc1 + '&dep2=' + r_arrival + '&ret2=' + r_dep + '&dtt2=' + r_dep_d_2 + '&cl2=' + r_cc1 + '&triptype=1&adult=' + r_adults + '&child=' + r_children + '&infant=' + r_infants + '&direct=' + r_direct + '&baggage=false&key=IRT&airlines=' + r_airlines + '&ref=' + ref + '&langcode=EN&curr=AED';
+
+    // Redirect after 500ms delay (optional)
+    setTimeout(function () {
+        window.open(finalURL, '_blank');
+    }, 500);
+});
+
+
+
+	// jQuery('body').on('click', '.multicity-search', function(){
+	jQuery(document).on('click', '.multicity-search', function() {
+
+		var m_adults = jQuery('.adults').val();
+		var m_children = jQuery('.children').val();
+		var m_infants = jQuery('.infants').val();
+		var m_cc1 = jQuery('input[name=cl1]').val();
+		var m_triptype = jQuery('input[name=triptype]').val();
+		var m_direct = jQuery('input[name=direct]').val();
+		var m_airlines = jQuery('input[name=airlines]').val();
+
+		var m_dep1 = jQuery('input[name=mc-dep1]').val();
+		var m_arrival1 = jQuery('input[name=mc-arr1]').val();
+		var m_dep_d_1 = jQuery('input[name="multicity1"]').val();
+
+		var m_dep2 = jQuery('input[name=mc-dep2]').val();
+		var m_arrival2 = jQuery('input[name=mc-arr2]').val();
+		var m_dep_d_2 = jQuery('input[name="multicity2"]').val();
+
+		var m_dep3 = jQuery('input[name=mc-dep3]').val();
+		var m_arrival3 = jQuery('input[name=mc-ret3]').val();
+		var m_dep_d_3 = jQuery('input[name="mc-ddt3"]').val();
+
+		var ref = jQuery('input[name=refundable]').val();
+
+		if ((jQuery('input[name="mc-dep3"]').val() != undefined) && (jQuery('input[name="mc-arr3"]').val() != undefined) && (jQuery('input[name="multicity3"]').val() != undefined)) {
+			var mc3 = 'dep3='+ jQuery('input[name="mc-dep3"]').val() +'&ret3='+ jQuery('input[name="mc-arr3"]').val() +'&dtt3='+ jQuery('input[name="multicity3"]').val();
+		}
+		else {
+			var mc3 = "";
+		}
+
+		console.log("mc3",mc3);
+
+		if( jQuery('select.mc-select').val() == 'any' ){
+			if(jQuery('select.mc-select').val() == 'any') {
+				jQuery('select.mc-select').next('.select2-container').find('.select2-selection').addClass('field-error');
+			}
+			else {
+				jQuery('select.mc-select').next('.select2-container').find('.select2-selection').removeClass('field-error');
+			}
+
+			// if(jQuery('select[name="mc-dep3"]').val() == 'any') {
+			// 	jQuery('select[name="mc-dep3"]').next('.select2-container').find('.select2-selection').addClass('field-error');
+			// }
+			// else {
+			// 	jQuery('select[name="mc-dep3"]').next('.select2-container').find('.select2-selection').removeClass('field-error');
+			// }
+
+			// if(jQuery('select[name="mc-arr3"]').val() == 'any') {
+			// 	jQuery('select[name="mc-arr3"]').next('.select2-container').find('.select2-selection').addClass('field-error');
+			// }
+			// else {
+			// 	jQuery('select[name="mc-arr3"]').next('.select2-container').find('.select2-selection').removeClass('field-error');
+			// }
+		}
+		else {
+
+			setTimeout(function () {
+
+				// window.open('https://orgone.aosuat.com/flight/result?dep1=' + m_dep1 + '&ret1=' + m_arrival1 + '&dtt1=' + m_dep_d_1 + '&cl1=' + m_cc1 + '&dep2=' + m_dep2 + '&ret2=' + m_arrival2 + '&dtt2=' + m_dep_d_2 + '&cl2=' + m_cc1 + '&dep3=' + m_dep3 + '&ret3=' + m_arrival3 + '&dtt3=' + m_dep_d_3 + '&cl3=' + m_cc1 + '&triptype=' + m_triptype + '&adult=' + m_adults + '&child=' + m_children + '&infant=' + m_infants + '&direct=' + m_direct + '&key=IMC&langcode=EN&airlines=' + m_airlines + '&ref=false&agency=2206081006125414548');
+
+				window.open('https://booking.itlworld.com/Flight/search?dep1=' + m_dep1 + '&ret1=' + m_arrival1 + '&dtt1=' + m_dep_d_1 + '&cl1=' + m_cc1 + '&dep2=' + m_dep2 + '&ret2=' + m_arrival2 + '&dtt2=' + m_dep_d_2 + '&cl2=' + m_cc1 + '&'+ mc3 +'&cl3=' + m_cc1 + '&triptype=1&adult=' + m_adults + '&child=' + m_children + '&infant=' + m_infants + '&direct=' + m_direct + '&baggage=false&key=MC&airlines=' + m_airlines + '&ref='+ref+'&langcode=EN&curr=AED', '_blank')
+
+			}, 500);
+		}
+	});
+
+
+// hotel jquery
+
+// For the check-in date
+// For the check-in date
+// For the check-in date
+// For the check-in date
+jQuery('input[name="h-checkin"]').daterangepicker({
+    "startDate": moment().add(0, 'day'),
+    "singleDatePicker": true,
+    "autoUpdateInput": true,
+    "autoApply": true,
+    "linkedCalendars": false,  // Disable linked calendars
+    "minDate": moment().add(0, 'day'),
+    "locale": {
+        format: 'DD-MMM-YYYY'
+    }
+}, function (start) {
+    var formattedCheckin = start.format('DD-MMM-YYYY');
+    jQuery('input[name="hh-checkin"]').val(formattedCheckin);
+    
+    // Automatically set checkout date to one day ahead of check-in
+    var newCheckoutDate = moment(start).add(1, 'day');
+    jQuery('input[name="h-checkout"]').daterangepicker({
+        "startDate": newCheckoutDate,
+        "singleDatePicker": true,
+        "linkedCalendars": false,  // Disable linked calendars
+        "autoUpdateInput": true,
+        "autoApply": true,
+        "minDate": newCheckoutDate, // Ensures checkout can't be before check-in
+        "locale": {
+            format: 'DD-MMM-YYYY'
+        }
+    }, function (checkoutStart) {
+        var formattedCheckout = checkoutStart.format('DD-MMM-YYYY');
+        jQuery('input[name="hh-checkout"]').val(formattedCheckout);
+        
+        // Calculate and update nights
+        var checkinDate = moment(formattedCheckin, 'DD-MMM-YYYY');
+        var checkoutDate = moment(formattedCheckout, 'DD-MMM-YYYY');
+        var nights = checkoutDate.diff(checkinDate, 'days');
+        
+        // Ensure nights cannot be negative
+        if (nights < 0) nights = 0;
+
+        jQuery('span.selected-nights strong').text(nights);
+    });
+
+    // Default checkout to the new date
+    jQuery('input[name="h-checkout"]').val(newCheckoutDate.format('DD-MMM-YYYY'));
+    jQuery('input[name="hh-checkout"]').val(newCheckoutDate.format('DD-MMM-YYYY'));
+});
+
+// For the checkout date
+jQuery('input[name="h-checkout"]').daterangepicker({
+    "startDate": moment().add(1, 'day'),
+    "singleDatePicker": true,
+    "linkedCalendars": false,  // Disable linked calendars
+    "autoUpdateInput": true,
+    "autoApply": true,
+    "minDate": moment().add(1, 'day'),
+    "locale": {
+        format: 'DD-MMM-YYYY'
+    }
+}, function (start) {
+    var formattedCheckout = start.format('DD-MMM-YYYY');
+    jQuery('input[name="hh-checkout"]').val(formattedCheckout);
+
+    // Calculate and update nights
+    var checkinDate = moment(jQuery('input[name="hh-checkin"]').val(), 'DD-MMM-YYYY');
+    var checkoutDate = moment(formattedCheckout, 'DD-MMM-YYYY');
+    var nights = checkoutDate.diff(checkinDate, 'days');
+    
+    // Ensure nights cannot be negative
+    if (nights < 0) nights = 0;
+
+    jQuery('span.selected-nights strong').text(nights);
+});
+
+
+// For start date (Only)
+jQuery('input[name="h-checkin"]').on('change', function() {
+    let checkinDate = moment(jQuery(this).val(), 'DD-MMM-YYYY');
+    let checkoutDate = moment(jQuery('input[name="h-checkout"]').val(), 'DD-MMM-YYYY');
+
+    // If checkout date exists, calculate nights
+    if (checkoutDate.isValid()) {
+        let nights = checkoutDate.diff(checkinDate, 'days');
+
+        // Ensure nights cannot be negative
+        if (nights < 0) nights = 0;
+
+        jQuery('span.selected-nights strong').text(nights);
+    }
+});
+
+
+
+
+
+	// jQuery('input[name="h-checkout"]').daterangepicker({
+	// 	"startDate": moment().add(1, 'day'),
+	// 	// "endDate": moment().add(1, 'day'),
+	// 	"singleDatePicker": true,
+	// 	"linkedCalendars": false,
+	// 	"autoUpdateInput": true,
+	// 	"autoApply": true,
+	// }, function (start, end, label) {
+	// 	console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+	// 	jQuery('input[name="h-checkout"]').val(start.format('DD-MMMM-YYYY'));
+	// 	// jQuery('input[name="h-checkout"]').val(end.format('DD-MMMM-YYYY'));
+	// 	// $start_date = start;
+	// 	// $end_date = end;
+	// 	// $datediff = $end_date - $start_date;
+
+	// 	// $datediff = Math.round($datediff / (1000 * 3600 * 24)) - 1;
+
+	// 	// jQuery('span.selected-nights strong').text($datediff);
+
+	// 	// console.log($datediff);
+	// });
+
+	// jQuery('input[name="h-checkout"]').daterangepicker({
+	// 	// "startDate": moment().add(0, 'day'),
+	// 	"startDate": moment().add(1, 'day'),
+	// 	"linkedCalendars": false,
+	// 	"singleDatePicker": true,
+	// 	"autoUpdateInput": false,
+	// 	"autoApply": true,
+	// }, function (start, end, label) {
+
+	// 	// $('input[name="h-checkin"]').val(start.format('DD-MMMM-YYYY'));
+	// 	$('input[name="h-checkout"]').val(start.format('DD-MMMM-YYYY'));
+	// 	// $start_date = start;
+	// 	// $end_date = end;
+	// 	// $datediff = $end_date - $start_date;
+
+	// 	// $datediff = Math.round($datediff / (1000 * 3600 * 24)) - 1;
+
+	// 	// jQuery('span.selected-nights strong').text($datediff);
+
+	// 	console.log($datediff);
+	// });
+
+	jQuery('select[name="hotel-destination"]').change(function () {
+		var des = jQuery(this).val();
+		jQuery('input[name=h-city-code]').val(des);
+		console.log($(this).val())
+	});
+	(function () {
+		var ii = 2;
+		var jj = 3;
+		//jQuery('.addmore_room').click(function () {
+			// $('#rooms_list .hotel-options:first-child').clone().attr('hotel-id', ii).appendTo('#rooms_list');
+			//$('#rooms_list').append('<div class="hotel-options hotel-' + ii + '" hotel-id="' + ii + '"> <input type="hidden" name="room_no" value="room' + ii + '"> <input type="hidden" name="adult_count" value="1"> <input type="hidden" name="child_count" value="1"> <div class="hotel-rooms"> Room ' + ii + ' </div> <div class="h-adults"> Adults (12+) <div class="number h-counter"> <span class="minus"></span> <input type="text" value="1" class="adults" id="adults" autocomplete="off"> <span class="plus"></span> </div> </div> <div class="h-adults childrens"> Child (0-11) <div class="number c-counter"> <span class="minus"></span> <input type="text" value="1" class="child" id="child" autocomplete="off"> <span class="plus"></span> </div> </div> <div class="children-wrap"> <div class="h-adults childrens"> Child 1 <div class="form-group form-select withicon"> <select name="country" class="form-control itlselect"> <option value="any">Under 1</option><option value="1">1</option> <option value="2">2</option> <option value="3">3</option> <option value="4">4</option> <option value="5">5</option> <option value="6">6</option> <option value="7">7</option> <option value="8">8</option> <option value="9">9</option> <option value="10">10</option> <option value="11">11</option> </select> </div> </div> </div><div class="remove-city-wrap"><button class="remove-room"> <img src="/themes/SAN/assets/img/multicity.svg"> </button></div> </div>');
+			//ii++;
+		//});
+
+let maxRooms = 6;
+let iii = 1;
+
+jQuery('.addmore_room').click(function () {
+    let roomCount = jQuery('#rooms_list .hotel-options').length + 1;
+    if (roomCount <= maxRooms) {
+        jQuery('#rooms_list').append(
+            '<div class="hotel-options hotel-' + roomCount + '" hotel-id="' + roomCount + '">' +
+            '<input type="hidden" name="room_no" value="room' + roomCount + '">' +
+            '<input type="hidden" name="adult_count" value="1">' +
+            '<input type="hidden" name="child_count" value="0">' +
+            '<div class="hotel-rooms"> Room ' + roomCount + ' </div>' +
+            '<div class="h-adults"> Adults (6)' +
+            '<div class="number h-counter">' +
+            '<span class="minus"></span>' +
+            '<input type="text" value="1" class="adults" id="adults" autocomplete="off">' +
+            '<span class="plus"></span>' +
+            '</div>' +
+            '</div>' +
+            '<div class="h-adults childrens"> Child (0-4)' +
+            '<div class="number c-counter">' +
+            '<span class="minus"></span>' +
+            '<input type="text" value="0" class="child" id="child" autocomplete="off">' +
+            '<span class="plus"></span>' +
+            '</div>' +
+            '</div>' +
+            '<div class="remove-city-wrap"><button class="remove-room">' +
+            '<img src="/themes/SAN/assets/img/multicity.svg">' +
+            '</button></div>' +
+            '</div>'
+        );
+    }
+
+    // Disable the add button if max rooms are reached
+    if (jQuery('#rooms_list .hotel-options').length >= maxRooms) {
+        jQuery('.addmore_room').prop('disabled', true);
+    }
+});
+
+jQuery('#rooms_list').on('click', '.remove-city-wrap .remove-room', function() {
+    jQuery(this).parent().parent().remove();
+    
+    // Reorder room numbers
+    jQuery('#rooms_list .hotel-options').each(function(index) {
+        jQuery(this).find('.hotel-rooms').text('Room ' + (index + 1));
+    });
+    
+    // Enable the add button if rooms are below max
+    if (jQuery('#rooms_list .hotel-options').length < maxRooms) {
+        jQuery('.addmore_room').prop('disabled', false);
+    }
+});
+
+
+
+
+		jQuery('.addmore-city').click(function() {
+    if (jj == 3) {
+        var tomorrow = moment().add(1, 'day').format('DD-MMM-YYYY');
+
+        jQuery('.multicity-form').append(`
+            <div class="row custom-search-input-2 single-multicity multicity3" id="milticity-${jj}">
+                <input type="hidden" name="m-dep${jj}" value="" data-title="Departure">
+                <input type="hidden" name="m-ret${jj}" value="" data-title="Arrival">
+                <input type="hidden" name="m-ddt${jj}" value="" data-title="Departure Date">
+                <div class="col-5 col-sm-4">
+                    <div class="form-groups">
+                        <input type="hidden" class="airportsearch" name="mc-dep${jj}" />
+                        <input type="text" class="search-airport-js search-airport searchinputc mcdep3 form-control" 
+                            placeholder="Origin" name="search-mc-dep-gen" autocomplete="off" />
+                        <div class="allairport-result"></div>
+                    </div>
+                </div>
+                <div class="col-5 col-sm-4 col-lg-4">
+                    <div class="form-groups">
+                        <input type="hidden" class="airportsearch" name="mc-arr${jj}" />
+                        <input type="text" class="search-airport-js search-airport searchinputc mcdest3 form-control" 
+                            placeholder="Destination" name="search-mc-arr-gen" autocomplete="off" />
+                        <div class="allairport-result"></div>
+                    </div>
+                </div>
+                <div class="col-10 col-sm-2 col-lg-2">
+                    <div class="form-groups form-select withicon">
+                        <div class="daterangeselect">
+                            <div class="checkout">
+                                <input type="text" name="multicity${jj}" class="form-control multicity-date" value="${tomorrow}" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-5 col-sm-2 col-lg-2">
+                    <div class="multicity-add-remove" style="display: none;">
+                        <button class="remove-city">
+                            <img src="/themes/SAN/assets/img/multicity.svg">
+                        </button>
+                        <button class="addmore-city">
+                            <img src="/themes/SAN/assets/img/add-multicity.svg">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        setTimeout(function() {
+            jQuery(`input[name="multicity${jj}"]`).daterangepicker({
+                "startDate": moment().add(1, 'day'),
+                "singleDatePicker": true,
+                "autoApply": true,
+                "minDate": moment().add(1, 'day'),
+                "locale": {
+                    format: 'DD-MMM-YYYY'
+                }
+            }, function(start, end, label) {
+                jQuery(`input[name="m-ddt${jj}"]`).val(start.format('DD-MMM-YYYY'));
+            });
+        }, 100);
+
+        jj++;
+    }
+
+    jQuery('.itlselect').select2();
+});
+
+			jQuery(document).on('change', 'select[name="mc-arr3"]', function() {
+			// jQuery('select[name="mc-arr3"]').change(function () {
+				var arrival = jQuery(this).val();
+				jQuery('input[name=m-ret3]').val(arrival);
+				console.log($(this).val())
+			});
+
+			// jQuery('select[name="mc-dep3"]').change(function () {
+			jQuery(document).on('change', 'select[name="mc-dep3"]', function() {
+				var arrival = jQuery(this).val();
+				jQuery('input[name=m-dep3]').val(arrival);
+				console.log($(this).val())
+			});
+			
+
+				jQuery('.remove-city').click(function () {
+					jj = 3;
+					jQuery(this).parent().parent().parent().next().remove();
+				});
+
+
+			})();
+
+
+
+jQuery(".hotel_search").click(function (e) {
+    e.preventDefault(); // Prevent form submission and redirection
+
+    var CityCode = jQuery('input[name=hotel-destination]').val().trim(); // Get value of destination
+    var hotel_checkin = jQuery('input[name=hh-checkin]').val().trim();
+    var hotel_checkout = jQuery('input[name=hh-checkout]').val().trim();
+    var room1_adults = jQuery('.hotel-1 #adults').val().trim();
+    var room1_child = jQuery('.hotel-1 #child').val().trim();
+    var nationality = jQuery('input[name=nationality]').val().trim();
+
+    // Validation for destination field
+    if (!CityCode) {
+        jQuery('input#search-destination').addClass('field-error'); // Highlight input if empty
+        return false; // Stop further execution if validation fails
+    } else {
+        jQuery('input#search-destination').removeClass('field-error'); // Remove error class if field is filled
+    }
+
+    // Validation for other fields (optional)
+    if (!hotel_checkin || !hotel_checkout) {
+        alert('Please select check-in and check-out dates');
+        return false; // Stop execution if check-in or check-out is missing
+    }
+
+    // Validation for room fields (optional)
+    if (!room1_adults) {
+        alert('Please select the number of adults for the first room');
+        return false;
+    }
+
+    var room_nth = jQuery('#rooms_list .hotel-options');
+    var roomParams = ''; // Initialize room parameters string
+    var i;
+
+    // Add room1 parameters to roomParams
+    roomParams += '&room1=' + room1_adults + '-' + room1_child;
+
+    // Loop through each additional room and generate parameters
+    for (i = 2; i <= room_nth.length; ++i) {
+        var room_adults = jQuery('.hotel-' + i + ' #adults').val();
+        var room_child = jQuery('.hotel-' + i + ' #child').val();
+
+        // Only append room parameters if adults are selected
+        if (room_adults) {
+            var al_rooms = 'room' + i + '=' + room_adults + '-' + room_child; // Room parameter format
+            roomParams += '&' + al_rooms; // Append to roomParams string
+        }
+    }
+
+    // If nationality is selected as 'any', show error
+    if (jQuery('#nationality-list').val() == 'any') {
+        jQuery('#nationality-list').addClass('field-error');
+        return false;
+    } else {
+        jQuery('#nationality-list').removeClass('field-error');
+    }
+
+    // Construct the base URL with standard parameters (without room parameters)
+    var base_url = 'https://booking.itlworld.com/hotel/result?CityCode=' + CityCode + '&nationality=' + nationality + '&checkinDate=' + hotel_checkin + '&checkoutDate=' + hotel_checkout + '&langcode=EN';
+
+    // Append the room parameters at the end of the URL
+    var final_url = base_url + roomParams;
+
+    // After all validations pass, redirect to the desired URL
+    setTimeout(function () {
+        window.open(final_url, '_blank');
+    }, 500);
+});
+
+
+
+	$(document).click(function(e) {
+
+	  // check that your clicked
+	  // element has no id=info
+
+	  if( e.target.id != 'info') {
+	    $(".dest-list").hide();
+	  }
+	});
+
+	jQuery(document).ready(function() {
+    setTimeout(function() {
+
+        var today = new Date();
+        var tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; // January is 0!
+        var yyyy = today.getFullYear();
+        var tomday = tomorrow.getDate();
+        var tommonth = tomorrow.getMonth() + 1;
+        var tomyear = tomorrow.getFullYear();
+        
+        var months = [
+            "January", "February", "March", "April", "May", "June", 
+            "July", "August", "September", "October", "November", "December"
+        ];
+        
+        if (dd < 10) { dd = '0' + dd }
+        if (tomday < 10) { tomday = '0' + tomday }
+        
+        var formattedToday = dd + '-' + months[mm - 1] + '-' + yyyy;
+        var formattedTomorrow = tomday + '-' + months[tommonth - 1] + '-' + tomyear;
+        
+        $('input[name=h-checkin]').attr('value', formattedToday);
+        $('input[name=h-checkout]').attr('value', formattedTomorrow);
+        $('input[name=hh-checkin]').attr('value', formattedToday);
+        $('input[name=hh-checkout]').attr('value', formattedTomorrow);
+        $('.checkin input').attr('value', formattedToday);
+        $('.checkout input').attr('value', formattedTomorrow);
+    }, 500);
+});
+
+
+   jQuery('.refundable-check input').change(function() {
+	    if ($(this).is(":checked")) {
+	      $('input[name=refundable]').attr('value', 'true');
+	    }
+	    else {
+	    	$('input[name=refundable]').attr('value', 'false');
+	    }
+  	});
+
+   jQuery('.direct-flight-check input').change(function() {
+	    if ($(this).is(":checked")) {
+	      $('input[name=direct]').attr('value', 'true');
+	    }
+	    else {
+	    	$('input[name=direct]').attr('value', 'false');
+	    }
+  	});
+
+if (jQuery(window).width() <= 800) {
+	$(document).ready(function() {
+    function showButton(tabId) {
+        $('#pills-flight .btn_search').hide();
+        if (tabId === 'pills-roundtrip-tab') {
+            $('.roundtrip_submit').show();
+        } else if (tabId === 'pills-oneway-tab') {
+            $('.oneway_submit').show();
+        } else if (tabId === 'pills-multicity-tab') {
+            $('.multicity-search').show();
+        }
+    }
+
+    $('#pills-tab-child .nav-link').on('click', function() {
+        showButton($(this).attr('id'));
+    });
+
+    // Show the button for the active tab on page load
+    showButton($('#pills-tab-child .nav-link.active').attr('id'));
+});
+	}
+
+</script>

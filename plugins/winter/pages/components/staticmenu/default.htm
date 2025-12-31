@@ -1,0 +1,15 @@
+{% if __SELF__.menuItems %}
+    {% if __SELF__.property('menu')=='mobile' %}
+    <ul class="menu">
+        {% partial __SELF__ ~ "::mobileitems" items=__SELF__.menuItems %}
+    </ul>
+    {% elseif __SELF__.property('menu')=='footer' %}
+    <ul class="links">
+        {% partial __SELF__ ~ "::footeritems" items=__SELF__.menuItems %}
+    </ul>
+    {% else %}
+    <ul>
+        {% partial __SELF__ ~ "::items" items=__SELF__.menuItems %}
+    </ul>
+    {% endif %}
+{% endif %}

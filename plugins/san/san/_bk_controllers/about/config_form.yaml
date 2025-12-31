@@ -1,0 +1,11 @@
+name: About
+modelClass: san\San\Models\About
+form: $/san/san/models/about/fields.yaml
+defaultRedirect: san/san/about
+create:
+    redirect: 'san/san/about/update/:id'
+    redirectClose: san/san/about
+update:
+    redirect: san/san/about
+    redirectClose: san/san/about
+preview: {  }

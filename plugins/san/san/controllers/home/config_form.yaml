@@ -1,0 +1,11 @@
+name: Home
+modelClass: san\San\Models\Home
+form: $/san/san/models/home/fields.yaml
+defaultRedirect: san/san/home
+create:
+    redirect: 'san/san/home/update/:id'
+    redirectClose: san/san/home
+update:
+    redirect: san/san/home
+    redirectClose: san/san/home
+preview: {  }

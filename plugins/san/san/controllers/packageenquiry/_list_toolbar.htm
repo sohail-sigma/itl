@@ -1,0 +1,22 @@
+<div data-control="toolbar" style="display: flex;">
+            <button
+        class="btn btn-default oc-icon-trash-o"
+        disabled="disabled"
+        onclick="$(this).data('request-data', {
+            checked: $('.control-list').listWidget('getChecked')
+        })"
+        data-request="onDelete"
+        data-request-confirm="<?= e(trans('backend::lang.list.delete_selected_confirm')) ?>"
+        data-trigger-action="enable"
+        data-trigger=".control-list input[type=checkbox]"
+        data-trigger-condition="checked"
+        data-request-success="$(this).prop('disabled', true)"
+        data-stripe-load-indicator>
+        <?= e(trans('backend::lang.list.delete_selected')) ?>
+    </button>
+    <form action="<?= Backend::url('san/san/packageenquiry/export') ?>" method="post">
+        <?= Form::token() ?>
+        <input type="hidden" name="all_ids" id="all_ids">
+        <button type="submit" class="btn btn-primary oc-icon-download">Export Data</button>
+    </form>
+</div>

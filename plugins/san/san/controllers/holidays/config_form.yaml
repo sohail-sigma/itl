@@ -1,0 +1,10 @@
+name: Holidays
+form: $/san/san/models/holidays/fields.yaml
+modelClass: san\San\Models\Holidays
+defaultRedirect: san/san/holidays
+create:
+    redirect: 'san/san/holidays/update/:id'
+    redirectClose: san/san/holidays
+update:
+    redirect: san/san/holidays
+    redirectClose: san/san/holidays

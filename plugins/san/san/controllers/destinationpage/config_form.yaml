@@ -1,0 +1,10 @@
+name: Destinationpage
+form: $/san/san/models/destinationpage/fields.yaml
+modelClass: san\San\Models\Destinationpage
+defaultRedirect: san/san/destinationpage
+create:
+    redirect: 'san/san/destinationpage/update/:id'
+    redirectClose: san/san/destinationpage
+update:
+    redirect: san/san/destinationpage
+    redirectClose: san/san/destinationpage

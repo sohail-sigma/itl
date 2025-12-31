@@ -1,0 +1,7 @@
+columns:
+    title:
+        label: Title
+        type: partial
+        searchable: true
+        sortable: true
+        path: ~/plugins/san/san/models/travelmanagement/_banner_column.html

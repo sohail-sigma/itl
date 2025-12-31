@@ -1,0 +1,11 @@
+name: Pckages
+modelClass: san\San\Models\Packages
+form: $/san/san/models/packages/fields.yaml
+defaultRedirect: san/san/pckages
+create:
+    redirect: 'san/san/pckages/update/:id'
+    redirectClose: san/san/pckages
+update:
+    redirect: san/san/pckages
+    redirectClose: san/san/pckages
+preview: {  }

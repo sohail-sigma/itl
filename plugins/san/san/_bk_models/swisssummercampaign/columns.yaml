@@ -1,0 +1,49 @@
+columns:
+    id:
+        label: id
+        type: number
+        searchable: true
+    fname:
+        label: fname
+        type: text
+        searchable: true
+    lname:
+        label: lname
+        type: text
+        searchable: true
+    email:
+        label: email
+        type: text
+        searchable: true
+    nationality:
+        label: nationality
+        type: text
+        searchable: true
+    countrycode:
+        label: countrycode
+        type: text
+        searchable: true
+    mobile:
+        label: mobile
+        type: text
+        searchable: true
+    country:
+        label: country
+        type: text
+        searchable: true
+    city:
+        label: city
+        type: text
+        searchable: true
+    language:
+        label: language
+        type: text
+        searchable: true
+    comments:
+        label: comments
+        type: text
+        searchable: true
+    desireddestination:
+        label: desireddestination
+        type: text
+        searchable: true

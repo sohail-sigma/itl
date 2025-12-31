@@ -1,0 +1,96 @@
+fields:
+    title:
+        label: Title
+        span: auto
+        type: text
+    slug:
+        label: Slug
+        span: auto
+        preset:
+            field: title
+            type: slug
+        type: text
+    banner:
+        label: 'Banner (1920 x 680 px)'
+        mode: image
+        imageWidth: '100'
+        imageHeight: '100'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        fileTypes: 'svg, jpeg, jpg, png'
+        type: fileupload
+    icon:
+        label: 'Icon (98 x 97 px)'
+        mode: file
+        imageWidth: '100'
+        imageHeight: '100'
+        useCaption: 1
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload
+        comment: .svg
+    status:
+        label: Status
+        span: auto
+        type: switch
+    button_title:
+        label: 'Button Title'
+        span: auto
+        type: text
+    button_icon:
+        label: 'Button Icon (25 x 25 px)'
+        mode: file
+        imageWidth: '50'
+        imageHeight: '50'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        fileTypes: 'svg, jpeg, jpg, png'
+        type: fileupload
+    svg_icon:
+        label: 'Upload SVG'
+        span: auto
+        mode: file
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        fileTypes: svg
+        type: fileupload
+tabs:
+    fields:
+        content:
+            label: Description
+            size: huge
+            span: full
+            type: richeditor
+            tab: Content
+        meta_title:
+            label: 'Meta Title'
+            span: auto
+            type: text
+            tab: SEO
+        meta_desc:
+            label: 'Meta Description'
+            size: ''
+            span: auto
+            type: textarea
+            tab: SEO
+        meta_image:
+            label: 'OG Image (1200 x 630 px)'
+            mode: file
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            comment: 'jpg/png The recommended size for a lowdown OG image is 1200×630 pixels'
+            tab: SEO

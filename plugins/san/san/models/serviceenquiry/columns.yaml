@@ -1,0 +1,42 @@
+columns:
+    area_of_interest:
+        label: 'Area of Interest '
+        type: text
+        searchable: true
+    first_name:
+        label: 'First Name'
+        type: text
+        searchable: true
+    last_name:
+        label: 'Last Name'
+        type: text
+        searchable: true
+    email:
+        label: Email
+        type: text
+        searchable: true
+    phone:
+        label: Phone
+        type: text
+        searchable: true
+    country:
+        label: Nationality
+        type: text
+        searchable: true
+    city:
+        label: City
+        type: partial
+        searchable: true
+        path: ~/plugins/san/san/models/serviceenquiry/_city_column.html
+    created_at:
+        label: 'Submitted On'
+        type: datetime
+        searchable: true
+    designation:
+        label: Designation
+        type: text
+        searchable: true
+    c_name:
+        label: 'Company Name'
+        type: text
+        searchable: true

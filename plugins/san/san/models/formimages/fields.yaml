@@ -1,0 +1,74 @@
+tabs:
+    fields:
+        holiday_img:
+            label: 'Holiday Image (1920 x 680 px)'
+            mode: image
+            imageWidth: '120'
+            imageHeight: '80'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            tab: Holiday
+        content_1:
+            label: 'Holiday Content'
+            size: large
+            span: auto
+            type: richeditor
+            tab: Holiday
+        content_4:
+            label: 'Link for holiday tab image'
+            span: auto
+            required: 1
+            type: text
+            tab: Holiday
+        flight_img:
+            label: 'Flight Image (1920 x 680 px)'
+            mode: image
+            imageWidth: '120'
+            imageHeight: '80'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            tab: Flight
+        content_2:
+            label: 'Flight Content'
+            size: large
+            span: auto
+            type: richeditor
+            tab: Flight
+        content_5:
+            label: 'Link for hotel tab image'
+            span: auto
+            required: 1
+            type: text
+            tab: Flight
+        hotel_img:
+            label: 'Hotel Image (1920 x 680 px)'
+            mode: image
+            imageWidth: '120'
+            imageHeight: '80'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            tab: Hotel
+        content_3:
+            label: 'Hotel Content'
+            size: large
+            span: auto
+            type: richeditor
+            tab: Hotel
+        content_6:
+            label: 'Link for flight tab image'
+            span: auto
+            required: 1
+            type: text
+            tab: Hotel

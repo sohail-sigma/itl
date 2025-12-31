@@ -1,0 +1,7 @@
+<?php if($record->bg_image){ ?>
+<a class="link-nav" href="/backend/san/san/slider/update/<?php echo $record->id; ?>">
+    <img src="<?php echo $record->bg_image->getThumb(150,80,'crop'); ?>" /></a>
+<?php } ?>
+<div class="list-link-nav">
+    <a class="link-nav" href="/backend/san/san/slider/update/<?php echo $record->id; ?>">Edit</a>
+</div>

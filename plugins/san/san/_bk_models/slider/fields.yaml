@@ -1,0 +1,20 @@
+fields:
+    slider_title:
+        label: Text
+        span: full
+        type: text
+    description:
+        label: 'Add Slider description'
+        span: full
+        size: large
+        required: 0
+        type: richeditor
+    bg_image:
+        label: 'Choose Slider File (1920 x 856 px)'
+        mode: image
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload

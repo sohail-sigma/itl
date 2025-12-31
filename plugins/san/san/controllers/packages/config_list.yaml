@@ -1,0 +1,14 @@
+list: $/san/san/models/packages/columns.yaml
+modelClass: san\San\Models\Packages
+title: Packages
+noRecordsMessage: 'backend::lang.list.no_records'
+showSetup: true
+showCheckboxes: true
+recordsPerPage: 20
+filter: config_filter.yaml
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'
+recordUrl: 'san/san/packages/update/:id'
+recordOnClick: ''

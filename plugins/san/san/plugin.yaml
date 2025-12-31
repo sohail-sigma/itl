@@ -1,0 +1,271 @@
+plugin:
+    name: 'san.san::lang.plugin.name'
+    description: 'san.san::lang.plugin.description'
+    author: san
+    icon: wn-icon-adjust
+    replaces: {  }
+permissions:
+    cms_permission:
+        tab: website
+        label: 'Cms Permission'
+    blog_permission:
+        tab: website
+        label: 'Blog Permission'
+    seo_permission:
+        tab: website
+        label: 'SEO permission'
+    hr_permissions:
+        tab: hr
+        label: 'HR permission'
+    hr_permission_KSA:
+        tab: hr
+        label: 'HR permission KSA'
+    hr_permission_uae:
+        tab: 'HR UAE'
+        label: 'HR UAE'
+    marketing_team:
+        tab: 'Marketing team'
+        label: 'Marketing team'
+    products_team:
+        tab: 'Products team'
+        label: 'Products team'
+    HR_UAE:
+        tab: 'HR UAE'
+        label: 'HR UAE'
+    Campaigns:
+        tab: Campaigns
+        label: Campaigns
+navigation:
+    main-menu-item:
+        label: Packages
+        url: san/san/packages
+        icon: icon-cubes
+        permissions:
+            - cms_permission
+            - products_team
+            - marketing_team
+        sideMenu:
+            side-menu-item:
+                label: Packages
+                url: san/san/packages
+                icon: icon-cube
+                permissions:
+                    - cms_permission
+                    - marketing_team
+            package-enquiry-menu:
+                label: 'Package Enquiry'
+                url: san/san/packageenquiry
+                icon: icon-table
+                permissions:
+                    - cms_permission
+            side-menu-item2:
+                label: Experiences
+                url: san/san/destination
+                icon: icon-location-arrow
+                permissions:
+                    - cms_permission
+                    - products_team
+                    - marketing_team
+    main-menu-item2:
+        label: Pages
+        url: san/san/home/update/1
+        icon: icon-file
+        permissions:
+            - cms_permission
+            - marketing_team
+        sideMenu:
+            side-menu-item:
+                label: Home
+                url: san/san/home/update/1
+                icon: icon-home
+                permissions:
+                    - cms_permission
+                    - marketing_team
+            side-menu-item2:
+                label: Experiences
+                url: san/san/destinationpage/update/5
+                icon: icon-location-arrow
+                permissions:
+                    - cms_permission
+                    - marketing_team
+            side-menu-item3:
+                label: Search
+                url: san/san/search/update/6
+                icon: icon-search
+                permissions:
+                    - cms_permission
+            side-menu-item4:
+                label: 'Travel Management'
+                url: san/san/corporatetravel/update/7
+                icon: icon-simplybuilt
+                permissions:
+                    - cms_permission
+                    - marketing_team
+            side-menu-item5:
+                label: Services
+                url: san/san/csr/update/8
+                icon: icon-tree
+                permissions:
+                    - marketing_team
+            Careers:
+                label: Careers
+                url: san/san/career/update/9
+                icon: icon-briefcase
+                permissions:
+                    - hr_UAE
+                attributes: {  }
+            side-menu-news:
+                label: News
+                url: san/san/newspage/update/12
+                icon: icon-stack-exchange
+            side-menu-holidays:
+                label: Holidays
+                url: san/san/holidays/update/13
+                icon: icon-space-shuttle
+                permissions:
+                    - marketing_team
+                    - cms_permission
+    main-menu-item3:
+        label: Company
+        url: san/san/about/update/3
+        icon: icon-building
+        permissions:
+            - cms_permission
+            - marketing_team
+        sideMenu:
+            side-menu-item:
+                label: 'About Us'
+                url: san/san/about/update/3
+                icon: icon-building
+                permissions:
+                    - cms_permission
+                    - marketing_team
+            side-menu-item2:
+                label: Partners
+                url: san/san/partners
+                icon: icon-users
+                permissions:
+                    - cms_permission
+            about-query:
+                label: 'About Queries'
+                url: san/san/aboutquery
+                icon: icon-info-circle
+                permissions:
+                    - marketing_team
+            main-menu-homeimages:
+                label: 'Home Images'
+                url: san/san/formimages/update/11
+                icon: icon-sliders
+                permissions:
+                    - marketing_team
+            side-menu-enq-emails:
+                label: 'Enquiry Emails'
+                url: san/san/enquiryemails/update/14
+                icon: icon-envelope
+            side-menu-social-links:
+                label: 'Blog Share Links'
+                url: san/san/blogsharellinks
+                icon: icon-sitemap
+    main-menu-item4:
+        label: 'Contact Us'
+        url: san/san/contact/update/2
+        icon: icon-phone-square
+        permissions:
+            - cms_permission
+            - marketing_team
+        sideMenu:
+            side-menu-item:
+                label: 'Contact Us'
+                url: san/san/contact/update/2
+                icon: icon-phone-square
+                permissions:
+                    - marketing_team
+            side-menu-item2:
+                label: Enquiry
+                url: san/san/enquiry
+                icon: icon-envelope
+                permissions:
+                    - cms_permission
+            side-menu-item3:
+                label: Offices
+                url: san/san/office
+                icon: icon-building-o
+                permissions:
+                    - cms_permission
+                    - marketing_team
+            side-menu-newsletter:
+                label: Newsletter
+                url: san/san/newsletter
+                icon: icon-envelope-o
+    main-menu-item5:
+        label: Services
+        url: san/san/services
+        icon: icon-spoon
+        permissions:
+            - cms_permission
+            - marketing_team
+        sideMenu:
+            service-management-enquiry:
+                label: 'Services Enquiry'
+                url: san/san/serviceenquiry
+                icon: icon-sitemap
+                permissions:
+                    - cms_permission
+                    - marketing_team
+    main-menu-item6:
+        label: Careers
+        url: san/san/career/update/9
+        icon: icon-joomla
+        permissions:
+            - cms_permission
+            - hr_permissions
+            - marketing_team
+        sideMenu:
+            position-menu-item:
+                label: 'Career Positions'
+                url: san/san/careerpositions
+                icon: icon-cubes
+                permissions:
+                    - cms_permission
+                    - hr_permissions
+                    - marketing_team
+    cvs-menu-item-cv:
+        label: 'Careers Cv''s'
+        url: san/san/careers
+        icon: icon-file-pdf-o
+        permissions:
+            - HR_UAE
+            - hr_permissions
+        order: ''
+    main-menu-travel-management:
+        label: 'Travel Management'
+        url: san/san/travelmanagement
+        icon: icon-automobile
+        permissions:
+            - cms_permission
+        sideMenu:
+            side-menu-travelenquiry:
+                label: 'Travel Management Enquiry'
+                url: san/san/travelenquiry
+                icon: icon-sliders
+                permissions:
+                    - cms_permission
+    main-menu-item7:
+        label: Campaigns
+        url: san/san/campaign1
+        icon: icon-life-ring
+        permissions:
+            - Campaigns
+        sideMenu:
+            side-menu-campaign1:
+                label: 'Campaign 1'
+                url: san/san/campaign1
+                icon: icon-sitemap
+            side-menu-campaigntest:
+                label: 'Campaign Test'
+                url: san/san/campaigntest
+                icon: icon-sitemap
+            side-menu-swisssummercampaign:
+                label: 'Swiss Summer Campaign'
+                url: san/san/swisssummercampaign
+                icon: icon-sitemap

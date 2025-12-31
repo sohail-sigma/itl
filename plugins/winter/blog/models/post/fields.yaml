@@ -1,0 +1,97 @@
+# ===================================
+#  Field Definitions
+# ===================================
+
+fields:
+    title:
+        label: winter.blog::lang.post.title
+        span: left
+        placeholder: winter.blog::lang.post.title_placeholder
+        commentAbove: 'Max 191 characters allowed'
+        attributes: 
+                maxlength: 191
+
+    slug:
+        label: winter.blog::lang.post.slug
+        span: right
+        placeholder: winter.blog::lang.post.slug_placeholder
+        preset:
+            field: title
+            type: slug
+
+    toolbar:
+        type: partial
+        path: post_toolbar
+        cssClass: collapse-visible
+
+secondaryTabs:
+    stretch: true
+    fields:
+        content:
+            tab: winter.blog::lang.post.tab_edit
+            type: Winter\Blog\FormWidgets\BlogMarkdown
+            cssClass: field-slim blog-post-preview
+            stretch: true
+            mode: split
+
+        categories:
+            tab: winter.blog::lang.post.tab_categories
+            type: relation
+            commentAbove: winter.blog::lang.post.categories_comment
+            placeholder: winter.blog::lang.post.categories_placeholder
+
+        published:
+            tab: winter.blog::lang.post.tab_manage
+            label: winter.blog::lang.post.published
+            span: full
+            type: checkbox
+
+        user:
+            tab: winter.blog::lang.post.tab_manage
+            label: winter.blog::lang.post.published_by
+            span: right
+            type: relation
+            nameFrom: login
+            emptyOption: winter.blog::lang.post.current_user
+
+        published_at:
+            tab: winter.blog::lang.post.tab_manage
+            label: winter.blog::lang.post.published_on
+            span: left
+            cssClass: checkbox-align
+            type: datepicker
+            mode: datetime
+            trigger:
+                action: enable
+                field: published
+                condition: checked
+
+        excerpt:
+            tab: winter.blog::lang.post.tab_manage
+            label: winter.blog::lang.post.excerpt
+            type: textarea
+            size: small
+
+        country:
+            tab: winter.blog::lang.post.tab_manage
+            label: Country
+            type: text
+            span: full
+
+        post_thumnail:
+            tab: winter.blog::lang.post.tab_manage
+            label: post thumnail  (350 x 260)
+            type: fileupload
+            mode: image
+            span: left
+            imageWidth: 200
+            imageHeight: 200
+
+        featured_images:
+            tab: winter.blog::lang.post.tab_manage
+            label: Featured Images (790 x 530)
+            type: fileupload
+            mode: image
+            span: right
+            imageWidth: 200
+            imageHeight: 200

@@ -1,0 +1,13 @@
+columns:
+    id:
+        label: ID
+        searchable: false
+        sortable: true
+
+    base_country:
+        label: Base Country
+
+    target_packages:
+        label: Target Packages
+        type: partial
+        path: ~/plugins/itlworld/ipcountries/models/countryrule/_target_packages_column.htm

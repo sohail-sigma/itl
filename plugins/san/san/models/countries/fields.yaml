@@ -1,0 +1,165 @@
+fields:
+    title:
+        label: Title
+        span: auto
+        type: text
+    slug:
+        label: Slug
+        span: auto
+        preset:
+            field: title
+            type: slug
+        type: text
+    headline:
+        label: Headline
+        span: auto
+        type: text
+    status:
+        label: Status
+        span: auto
+        type: switch
+    video:
+        label: 'Youtub Video ID'
+        span: auto
+        type: text
+        comment: 'eg : 24VvcOVg-f'
+    destination:
+        label: Destination
+        nameFrom: title
+        descriptionFrom: description
+        span: auto
+        type: relation
+    banner:
+        label: 'Banner (1920 x 630 px)'
+        mode: image
+        imageWidth: '100'
+        imageHeight: '100'
+        useCaption: true
+        thumbOptions:
+            mode: crop
+            extension: auto
+        span: auto
+        type: fileupload
+tabs:
+    fields:
+        brief:
+            label: Brief
+            size: ''
+            span: auto
+            type: richeditor
+            tab: Content
+        content:
+            label: Description
+            size: ''
+            span: auto
+            type: richeditor
+            tab: Content
+        currency:
+            label: Currency
+            span: auto
+            type: text
+            tab: 'Fact Sheet'
+        capital:
+            label: Capital
+            span: auto
+            type: text
+            tab: 'Fact Sheet'
+        language:
+            label: Language
+            span: auto
+            type: text
+            tab: 'Fact Sheet'
+        emergency_no:
+            label: 'Emergency Number'
+            span: auto
+            type: text
+            tab: 'Fact Sheet'
+        phone_code:
+            label: 'Phone Code'
+            span: auto
+            type: text
+            tab: 'Fact Sheet'
+        gmt:
+            label: GMT
+            span: auto
+            type: text
+            comment: 'gmt in hours'
+            tab: 'Fact Sheet'
+        visa_on_arrival:
+            label: 'Nationalities can obtain a visa on arrival'
+            span: auto
+            type: text
+            tab: 'Fact Sheet'
+        meta_title:
+            label: 'Meta Title'
+            span: auto
+            type: text
+            tab: SEO
+        meta_desc:
+            label: 'Meta Description'
+            span: auto
+            type: text
+            tab: SEO
+        meta_image:
+            label: 'Meta Image'
+            mode: image
+            imageWidth: '100'
+            imageHeight: '100'
+            useCaption: true
+            thumbOptions:
+                mode: crop
+                extension: auto
+            span: auto
+            type: fileupload
+            comment: 'jpg/png The recommended size for a lowdown OG image is 1200×630 pixels'
+            tab: SEO
+        cities:
+            label: Cities
+            prompt: 'Add new item'
+            style: default
+            span: full
+            type: repeater
+            tab: Cities
+            form:
+                fields:
+                    title:
+                        label: Title
+                        span: full
+                        type: text
+                    description:
+                        label: Description
+                        size: ''
+                        span: full
+                        type: textarea
+                    image:
+                        label: Image
+                        mode: image
+                        imageWidth: '100'
+                        imageHeight: '100'
+                        span: auto
+                        type: mediafinder
+        experiences:
+            label: Repeater
+            prompt: 'Add new item'
+            style: default
+            span: full
+            type: repeater
+            tab: Experiences
+            form:
+                fields:
+                    title:
+                        label: Title
+                        span: full
+                        type: text
+                    description:
+                        label: Description
+                        size: ''
+                        span: full
+                        type: richeditor
+                    image:
+                        label: image
+                        mode: image
+                        imageWidth: '100'
+                        imageHeight: '100'
+                        span: auto
+                        type: mediafinder

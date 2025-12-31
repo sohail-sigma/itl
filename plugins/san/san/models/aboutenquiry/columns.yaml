@@ -1,0 +1,64 @@
+columns:
+    work_in:
+        label: 'Work In'
+        type: partial
+        searchable: true
+        path: ~/plugins/san/san/models/aboutenquiry/_work_in_column.html
+    speak_with:
+        label: 'speak with'
+        type: text
+        searchable: true
+    first_name:
+        label: 'First name'
+        type: text
+        searchable: true
+    last_name:
+        label: 'Last name'
+        type: text
+        searchable: true
+    email:
+        label: email
+        type: text
+        searchable: true
+    c_name:
+        label: 'Company '
+        type: text
+        searchable: true
+    designation:
+        label: Designation
+        type: text
+        searchable: true
+    phone:
+        label: Phone
+        type: text
+        searchable: true
+    country:
+        label: Country
+        type: text
+        searchable: true
+    city:
+        label: City
+        type: text
+        searchable: true
+    supplier:
+        label: Supplier
+        type: partial
+        searchable: true
+        path: ~/plugins/san/san/models/aboutenquiry/_supplier_column.html
+    gds_code:
+        label: 'GDS code'
+        type: text
+        searchable: true
+    bookable_gds:
+        label: 'bookable via GDS'
+        type: partial
+        searchable: true
+        path: ~/plugins/san/san/models/aboutenquiry/_bookable_gds_column.html
+    created_at:
+        label: 'Submitted On'
+        type: datetime
+        searchable: true
+    diverse_vendor:
+        label: 'Diverse Vendor'
+        type: text
+        searchable: true

@@ -1,0 +1,14 @@
+title: Slider
+modelClass: san\San\Models\Slider
+list: $/san/san/models/slider/columns.yaml
+recordUrl: 'san/san/slider/update/:id'
+noRecordsMessage: 'backend::lang.list.no_records'
+recordsPerPage: 20
+showCheckboxes: 1
+defaultSort:
+    column: slider_title
+    direction: desc
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'

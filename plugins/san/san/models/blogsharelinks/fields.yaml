@@ -1,0 +1,9 @@
+fields:
+    title:
+        label: 'Link Title'
+        span: left
+        type: text
+    sort_order:
+        label: 'Sort Order'
+        span: right
+        type: text

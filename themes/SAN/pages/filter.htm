@@ -1,0 +1,1037 @@
+title = "filter"
+url = "/filter"
+layout = "default"
+is_hidden = 0
+==
+
+<style type="text/css">
+	.daterangeselect {
+	    display: flex;
+	}
+	.daterangeselect input {
+	    border-radius: 8px;
+	    overflow: hidden;
+	}
+	span.selected-nights {
+	    background: #00C3C3;
+	    font-family: 'UniSansRegular';
+	    color: #fff;
+	    text-align: center;
+	    flex: 0 0 60px;
+	    border-radius: 5px;
+	    display: flex;
+	    justify-content: center;
+	    align-items: center;
+	    flex-direction: column;
+	    z-index: 9;
+	    text-transform: uppercase;
+	    box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.42);
+		-webkit-box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.42);
+		-moz-box-shadow: 0px 3px 6px 0px rgba(0,0,0,0.42);
+	}
+	span.selected-nights strong {
+		font-size: 14px;
+	}
+	.checkin:before {
+	    content: "";
+	    background-image: url(/themes/SAN/assets/img/checkin.svg);
+	    width: 22px;
+	    height: 23px;
+	    position: absolute;
+	    left: 15px;
+	    top: 50%;
+	    transform: translateY(-50%);
+	}
+
+	.checkout:before {
+	    content: "";
+	    background-image: url(/themes/SAN/assets/img/checkout.svg);
+	    width: 22px;
+	    height: 23px;
+	    position: absolute;
+	    left: 15px;
+	    top: 50%;
+	    transform: translateY(-50%);
+	}
+
+	.checkin, .checkout {
+	    position: relative;
+	}
+
+	.checkin input, .checkout input {
+	    text-indent: 35px;
+	}
+	.daterangeselect:before {
+	    content: "";
+	    width: 50%;
+	    height: 100%;
+	    position: absolute;
+	    left: 50%;
+	    transform: translateX(-50%);
+	    background: #fff;
+	    top: 0;
+	}
+	.tab-pane .custom-search-input-2 [type='submit'] span img {
+	    margin-right: 15px;
+	}
+	div#pills-tabContent:before {
+		height: 100%;
+		width: 80%;
+	}
+	div#pills-tabContent .custom-search-input-2 {
+	    justify-content: center;
+	    position: relative;
+	    z-index: 99;
+	    box-shadow: none;
+	}
+	.hotel-rooms {
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    font-size: 12px;
+	    color: #fff;
+	    z-index: 9;
+	    font-weight: 400;
+	    text-transform: uppercase;
+	    line-height: 1;
+	}
+
+	.hotel-rooms input {
+	    width: 25px;
+	    height: 25px;
+	    background: #00C3C3;
+	    border-radius: 4px;
+	    margin: 0 10px;
+	    padding: 0;
+	    text-align: center;
+	    color: #fff;
+	}
+
+	.hotel-rooms input::-webkit-outer-spin-button,
+	.hotel-rooms input::-webkit-inner-spin-button {
+	    /* display: none; <- Crashes Chrome on hover */
+	    -webkit-appearance: none;
+	    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+	}
+
+	.hotel-options {
+	    margin-top: 10px;
+	    display: flex;
+	    font-size: 12px;
+	    color: #fff;
+	    text-align: center;
+	}
+	.number .minus, .number .plus {
+	   font-weight: normal;
+	   width: 15px;
+	   height: 15px;
+	   line-height: 30px;
+	   font-size: 26px;
+	   background: 0 0;
+	   border-radius: 0;
+	   padding: 0;
+	   border: none;
+	   display: inline-block;
+	   vertical-align: middle;
+	   text-align: center;
+	   font-weight: 700;
+	   position: relative;
+	}
+	.number .minus:before {
+	   content: "";
+	   background-image: url(/themes/SAN/assets/img/n-minus.svg);
+	   width: 10px;
+	   height: 10px;
+	   position: absolute;
+	   top: 50%;
+	   left: 50%;
+	   transform: translate(-50%,-50%);
+	}
+	.number .plus:before {
+	   content: "";
+	   background-image: url(/themes/SAN/assets/img/n-plus.svg);
+	   width: 10px;
+	   height: 10px;
+	   position: absolute;
+	   top: 50%;
+	   left: 50%;
+	   transform: translate(-50%,-50%);
+	}
+	.number input {
+	    background: transparent;
+	    width: 15px;
+	    text-align: center;
+	    height: auto;
+	    font-size: 12px;
+	    color: #fff;
+	}
+
+	.h-adults .number {border: 1px solid #ccc;border-radius: 5px;padding: 3px 15px;}
+
+	.hotel-options > div {
+	    margin: 0 10px;
+	}
+	.children-wrap select.form-control {
+	    background: transparent;
+	    background: transparent;
+	    text-align: center;
+	    height: auto;
+	    font-size: 12px;
+	    color: #fff;
+	    border: 1px solid #ccc;
+	    border-radius: 5px !important;
+	    padding: 3px 15px;
+	}
+
+	#pills-tabContent .children-wrap .form-select:before {
+	    background-image: url(/themes/SAN/assets/img/child-arrow.svg);
+	    width: 7px;
+	    height: 7px;
+	    background-repeat: no-repeat;
+	    background-size: contain;
+	    right: 3px;
+	}
+	.children-wrap {
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	}
+
+	.children-wrap > div {
+	    margin: 0 8px;
+	}
+	.daterangepicker {
+	    border-radius: 0;
+	    font-family: 'UniSansRegular';
+	}
+
+	.daterangepicker td.active, .daterangepicker td.active:hover {
+	    background-color: #fbdf17 !important;
+	}
+
+	.daterangepicker td {
+	    border-radius: 0 !important;
+	}
+	ul#pills-tab-child li a.active {
+	    background: transparent;
+	    background: transparent;
+	    text-align: center;
+	    height: auto;
+	    font-size: 12px;
+	    color: #fff;
+	    border: 1px solid #ccc;
+	    border-radius: 5px !important;
+	    padding: 3px 15px;
+	    min-width: 70px;
+	}
+
+	ul#pills-tab-child li a {
+	    background: transparent;
+	    text-align: center;
+	    height: auto;
+	    font-size: 12px;
+	    color: #fff;
+	    border: 1px solid transparent;
+	    border-radius: 5px !important;
+	    padding: 3px 15px;
+	    min-width: 75px;
+	}
+	.flight-nav {
+	    display: flex;
+	    justify-content: space-between;
+	    align-items: center;
+	}
+
+	.flight-nav .class-of-travel {
+	    display: flex;
+	    align-items: center;
+	    font-size: 12px;
+	    color: #fff;
+	    text-align: center;
+	}
+
+	.flight-nav .class-of-travel select.form-control {
+	    background: transparent;
+	    background: transparent;
+	    text-align: left;
+	    height: auto;
+	    font-size: 12px;
+	    color: #fff;
+	    border: 1px solid #ccc;
+	    border-radius: 5px !important;
+	    padding: 3px 15px;
+	    margin-left: 5px;
+	    width: 150px;
+	}
+
+	.flight-nav .class-of-travel .form-select:before {
+	    background-image: url(/themes/SAN/assets/img/child-arrow.svg);
+	    width: 7px;
+	    height: 7px;
+	    background-repeat: no-repeat;
+	    background-size: contain;
+	    right: 3px;
+	}
+	div#pills-tabContent-child .row>div {
+	    padding: 0 7px;
+	}
+	div#pills-tabContent-child {
+		padding: 20px 0;
+	}
+	/* The container */
+	.custom-check {
+	  display: block;
+	  position: relative;
+	  padding-right: 25px;
+	  margin-bottom: 0;
+	  cursor: pointer;
+	  -webkit-user-select: none;
+	  -moz-user-select: none;
+	  -ms-user-select: none;
+	  user-select: none;
+	  margin-right: 20px;
+	}
+
+	/* Hide the browser's default checkbox */
+	.custom-check input {
+	  position: absolute;
+	  opacity: 0;
+	  cursor: pointer;
+	  height: 0;
+	  width: 0;
+	}
+
+	/* Create a custom checkbox */
+	.custom-check .checkmark {
+	  position: absolute;
+	  top: 0;
+	  right: 0;
+	  height: 15px;
+	  width: 15px;
+	  background-color: #eee;
+	}
+
+	/* On mouse-over, add a grey background color */
+	.custom-check:hover input ~ .checkmark {
+	  background-color: #ccc;
+	}
+
+	/* When the checkbox is checked, add a blue background */
+	.custom-check input:checked ~ .checkmark {
+	  background-color: #fcde18;
+	}
+
+	/* Create the checkmark/indicator (hidden when not checked) */
+	.custom-check .checkmark:after {
+	  content: "";
+	  position: absolute;
+	  display: none;
+	}
+
+	/* Show the checkmark when checked */
+	.custom-check input:checked ~ .checkmark:after {
+	  display: block;
+	}
+
+	/* Style the checkmark/indicator */
+	.custom-check .checkmark:after {
+	  left: 6px;
+	  top: 3px;
+	  width: 4px;
+	  height: 7px;
+	  border: solid white;
+	  border-width: 0 2px 2px 0;
+	  -webkit-transform: rotate(45deg);
+	  -ms-transform: rotate(45deg);
+	  transform: rotate(45deg);
+	}
+	.tab-pane .custom-search-input-2 [type='submit'], .tab-pane .custom-search-input-2 select {
+	    border-radius: 8px !important;
+	    padding-right: 40px;
+	}
+	#pills-multicity .custom-search-input-2 {
+	    padding-bottom: 15px;
+	}
+	#pills-multicity .custom-search-input-2:last-child {
+		padding-bottom: 0;
+	}
+	.multicity-form button.addmore-city, .multicity-form button.remove-city {
+	    background: transparent;
+	    border: none;
+	    height: 100%;
+	}
+	.multicity-form button.addmore-city:focus, .multicity-form button.remove-city:focus {
+		outline: none;
+		border: none;
+	}
+
+	.filter-modal .modal-header h3 {
+	    color: #fff;
+	    line-height: 1;
+	}
+
+	.filter-modal .modal-header button.close {
+	    opacity: 1;
+	    color: #fff;
+	    box-shadow: none;
+	}
+
+	.m-filters {
+		display: none;
+	}
+
+	@media (max-width: 1024px) {
+		.m-filters {
+			display: block;
+		}
+		.d-filters {
+			display: none;
+		}
+		.filter-modal .modal-content {
+		    background: #102838;
+		    height: 100%;
+		}
+
+		.filter-modal .custom-search-input-2 {
+		    background: #102838;
+		    box-shadow: none;
+		}
+
+		.filter-modal #pills-tabContent-child .row>div {
+		    flex: 0 0 100%;
+		    max-width: 100%;
+		    padding-bottom: 15px;
+		}
+
+		.filter-modal .flight-nav {
+		    /* flex-direction: column; */
+		    width: 100%;
+		}
+
+		.filter-modal .empty-div {
+		    display: none;
+		}
+		.filter-modal .daterangeselect:before {
+			display: none;
+		}
+		.filter-modal .checkin, .filter-modal .checkout {
+		    position: relative;
+		    width: 100%;
+		}
+		.filter-modal #pills-tabContent-child .row>div {
+		    flex: 0 0 50%;
+		    max-width: 50%;
+		    padding-bottom: 15px;
+		}
+		.filter-modal .custom-search-input-2 > div {
+			flex: 0 0 50%;
+			max-width: 50%;
+			padding-bottom: 15px;
+		}
+		.filter-modal .custom-search-input-2 > .hotel-options {
+		    flex: 0 0 100%;
+		    max-width: 100%;
+		    justify-content: center;
+		    flex-wrap: wrap;
+		}
+
+		.filter-modal .custom-search-input-2 > .hotel-options > div {
+		    padding-bottom: 15px;
+		}
+		.filter-modal .custom-search-input-2 > .hotel-options > div {
+		    padding-bottom: 15px;
+		    flex-wrap: wrap;
+		}
+		.modal-body .fade {
+		    opacity: 1;
+		}
+		.modal.show .modal-dialog {
+		    margin: 0;
+		    height: 100%;
+		}
+	}
+	@media (min-width: 576px) {
+		.filter-modal .modal-dialog {
+		    max-width: 100%;
+		    margin: 0 auto;
+		    height: 100%;
+		}
+	}
+	@media (max-width: 640px) {
+		.filter-modal .flight-nav {
+		    flex-direction: column;
+		    width: 100%;
+		}
+		.flight-nav .class-of-travel {
+		    margin-top: 15px;
+		}
+		.filter-modal #pills-tabContent-child .row>div {
+		    flex: 0 0 100%;
+		    max-width: 100%;
+		    padding-bottom: 15px;
+		}
+		.multicity-add-remove {
+			text-align: center;
+		}
+		.filter-modal .custom-search-input-2 > div {
+		    flex: 0 0 100%;
+		    max-width: 100%;
+		    padding-bottom: 15px;
+		}
+	}
+</style>
+
+<section class="hero_single version_2 inner">
+    <div class="wrapper" style="background-image: url('/themes/SAN/assets/img/corporate_cover_bg.jpg');">
+        <div class="container position-relative">
+            <div class="banner_title">
+                <div class="banner_text">
+                    <!-- <p>DISCOVER</p> -->
+                    <h1 class="UniSansLight">TRAVEL MANAGEMENT</h1>
+                    <span class="line"><em></em></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="home-filter">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="custom-filters d-filters">
+					<ul class="nav nav-pills" id="pills-tab" role="tablist">
+					  <li class="nav-item">
+					    <a class="nav-link active" id="pills-holiday-tab" data-toggle="pill" href="#pills-holiday" role="tab" aria-controls="pills-holiday" aria-selected="true"><img src="/themes/SAN/assets/img/holidays-icon.svg"> Holidays</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" id="pills-flight-tab" data-toggle="pill" href="#pills-flight" role="tab" aria-controls="pills-flight" aria-selected="false"><img src="/themes/SAN/assets/img/flight-icon.svg"> Flight</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" id="pills-hotel-tab" data-toggle="pill" href="#pills-hotel" role="tab" aria-controls="pills-hotel" aria-selected="false"><img src="/themes/SAN/assets/img/hotel-icon.svg"> Hotel</a>
+					  </li>
+					</ul>
+					<div class="tab-content" id="pills-tabContent">
+						<div class="tab-pane fade" id="pills-holiday" role="tabpanel" aria-labelledby="pills-holiday-tab">
+							<div class="row custom-search-input-2">
+								<div class="col-5 col-sm-3">
+									<div class="form-group form-select withicon">
+										<select name="country" class="form-control">
+											<option value="any">Destinations</option>
+											<option value="switzerland">Switzerland</option>
+										</select>
+										<!-- <i class="icon_pin_alt"></i> -->
+									</div>
+								</div>
+								<div class="col-5 col-sm-3 col-lg-3">
+									<div class="form-group form-select withicon">
+										<select name="theme" class="form-control">
+											<option value="any">Experience</option>	
+											<option value="bike-travel">Bike Travel</option>
+											<option value="campervan">Campervan</option>
+											<option value="test">Test</option>
+										</select>
+										<!-- <i class="icon-bicycle"></i> -->
+									</div>
+								</div>
+								<div class="d-none d-sm-block col-10 col-sm-3 col-lg-3">
+									<div class="form-group form-select withicon">
+
+										<select name="month" class="form-control">
+											<option value="any">Month of Travel</option>	
+											<option value="1">January</option>
+											<option value="2">February</option>
+											<option value="3">March</option>
+											<option value="4">April</option>
+											<option value="5">May</option>
+											<option value="6">June</option>
+											<option value="7">July</option>
+											<option value="8">August</option>
+											<option value="9">September</option>
+											<option value="10">October</option>
+											<option value="11">November</option>
+											<option value="12">December</option>
+										</select>
+										<!-- <i class="icon-calendar"></i> -->
+									</div>
+								</div>                                
+								<div class="col-5 col-sm-3 col-lg-3">
+									<button type="submit" class="btn_search rounded-0 p-0"><span class="icon-search d-lg-none"></span><span class="d-none d-lg-block">SEARCH</span></button>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade show active" id="pills-flight" role="tabpanel" aria-labelledby="pills-flight-tab">
+							<div class="row custom-search-input-2">
+								<div class="col-md-2 empty-div"></div>
+								<div class="col-lg-8 col-md-12">
+									<div class="flight-nav">
+										<ul class="nav nav-pills" id="pills-tab-child" role="tablist">
+										  <li class="nav-item">
+										    <a class="nav-link active" id="pills-roundtrip-tab" data-toggle="pill" href="#pills-roundtrip" role="tab" aria-controls="pills-roundtrip" aria-selected="true">Round Trip</a>
+										  </li>
+										  <li class="nav-item">
+										    <a class="nav-link" id="pills-oneway-tab" data-toggle="pill" href="#pills-oneway" role="tab" aria-controls="pills-oneway" aria-selected="false">One Way</a>
+										  </li>
+										  <li class="nav-item">
+										    <a class="nav-link" id="pills-multicity-tab" data-toggle="pill" href="#pills-multicity" role="tab" aria-controls="pills-multicity" aria-selected="false">Multi City</a>
+										  </li>
+										</ul>
+										<div class="class-of-travel">
+											Class of Travel
+											<div class="form-group form-select withicon">
+												<select name="country" class="form-control">
+													<option value="any">Economy</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2 empty-div"></div>
+								<div class="col-md-12">
+									<div class="tab-content" id="pills-tabContent-child">
+									  <div class="tab-pane fade show active" id="pills-roundtrip" role="tabpanel" aria-labelledby="pills-roundtrip-tab">
+									  	<div class="row custom-search-input-2">
+									  		<div class="col-5 col-sm-3">
+												<div class="form-group form-select withicon">
+													<select name="country" class="form-control">
+														<option value="any">Dubai, United Arab Emirates</option>
+														<option value="switzerland">Switzerland</option>
+													</select>
+													<!-- <i class="icon_pin_alt"></i> -->
+												</div>
+											</div>
+											<div class="col-5 col-sm-3 col-lg-3">
+												<div class="form-group form-select withicon">
+													<select name="theme" class="form-control">
+														<option value="any">Dallas Fort Worth, United States</option>	
+														<option value="bike-travel">Bike Travel</option>
+														<option value="campervan">Campervan</option>
+														<option value="test">Test</option>
+													</select>
+													<!-- <i class="icon-bicycle"></i> -->
+												</div>
+											</div>
+											<div class="d-none d-sm-block col-10 col-sm-2 col-lg-2">
+												<div class="form-group form-select withicon">
+
+													<div class="daterangeselect">
+														<div class="checkin">
+															<input type="text" name="roundtrip" class="form-control" value="01/01/2018" />
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="d-none d-sm-block col-10 col-sm-2 col-lg-2">
+												<div class="form-group form-select withicon">
+
+													<div class="daterangeselect">
+														<div class="checkout">
+															<input type="text" name="roundtrip" class="form-control" value="01/15/2018" />
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-5 col-sm-2 col-lg-2">
+												<button type="submit" class="btn_search rounded-0 p-0"><span class="icon-search d-lg-none"></span><span class="d-none d-lg-block">SEARCH</span></button>
+											</div>
+									  	</div>
+									  </div>
+									  <div class="tab-pane fade" id="pills-oneway" role="tabpanel" aria-labelledby="pills-oneway-tab">
+									  	<div class="row custom-search-input-2">
+									  		<div class="col-5 col-sm-4">
+												<div class="form-group form-select withicon">
+													<select name="country" class="form-control">
+														<option value="any">Dubai, United Arab Emirates</option>
+														<option value="switzerland">Switzerland</option>
+													</select>
+													<!-- <i class="icon_pin_alt"></i> -->
+												</div>
+											</div>
+											<div class="col-5 col-sm-4 col-lg-4">
+												<div class="form-group form-select withicon">
+													<select name="theme" class="form-control">
+														<option value="any">Dallas Fort Worth, United States</option>	
+														<option value="bike-travel">Bike Travel</option>
+														<option value="campervan">Campervan</option>
+														<option value="test">Test</option>
+													</select>
+													<!-- <i class="icon-bicycle"></i> -->
+												</div>
+											</div>
+											<div class="d-none d-sm-block col-10 col-sm-2 col-lg-2">
+												<div class="form-group form-select withicon">
+
+													<div class="daterangeselect">
+														<div class="checkin">
+															<input type="text" name="oneway" class="form-control" value="01/01/2018" />
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-5 col-sm-2 col-lg-2">
+												<button type="submit" class="btn_search rounded-0 p-0"><span class="icon-search d-lg-none"></span><span class="d-none d-lg-block">SEARCH</span></button>
+											</div>
+									  	</div>
+									  </div>
+									  <div class="tab-pane fade" id="pills-multicity" role="tabpanel" aria-labelledby="pills-multicity-tab">
+									  	<div class="multicity-form">
+									  		<div class="row custom-search-input-2" id="milticity-1">
+										  		<div class="col-5 col-sm-4">
+													<div class="form-group form-select withicon">
+														<select name="country" class="form-control">
+															<option value="any">Dubai, United Arab Emirates</option>
+															<option value="switzerland">Switzerland</option>
+														</select>
+														<!-- <i class="icon_pin_alt"></i> -->
+													</div>
+												</div>
+												<div class="col-5 col-sm-4 col-lg-4">
+													<div class="form-group form-select withicon">
+														<select name="theme" class="form-control">
+															<option value="any">Dallas Fort Worth, United States</option>	
+															<option value="bike-travel">Bike Travel</option>
+															<option value="campervan">Campervan</option>
+															<option value="test">Test</option>
+														</select>
+														<!-- <i class="icon-bicycle"></i> -->
+													</div>
+												</div>
+												<div class="d-none d-sm-block col-10 col-sm-2 col-lg-2">
+													<div class="form-group form-select withicon">
+
+														<div class="daterangeselect">
+															<div class="checkin">
+																<input type="text" name="multicity" class="form-control" value="01/01/2018" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-5 col-sm-2 col-lg-2">
+													<button type="submit" class="btn_search rounded-0 p-0"><span class="icon-search d-lg-none"></span><span class="d-none d-lg-block">SEARCH</span></button>
+												</div>
+										  	</div>
+										  	<div class="row custom-search-input-2 single-multicity" id="milticity-2">
+										  		<div class="col-5 col-sm-4">
+													<div class="form-group form-select withicon">
+														<select name="country" class="form-control">
+															<option value="any">Dubai, United Arab Emirates</option>
+															<option value="switzerland">Switzerland</option>
+														</select>
+														<!-- <i class="icon_pin_alt"></i> -->
+													</div>
+												</div>
+												<div class="col-5 col-sm-4 col-lg-4">
+													<div class="form-group form-select withicon">
+														<select name="theme" class="form-control">
+															<option value="any">Dallas Fort Worth, United States</option>	
+															<option value="bike-travel">Bike Travel</option>
+															<option value="campervan">Campervan</option>
+															<option value="test">Test</option>
+														</select>
+														<!-- <i class="icon-bicycle"></i> -->
+													</div>
+												</div>
+												<div class="d-none d-sm-block col-10 col-sm-2 col-lg-2">
+													<div class="form-group form-select withicon">
+
+														<div class="daterangeselect">
+															<div class="checkin">
+																<input type="text" name="multicity" class="form-control" value="01/01/2018" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-5 col-sm-2 col-lg-2">
+													<div class="multicity-add-remove">
+														<button class="remove-city">
+															<img src="/themes/SAN/assets/img/multicity.svg">
+														</button>
+														<button class="addmore-city">
+															<img src="/themes/SAN/assets/img/add-multicity.svg">
+														</button>
+													</div>
+												</div>
+										  	</div>
+									  	</div>
+									  </div>
+									</div>
+								</div>
+								<div class="col-md-2 empty-div"></div>                            
+								<div class="col-lg-8 col-md-12">
+									<div class="flight-nav">
+										<div class="class-of-travel">
+											Passengers
+											<div class="form-group form-select withicon">
+												<select name="country" class="form-control">
+													<option value="any">3 Passengers</option>
+												</select>
+											</div>
+										</div>
+										<div class="class-of-travel">
+											Preffered Airline
+											<div class="form-group form-select withicon">
+												<select name="country" class="form-control">
+													<option value="any">Choose Airline</option>
+												</select>
+											</div>
+										</div>
+										<div class="class-of-travel">
+											<label class="custom-check">Direct Flight
+											  <input type="checkbox" checked="checked">
+											  <span class="checkmark"></span>
+											</label>
+											<label class="custom-check">Refundable
+											  <input type="checkbox">
+											  <span class="checkmark"></span>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-2 empty-div"></div>  
+							</div>
+						</div>
+						<div class="tab-pane fade" id="pills-hotel" role="tabpanel" aria-labelledby="pills-hotel-tab">
+							<div class="row custom-search-input-2">
+								<div class="col-5 col-sm-3">
+									<div class="form-group form-select withicon">
+										<select name="country" class="form-control">
+											<option value="any">Destinations</option>
+											<option value="switzerland">Switzerland</option>
+										</select>
+										<!-- <i class="icon_pin_alt"></i> -->
+									</div>
+								</div>
+								<div class="col-5 col-sm-2 col-lg-2">
+									<div class="form-group form-select withicon">
+										<select name="theme" class="form-control">
+											<option value="any">Nationality</option>	
+											<option value="bike-travel">Bike Travel</option>
+											<option value="campervan">Campervan</option>
+											<option value="test">Test</option>
+										</select>
+										<!-- <i class="icon-bicycle"></i> -->
+									</div>
+								</div>
+								<div class="d-none d-sm-block col-10 col-sm-5 col-lg-5">
+									<div class="form-group withicon">
+										<div class="daterangeselect">
+											<div class="checkin">
+												<input type="text" name="checkin" class="form-control" value="01/01/2018" />
+											</div>
+											<span class="selected-nights"><strong>2</strong> Nights</span>
+											<div class="checkout">
+												<input type="text" name="checkin" class="form-control" value="01/15/2018" />
+											</div>
+										</div>
+									</div>
+								</div>                                
+								<div class="col-5 col-sm-2 col-lg-2">
+									<button type="submit" class="btn_search rounded-0 p-0"><span class="icon-search d-lg-none"></span><span class="d-none d-lg-block"><img src="/themes/SAN/assets/img/search-icon.svg"> SEARCH</span></button>
+								</div>
+							</div>
+							<div class="row custom-search-input-2">
+								<div class="hotel-options">
+									<div class="hotel-rooms">
+										Rooms <input type="number" name="rooms" class="form-control" value="3">
+									</div>
+									<div class="h-adults">
+										Adults (12+)
+										<div class="number h-counter">
+										   <span class="minus"></span>
+	                                       <input type="text" value="1" class="adults" id="adults" autocomplete='off'>
+	                                       <span class="plus"></span>
+										</div>
+									</div>
+									<div class="h-adults childrens">
+										Child (0-11)
+										<div class="number c-counter">
+										   <span class="minus"></span>
+	                                       <input type="text" value="1" class="child" id="child" autocomplete='off'>
+	                                       <span class="plus"></span>
+										</div>
+									</div>
+									<div class="children-wrap">
+										<div class="h-adults childrens">
+											Child 1
+											<div class="form-group form-select withicon">
+												<select name="country" class="form-control">
+													<option value="any">Under 1</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="custom-filters m-filters">
+					<ul class="nav nav-pills" id="pills-tab" role="tablist">
+					  <li class="nav-item">
+					    <a class="nav-link" id="pills-holiday-tab" data-toggle="modal" data-target="#holidayModal"><img src="/themes/SAN/assets/img/holidays-icon.svg"> Holidays</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" id="pills-flight-tab" data-toggle="modal" data-target="#flightModal"><img src="/themes/SAN/assets/img/flight-icon.svg"> Flight</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" id="pills-hotel-tab" data-toggle="modal" data-target="#hotelModal"><img src="/themes/SAN/assets/img/hotel-icon.svg"> Hotel</a>
+					  </li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Modal -->
+<div class="modal filter-modal fade" id="holidayModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+      	<h3>Holiday</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class=""></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal filter-modal fade" id="flightModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+      	<h3>Flight</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class=""></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal filter-modal fade" id="hotelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+      	<h3>Hotel</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class=""></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+	jQuery(function() {
+		jQuery('input[name="checkin"]').daterangepicker({
+			"startDate": moment().add(0, 'day'),
+			"endDate":  moment().add(1, 'day'),
+			"linkedCalendars": false,
+			"autoUpdateInput": false,
+			"autoApply": true,
+		}, function(start, end, label) {
+			$('input[name="checkin"]').val(start.format('MM/DD/YYYY'));
+			$('input[name="checkout"]').val(end.format('MM/DD/YYYY'));
+			console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+		});
+
+		jQuery('input[name="roundtrip"]').daterangepicker({
+			"startDate": moment().add(0, 'day'),
+			"endDate":  moment().add(1, 'day'),
+			"linkedCalendars": false,
+			"autoUpdateInput": false,
+			"autoApply": true,
+		}, function(start, end, label) {
+			$('input[name="checkin"]').val(start.format('MM/DD/YYYY'));
+			$('input[name="checkout"]').val(end.format('MM/DD/YYYY'));
+			console.log('New date range selected: ' + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + ' (predefined range: ' + label + ')');
+		});
+
+		jQuery('input[name="oneway"]').daterangepicker({
+			"startDate": moment().add(0, 'day'),
+			"singleDatePicker": true,
+			"autoApply": true,
+		}, function(start, end, label) {
+		});
+
+		jQuery('input[name="multicity"]').daterangepicker({
+			"startDate": moment().add(0, 'day'),
+			"singleDatePicker": true,
+			"autoApply": true,
+		}, function(start, end, label) {
+		});
+	});
+
+	jQuery('.h-counter .minus').click(function () {
+
+		var $input = jQuery(this).parent().find('input');
+		var count = parseInt($input.val()) - 1;
+		count = count < 0 ? 0 : count;
+		$input.val(count);
+		$input.change();
+		var num= parseInt(jQuery('#child').val());
+		return false;
+	});
+
+	jQuery('.h-counter .plus').click(function () {
+		var $input = jQuery(this).parent().find('input');
+		$input.val(parseInt($input.val()) + 1);
+		$input.change();
+		return false;
+	});
+
+	jQuery('.c-counter .minus').click(function () {
+
+		var $input = jQuery(this).parent().find('input');
+		var count = parseInt($input.val()) - 1;
+		count = count < 0 ? 0 : count;
+		$input.val(count);
+		$input.change();
+		var num= parseInt(jQuery('#child').val());
+		jQuery(".children-wrap .h-adults:last").remove('');
+		console.log(t_rooms);
+		jQuery('input[name="n_guests"]').val(num+' Adults    '+num1+' Childrens');
+		jQuery('input[name="t_rooms"]').val(t_rooms);
+		return false;
+	});
+
+	jQuery('.c-counter .plus').click(function () {
+		var $input = jQuery(this).parent().find('input');
+		$input.val(parseInt($input.val()) + 1);
+		$input.change();
+		var num= parseInt(jQuery('#child').val());
+		var num1= parseInt(jQuery('#children').val());
+		var t_rooms = parseInt(jQuery('#rooms').val());
+		jQuery(".children-wrap").append('<div class="h-adults childrens"> Child '+num+'<div class="form-group form-select withicon"> <select name="country" class="form-control"> <option value="any">Under 1</option> </select> </div> </div>');
+		console.log(t_rooms);
+		return false;
+	});
+
+	jQuery('.addmore-city').click(function () {
+		jQuery(".multicity-form .single-multicity").eq(0).clone().insertAfter('.multicity-form .single-multicity');
+		return false;
+	});
+
+	jQuery('.remove-city').click(function () {
+		jQuery(".multicity-form .single-multicity:last").remove('');
+		return false;
+	});
+
+	if ( jQuery(window).width() <= 800 ){
+		jQuery("#pills-hotel").appendTo("#hotelModal .modal-body");
+		jQuery("#pills-flight").appendTo("#flightModal .modal-body");
+		jQuery("#pills-holiday").appendTo("#holidayModal .modal-body");
+	}
+
+</script>

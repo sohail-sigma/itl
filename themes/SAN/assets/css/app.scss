@@ -1,0 +1,42 @@
+@mixin font-face($name, $path, $weight: null, $style: null, $exts: eot woff ttf svg) {
+	$src: null;
+
+	$extmods: (
+		eot: "?",
+		svg: "#" + str-replace($name, " ", "_")
+	);
+
+	$formats: (
+		otf: "opentype",
+		ttf: "truetype"
+	);
+
+	@each $ext in $exts {
+		$extmod: if(map-has-key($extmods, $ext), $ext + map-get($extmods, $ext), $ext);
+		$format: if(map-has-key($formats, $ext), map-get($formats, $ext), $ext);
+		$src: append($src, url(quote($path + "." + $extmod)) format(quote($format)), comma);
+	}
+
+	@font-face {
+		font-family: quote($name);
+		font-style: $style;
+		font-weight: $weight;
+		src: $src;
+	}
+}
+@import "../bootstrap/scss/bootstrap.scss";
+@include font-face(UniSansHeavy, fonts/UniSansHeavy);
+@include font-face(UniSansThin, fonts/UniSansThin);
+@include font-face(UniSansSemiBold, fonts/UniSansSemiBold);
+@include font-face(UniSansLight, fonts/UniSansLight);
+@include font-face(UniSansRegular, fonts/UniSansRegular);
+@include font-face(UniSansBold, fonts/UniSansBold);
+@include font-face(fontello, fonts/fontello);
+@include font-face(ElegantIcons, fonts/ElegantIcons);
+@include font-face(dincondensedBold, fonts/dincondensedBold);
+
+@import "../theme/style.scss";
+@import "../fontawesome/scss/fontawesome.scss";
+@import "../owl/scss/owl.carousel.scss";
+@import "../aos/scss/aos.scss";
+@import "../lightgallery/sass/lightgallery.scss";

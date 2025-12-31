@@ -1,0 +1,10 @@
+name: CountryRules
+form: $/itlworld/ipcountries/models/countryrule/fields.yaml
+modelClass: ITLWorld\IpCountries\Models\CountryRule
+defaultRedirect: itlworld/ipcountries/countryrules
+create:
+    redirect: 'itlworld/ipcountries/countryrules/update/:id'
+    redirectClose: itlworld/ipcountries/countryrules
+update:
+    redirect: itlworld/ipcountries/countryrules
+    redirectClose: itlworld/ipcountries/countryrules

@@ -1,0 +1,341 @@
+title = "Travel & Management"
+url = "/travel-management"
+layout = "default"
+meta_title = "ITL World | Business Travel Management Company| Corporate Travel Services | International Business Trips"
+meta_description = "Best Travel Agency in GCC |Customized Corporate Travel Management Programs | Different objectives and policies for individual clients |International Travel, Business travel, Corporate Travel Service, Business Trips, Corporate Travel Management Company."
+is_hidden = 0
+
+[builderList travelManagement]
+modelClass = "san\San\Models\TravelManagement"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+
+[builderDetails]
+modelClass = "san\San\Models\CorporateTravel"
+identifierValue = 7
+modelKeyColumn = "id"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+==
+<?php
+function onSubmitNewsletterForm()
+	{
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$data = post();
+
+			$rules = [
+				'full_name' => 'required',
+				'email' => 'required|email|unique:san_san_newsletter'
+			];
+			$errorMessages = [
+				'email.required' => 'Please enter your email',
+				'email.unique' => 'Email already exist',
+				'full_name.required' => 'Please enter your full name'
+			];
+
+			$validation = Validator::make($data, $rules, $errorMessages);
+
+			if ($validation->fails()) {
+				throw new ValidationException($validation);
+			} else {
+				$input = Input::all();
+				$careers = new san\San\Models\Newsletter;
+				$careers->fulll_name = $input['full_name'];
+				$careers->email = $input['email'];
+				$careers->save();
+				Flash::success('Submitted successfully!');
+				unset($_POST);
+			}
+		}
+	}
+
+	function onSubmitTravelForm()
+	{
+		if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+			$data = post();
+			$rules = [
+				'first_name' => 'required',
+				'last_name' => 'required',
+				'email' => 'required|email',
+				'c_name' => 'required',
+				'phone' => 'required',
+				'city' => 'required',
+				'country' => 'required',
+				// 'interested_in' => 'required',
+			];
+			$errorMessages = [
+				'first_name.required' => 'Enter your first name',
+				'last_name.required' => 'Enter your last name',
+				'email.required' => 'Enter your email',
+				'c_name.required' => 'Enter your company name',
+				'phone.required' => 'Enter your phone number',
+				'city.required' => 'Enter your city name',
+				'country.required' => 'Enter your country name',
+				// 'interested_in.required' => 'This feild is required',
+			];
+			$validation = Validator::make($data, $rules, $errorMessages);
+			if ($validation->fails()) {
+				throw new ValidationException($validation);
+			} else {
+				$input = Input::all();
+				$enq = new san\San\Models\TravelEnquiry;
+				$interested_ins = $input['interested_in'];
+				$interested_in_text = "Area of interest: ";
+				$enq->first_name = $input['first_name'];
+				$enq->last_name = $input['last_name'];
+				$enq->email = $input['email'];
+				$enq->c_name = $input['c_name'];
+				$enq->city = $input['city'];
+				$enq->designation = $input['designation'];
+				$enq->phone = $input['phone'];
+				$enq->country = $input['country'];
+				$enq->interest = $input['interested_in'];
+				$enq->created_at = date("Y-m-d h:i:s a");
+				$enq->save();
+				if (isset($input['newsletter'])) {
+					$is_already = san\San\Models\Newsletter::where('email', $input['email'])->get();
+					if (count($is_already) == 0) {
+						$news_letter = new san\San\Models\Newsletter;
+						$news_letter->email = $input['email'];
+						$news_letter->fulll_name = $input['first_name'] . " " . $input['last_name'];
+						$news_letter->save();
+					}
+				}
+
+				$vars = [
+					'name' => $input['first_name'] . " " . $input['last_name'],
+					'email' => $input['email'],
+					'c_name' => $input['c_name'],
+					'designation' => $input['designation'],
+					'phone' => $input['phone'],
+					'city' => $input['city'],
+					'country' => $input['country'],
+					'interested_in_text' => $interested_in_text,
+					'interested_ins' => $interested_ins,
+				];
+				$user_emails = $input['email'];
+				Mail::send('travel_management', $vars, function ($message) {
+					$enqmails = san\San\Models\EnquiryEmails::where('id', '14')->first();
+					$message->to($enqmails['content_3'], 'Travel Management');
+					$message->subject('Travel Management query');
+				});
+				Mail::send('user_confirmation_email', $vars, function ($message) use ($user_emails) {$message->to($user_emails);});
+				Flash::success('Submitted successfully!');
+			}
+		}
+	}
+
+	function onEnd()
+   {
+   	$this['travel_management'] = san\San\Models\TravelManagement::where('status', '1')->orderBy('sort_order', 'ASC')->get();
+   }
+?>
+==
+<div class="banner-slider">
+	<div class="slider-inner">
+		<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+			<div class="carousel-inner">
+				<div class="carousel-caption d-md-block">
+					<h1>{{builderDetails.record.title}}</h1>
+					<span class="line"><em></em></span>
+				</div>
+				{% if(builderDetails.record.banner_type == 'image') %}
+				{% set scount = 1 %}
+				{% for bannerslider in builderDetails.record.banner_image %}
+				<div class="carousel-item {% if(scount == 1 ) %} active {% endif %}">
+					<div class="banner-image">
+						<img class="d-block w-100" src="{{bannerslider.path}}" alt="First slide">
+
+					</div>
+				</div>
+				{% set scount = scount + 1 %}
+				{% endfor %}
+				{% elseif(builderDetails.record.banner_type == 'video') %}
+				{% set scount = 1 %}
+				{% for banneriframe in builderDetails.record.banner_iframe %}
+                    {% set v_dur = banneriframe.video_duration * 1000 %}
+				<div class="carousel-item {% if(scount == 1 ) %} active {% endif %}" data-interval="{{v_dur}}">
+					<div class="banner-iframe">
+						<iframe width="770" height="433"
+							src="https://www.youtube.com/embed/{{ banneriframe.iframe[17:] }}?showinfo=0&playlist={{ banneriframe.iframe[17:] }}&loop=1&autoplay=1&controls=0&mute=1"
+							title="{{cdestinations_List[0].title}}" frameborder="0"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+							allowfullscreen=""></iframe>
+					</div>
+				</div>
+				{% set scount = scount + 1 %}
+				{% endfor %}
+				{% endif %}
+			</div>
+			<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="sr-only">Previous</span>
+			</a>
+			<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="sr-only">Next</span>
+			</a>
+		</div>
+	</div>
+</div>
+<!-- <section class="hero_single version_2 inner" data-aos="fade-up" data-aos-duration="2000">
+	<div class="wrapper" style="background-image: url({{builderDetails.record.banner.path}});">
+		<div class="container position-relative">
+			<div class="banner_title">
+				<div class="banner_text">
+					<h1>TRAVEL MANAGEMENT</h1>
+					<span class="line"><em></em></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</section> -->
+
+<section class="services-listing" data-aos="fade-up" data-aos-duration="2000">
+
+	{% for travel in travel_management %}
+	<div class="single-service" id="{{travel.slug}}" data-aos="fade-up" data-aos-duration="3000">
+		<div class="services-title">
+			<div class="main_title_2">
+				<h2>{{travel.title}}</h2>
+				<span><em></em></span>
+			</div>
+		</div>
+		{% if(travel.banner.path) %}
+		<div class="service-img">
+			<img src="{{travel.banner.path}}">
+		</div>
+		{% endif %}
+		<div data-title="{{travel.title}}">
+			{{travel.content | raw}}
+		</div>
+	</div>
+	{% endfor %}
+
+</section>
+<div id="enquiry-popup" class="white-popup mfp-hide">
+	{% partial 'site/travelenquiryform' %}
+</div>
+<div id="mice-popup" class="white-popup mfp-hide">
+	{% partial 'site/miceenquiryform' %}
+</div>
+<div id="edu-popup" class="white-popup mfp-hide">
+	{% partial 'site/edutravelenquiryform' %}
+</div>
+
+<div id="after-submit-popup" class="white-popup mfp-hide">
+	<div id="sign-in-dialog" class="zoom-anim-dialog">
+		<div class="modalbody">
+			<div class="small-dialog-header">
+				<h3><img src="/themes/SAN/assets/images/mail.svg" class="img-fluid mail"
+						alt="">Successfully sent</h3>
+			</div>
+		</div>
+		<div style="padding: 80px 10px;">
+			<h4>Form has been submitted successfully!</h4>
+		</div>
+		<button title="Close (Esc)" type="button" class="mfp-close"></button>
+	</div>
+</div>
+
+<script>
+	$('.open-popup-link').magnificPopup({
+		type: 'inline',
+		showCloseBtn: true,
+		callbacks: {
+			open: function () {
+				$('#sign-in-dialog').append($('.mfp-close'))
+			},
+		},
+		midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+
+		$('.enquire').click(function() {
+			var dataValue = $(this).parent().parent().data('title');
+			// alert(dataValue);
+			setTimeout(function() {
+				form_type = $('#form_type').val();
+				if(form_type == 'all' ){
+					$('#interested_in').val(dataValue);
+				}
+			}, 100);
+		});
+
+		var donescroll = false;
+		function animateValue(obj, start, end, duration) {
+			let startTimestamp = null;
+			const step = (timestamp) => {
+				if (!startTimestamp) startTimestamp = timestamp;
+				const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+				obj.innerHTML = Math.floor(progress * (end - start) + start);
+				if (progress < 1) {
+					window.requestAnimationFrame(step);
+				}
+			};
+			window.requestAnimationFrame(step);
+		}
+		// Variable to track whether the counters have been animated already
+		$(window).scroll(function () {
+		    // Get the position and dimensions of the section containing the counters
+		    var sectionOffset = $('.cust-row').offset().top,
+		        sectionHeight = $('.cust-row').outerHeight(),
+		        windowHeight = $(window).height(),
+		        windowScrollTop = $(this).scrollTop();
+
+		    // Check if the section is within the viewport
+		    if (windowScrollTop > (sectionOffset + sectionHeight - windowHeight)) {
+		        // Start the counter animations
+		        const obj = document.getElementById("itlnums1");
+		        const obj1 = document.getElementById("itlnums2");
+		        animateValue(obj, 0, 95, 3000);
+		        animateValue(obj1, 0, 94, 3000);
+		        // Reset the flag to indicate that the counters have been animated
+		        donescroll = true;
+		    } else {
+		        // Reset the flag when the section is not in view
+		        donescroll = false;
+		    }
+		});
+
+	});
+
+	$('.slider-items').owlCarousel({
+		loop: true,
+		margin: 10,
+		responsiveClass: true,
+		autoplay: true,
+		autoplayTimeout: 2000,
+		autoplayHoverPause: true,
+		stagePadding: 100,
+		dots: false,
+		responsive: {
+			0: {
+				items: 1,
+				nav: false
+			},
+			600: {
+				items: 3,
+				nav: false
+			},
+			1000: {
+				items: 4,
+				nav: false,
+				loop: true
+			},
+			1300: {
+				items: 5,
+				nav: false,
+				loop: true
+			}
+		}
+	})
+</script>

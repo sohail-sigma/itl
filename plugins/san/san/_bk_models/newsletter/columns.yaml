@@ -1,0 +1,7 @@
+columns:
+    fulll_name:
+        label: Name
+        type: text
+    email:
+        label: email
+        type: text

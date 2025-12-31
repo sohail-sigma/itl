@@ -1,0 +1,23 @@
+<?= $this->listRender() ?>
+<script>
+   $('input[name="checked[]"]').change( function(){
+      var allids = $.map($('input[name="checked[]"]:checked'), function(c){
+         return c.value;
+      })
+      $('#all_ids').val(allids);
+   });
+   
+   $(document).on("click", "#Lists-checkboxAll", function(){
+      if($(this).prop("checked") == true){
+         setTimeout(
+         function() 
+         {
+            var allids = $.map($('input[name="checked[]"]:checked'), function(c){return c.value; })
+            $('#all_ids').val(allids);
+         }, 100);
+      }
+      else{
+         $('#all_ids').val('');
+      }
+   });
+</script>

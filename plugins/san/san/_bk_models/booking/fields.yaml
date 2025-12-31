@@ -1,0 +1,46 @@
+fields:
+    name:
+        label: Name
+        span: auto
+        type: text
+    email:
+        label: Email
+        span: auto
+        type: text
+    phone:
+        label: Phone
+        span: auto
+        type: text
+    package:
+        label: Package
+        size: ''
+        span: full
+        type: textarea
+    nationality:
+        label: Nationality
+        span: auto
+        type: text
+    pax:
+        label: 'Number of pax'
+        span: auto
+        type: text
+    departure_from:
+        label: 'Departure From'
+        span: auto
+        type: text
+    departure_when:
+        label: When
+        span: auto
+        type: text
+    how_logn:
+        label: 'How long'
+        span: auto
+        type: text
+    subscription:
+        label: Subscription
+        span: auto
+        type: switch
+    ip:
+        label: 'Customer IP'
+        span: auto
+        type: text

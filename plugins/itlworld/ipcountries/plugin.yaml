@@ -1,0 +1,6 @@
+plugin:
+    name: 'itlworld.ipcountries::lang.plugin.name'
+    description: 'itlworld.ipcountries::lang.plugin.description'
+    author: ITLWorld
+    icon: wn-icon-adjust
+    replaces: {  }

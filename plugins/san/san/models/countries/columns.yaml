@@ -1,0 +1,18 @@
+columns:
+    title:
+        label: Title
+        type: partial
+        searchable: true
+        sortable: true
+        path: ~/plugins/san/san/models/countries/_banner_column.html
+    destination_id:
+        label: Destination
+        type: text
+        searchable: true
+        sortable: false
+        select: title
+        relation: destination
+    status:
+        label: Active
+        type: switch
+        searchable: true

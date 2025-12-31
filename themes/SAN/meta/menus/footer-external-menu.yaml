@@ -1,0 +1,89 @@
+items:
+    -
+        title: 'Business Travel'
+        nesting: null
+        type: url
+        url: '/travel-management/#business-travel'
+        code: ''
+        reference: null
+        cmsPage: null
+        replace: null
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+    -
+        title: 'Leisure Travel'
+        type: url
+        url: '/travel-management/#leisure-travel'
+        code: ''
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+    -
+        title: 'MICE / Incentive Travel'
+        nesting: null
+        type: url
+        url: '/travel-management/#mice'
+        code: ''
+        reference: null
+        cmsPage: null
+        replace: null
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+    -
+        title: 'Destination Management'
+        nesting: null
+        type: url
+        url: '/travel-management/#destination-management'
+        code: ''
+        reference: null
+        cmsPage: null
+        replace: null
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+    -
+        title: 'Elite Travel'
+        nesting: null
+        type: url
+        url: '/services/#elite-travel'
+        code: ''
+        reference: null
+        cmsPage: null
+        replace: null
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+    -
+        title: 'Educational Travel'
+        nesting: null
+        type: url
+        url: '/travel-management/#educational-travel'
+        code: ''
+        reference: null
+        cmsPage: null
+        replace: null
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+    -
+        title: 'Travel Technology'
+        nesting: null
+        type: url
+        url: '/travel-management/#travel-technology'
+        code: ''
+        reference: null
+        cmsPage: null
+        replace: null
+        viewBag:
+            isHidden: '0'
+            cssClass: ''
+            isExternal: '0'
+name: 'footer external menu'

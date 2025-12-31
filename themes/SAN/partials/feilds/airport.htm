@@ -1,0 +1,36 @@
+[viewBag]
+
+==
+
+
+{% if listOfairport %}
+<div class="dest-list">
+   <ul style="margin: 0;">
+      {% for airport in listOfairport %}
+      <li class="airport" data-city_code="{{airport.ac}}" >{{airport.an}} ({{airport.ac}})</li>
+      {% endfor %}
+   </ul>
+</div>
+{% endif %}
+
+
+<script>
+   $("body").on("click", ".airport", function(){
+      var pdiv = $(this).closest('.form-groups');
+      console.log(pdiv);
+      pdiv.find('.search-airport').attr("placeholder", $(this).text());
+      pdiv.find('.search-airport').val($(this).text());
+      pdiv.find('.airportsearch').val($(this).attr("data-city_code"));
+		$(this).parent().closest(".dest-list").hide();
+   });
+
+   $("body").on("click", "#milticity-1 .airport", function(){
+      $('#milticity-2 .mcdep2').attr("placeholder", $(this).text());
+      $('#milticity-2 .mcdep2').val($(this).text());
+   });
+
+   $("body").on("click", "#milticity-2 .airport", function(){
+      $('#milticity-3 .mcdep3').attr("placeholder", $(this).text());
+      $('#milticity-3 .mcdep3').val($(this).text());
+   });
+</script>

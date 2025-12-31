@@ -1,0 +1,11 @@
+name: Themes
+modelClass: san\San\Models\Themes
+form: $/san/san/models/themes/fields.yaml
+defaultRedirect: san/san/themes
+create:
+    redirect: 'san/san/themes/update/:id'
+    redirectClose: san/san/themes
+update:
+    redirect: san/san/themes
+    redirectClose: san/san/themes
+preview: {  }

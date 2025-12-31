@@ -1,0 +1,4 @@
+title: Countries
+modelClass: san\San\Models\Countries
+toolbar:
+    buttons: reorder_toolbar

@@ -1,0 +1,15 @@
+title: PackageEnquiry
+modelClass: san\San\Models\PackageEnquiry
+list: $/san/san/models/packageenquiry/columns.yaml
+noRecordsMessage: 'backend::lang.list.no_records'
+recordsPerPage: 20
+showSetup: true
+showCheckboxes: true
+showSorting: 0
+defaultSort:
+    column: created_at
+    direction: desc
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'

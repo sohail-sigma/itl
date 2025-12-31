@@ -1,0 +1,445 @@
+title = "Services"
+url = "/services"
+layout = "default"
+meta_title = "About ITL World | Leading travel agency in UAE, KSA, Kuwait, Qatar"
+meta_description = "ITL World has the perfect blend of global expertise and local knowledge. Right from travel planning to ticketing services, hotel bookings, UAE visit visa, global visa processing and organizing activities at destinations around the world and UAE, ITL World has successfully been the most award winning travel management company."
+is_hidden = 0
+
+[builderDetails]
+modelClass = "san\San\Models\Csr"
+identifierValue = 8
+modelKeyColumn = "id"
+displayColumn = "title"
+notFoundMessage = "Record not found"
+
+[builderList servicesList]
+modelClass = "san\San\Models\Services"
+scope = "-"
+scopeValue = "{{ :scope }}"
+displayColumn = "title"
+noRecordsMessage = "No records found"
+detailsPage = "-"
+detailsUrlParameter = "id"
+pageNumber = "{{ :page }}"
+sortColumn = "id"
+sortDirection = "asc"
+==
+<?php
+function onSubmitNewsletterForm()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = post();
+    
+            $rules = [
+                    'full_name' => 'required',
+                    'email' => 'required|email|unique:san_san_newsletter'
+                ];
+                $errorMessages = [
+                    'email.required' => 'Please enter your email',
+                    'email.unique' => 'Email already exist',
+                    'full_name.required' => 'Please enter your full name'
+                ];
+    
+            $validation = Validator::make($data, $rules, $errorMessages);
+    
+            if ($validation->fails()) {
+                throw new ValidationException($validation);
+            }else{
+                $input = Input::all();
+                $careers = new  san\San\Models\Newsletter;
+                $careers->fulll_name = $input['full_name'];
+                $careers->email = $input['email'];
+                $careers->save();
+                Flash::success('Submitted successfully!');
+                unset($_POST);
+            }
+        }
+    }
+
+    function onSubmitTransportForm()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = post();
+            if( $data['area_of_interest'] != "Ground transportation"){
+                $rules = [
+                    'area_of_interest' => 'required',
+                    'first_name' => 'required',
+                    'last_name' => 'required',
+                    'email' => 'required|email',
+                    'c_name' => 'required',
+                    'phone' => 'required',
+                    'country' => 'required',
+                    'designation' => 'required',
+                ];
+                $errorMessages = [
+                    'area_of_interest.required' => 'Please select one option',
+                    'first_name.required' => 'Enter your first name',
+                    'last_name.required' => 'Enter your last name',
+                    'email.required' => 'Enter your email',
+                    'c_name.required' => 'Enter your company name',
+                    'phone.required' => 'Enter your phone number',
+                    'designation.required' => 'Enter designation',
+                ];
+            }else{
+                $rules = [
+                    'area_of_interest' => 'required',
+                    'first_name' => 'required',
+                    'last_name' => 'required',
+                    'email' => 'required|email',
+                    'c_name' => 'required',
+                    'phone' => 'required',
+                    'country' => 'required',
+                    'fromcity' => 'required',
+                    'tocity' => 'required',
+                    'date' => 'required',
+                    'time' => 'required',
+                    'designation' => 'required',
+                ];
+                $errorMessages = [
+                    'area_of_interest.required' => 'Please select one option',
+                    'first_name.required' => 'Enter your first name',
+                    'last_name.required' => 'Enter your last name',
+                    'email.required' => 'Enter your email',
+                    'c_name.required' => 'Enter your company name',
+                    'phone.required' => 'Enter your phone number',
+                    'fromcity.required' => 'Enter from city name',
+                    'tocity.required' => 'Enter to city name',
+                    'date.required' => 'Choose date',
+                    'time.required' => 'Select time',
+                    'designation.required' => 'Enter designation',
+                ];
+            }
+
+            $validation = Validator::make($data, $rules, $errorMessages);
+            if ($validation->fails()) {
+                throw new ValidationException($validation);
+            }else{
+                $input = Input::all();
+                
+                $enq = new  san\San\Models\ServiceEnquiry;
+                $enq->area_of_interest = $input['area_of_interest']; 
+                $enq->first_name = $input['first_name']; 
+                $enq->last_name = $input['last_name']; 
+                $enq->email = $input['email']; 
+                $enq->c_name = $input['c_name'];
+                $enq->designation = $input['designation']; 
+                $enq->phone = $input['phone'];
+                $enq->city = $input['city'];
+
+                if($input['fromcity'] != ""){
+                    $enq->city = $input['fromcity'];
+                }
+
+                if($input['fromcity'] != ""){
+                    $enq->city = $input['fromcity'];
+                }
+                if($input['tocity'] != ""){
+                    $enq->tocity = $input['tocity'];
+                }
+                if($input['date'] != ""){
+                    $enq->date = $input['date'];
+                }
+                if($input['time'] != ""){
+                    $enq->time = $input['time'];
+                }
+
+                $enq->country = $input['country'];
+                $enq->created_at = date("Y-m-d h:i:s a");
+                $enq->save();
+                if(isset($input['newsletter'])){
+                    $is_already = san\San\Models\Newsletter::where('email', $input['email'])->get();
+                    if(count($is_already) == 0){
+                        $news_letter = new  san\San\Models\Newsletter;
+                        $news_letter->email = $input['email'];
+                        $news_letter->fulll_name = $input['first_name']." ".$input['last_name'];
+                        $news_letter->save();
+                    }
+                }
+                $vars = [
+                    'name' => $input['first_name']." ".$input['last_name'],
+                    'area_of_interest' => $input['area_of_interest'],
+                    'email' => $input['email'],
+                    'c_name' => $input['c_name'],
+                    'designation' => $input['designation'],
+                    'phone' => $input['phone'],
+                    'fromcity' => $input['fromcity'],
+                    'tocity' => $input['tocity'],
+                    'date' => $input['date'],
+                    'time' => $input['time'],
+                    'city' => $input['city'],
+                    'country' => $input['country']
+                ];
+                $user_emails = $input['email'];
+                try 
+                {
+                    Mail::send('user_confirmation_email', $vars, function ($message) use ($user_emails) {$message->to($user_emails);});
+                    Mail::send('services_q', $vars, function($message) {
+                        $enqmails = san\San\Models\EnquiryEmails::where('id', '14')->first();
+                        $message->to($enqmails['content_4'], 'Services query');
+                        $message->subject('Services query');
+                    });
+                }catch (Exception $ex) {
+                    trace_log($ex);
+                }
+
+                
+                Flash::success('Submitted successfully!');
+                unset($_POST);
+            }
+        }
+    }
+
+    function onSubmitAboutForm()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = post();
+            $rules = [
+                'area_of_interest' => 'required',
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'email' => 'required|email',
+                'c_name' => 'required',
+                'phone' => 'required',
+                'country' => 'required',
+                'city' => 'required',
+            ];
+            $errorMessages = [
+                'area_of_interest.required' => 'Please select one option',
+                'first_name.required' => 'Enter your first name',
+                'last_name.required' => 'Enter your last name',
+                'email.required' => 'Enter your email',
+                'c_name.required' => 'Enter your company name',
+                'phone.required' => 'Enter your phone number',
+                'city.required' => 'Enter your city name',
+            ];
+
+            $validation = Validator::make($data, $rules, $errorMessages);
+            if ($validation->fails()) {
+                throw new ValidationException($validation);
+            }else{
+                $input = Input::all();
+                
+                $enq = new  san\San\Models\ServiceEnquiry;
+                $enq->area_of_interest = $input['area_of_interest']; 
+                $enq->first_name = $input['first_name']; 
+                $enq->last_name = $input['last_name']; 
+                $enq->email = $input['email']; 
+                $enq->c_name = $input['c_name'];
+                $enq->designation = $input['designation']; 
+                $enq->phone = $input['phone']; 
+                $enq->city = $input['city'];
+                $enq->country = $input['country'];
+                $enq->created_at = date("Y-m-d h:i:s a");
+                $enq->save();
+                if(isset($input['newsletter'])){
+                    $is_already = san\San\Models\Newsletter::where('email', $input['email'])->get();
+                    if(count($is_already) == 0){
+                        $news_letter = new  san\San\Models\Newsletter;
+                        $news_letter->email = $input['email'];
+                        $news_letter->fulll_name = $input['first_name']." ".$input['last_name'];
+                        $news_letter->save();
+                    }
+                }
+                $user_emails = $input['email'];
+                $vars = [
+                    'name' => $input['first_name']." ".$input['last_name'],
+                    'area_of_interest' => $input['area_of_interest'],
+                    'email' => $input['email'],
+                    'c_name' => $input['c_name'],
+                    'designation' => $input['designation'],
+                    'phone' => $input['phone'],
+                    'city' => $input['city'],
+                    'country' => $input['country']
+                ];
+                try 
+                {
+                    
+                    Mail::send('services_q', $vars, function($message) {
+                        $enqmails = san\San\Models\EnquiryEmails::where('id', '14')->first();
+                        $message->to($enqmails['content_4'], 'Services query');
+                        $message->subject('Services query');
+                    });
+                }catch (Exception $ex) {
+                    trace_log($ex);
+                }
+
+                die;
+                // Flash::success('Submitted successfully!');
+                // unset($_POST);
+            }
+        }
+    }
+
+    function onEnd()
+    {
+        $this['services'] = san\San\Models\Services::where('status', '1')->orderBy('sort_order', 'ASC')->get();
+    }
+?>
+==
+<div class="banner-slider">
+    <div class="slider-inner">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-caption d-md-block">
+                    <h1>{{builderDetails.record.title}}</h1>
+                    <span class="line"><em></em></span>
+                </div>
+                {% if(builderDetails.record.banner_type == 'image') %}
+                    {% set scount = 1 %}
+                    {% for bannerslider in builderDetails.record.banner_image %}
+                        <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}">
+                            <div class="banner-image">
+                                <img class="d-block w-100" src="{{bannerslider.path}}" alt="First slide">
+                                
+                            </div> 
+                        </div>
+                        {% set scount = scount + 1 %}
+                    {% endfor %}
+                {% elseif(builderDetails.record.banner_type == 'video') %}
+                    {% set scount = 1 %}
+                    {% for banneriframe in builderDetails.record.banner_iframe %}
+                    {% set v_dur = banneriframe.video_duration * 1000 %}
+                        <div class="carousel-item {% if(scount == 1 ) %} active {% endif %}" data-interval="{{v_dur}}">
+                            <div class="banner-iframe">
+                                <iframe width="770" height="433" src="https://www.youtube.com/embed/{{ banneriframe.iframe[17:] }}?showinfo=0&playlist={{ banneriframe.iframe[17:] }}&loop=1&autoplay=1&controls=0&mute=1" title="{{cdestinations_List[0].title}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe>
+                            </div>
+                        </div>
+                        {% set scount = scount + 1 %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- <section class="hero_single version_2 inner" data-aos="fade-up" data-aos-duration="2000">
+    <div class="wrapper" style="background-image: url({{builderDetails.record.banner.path}});">
+        <div class="container position-relative">
+            <div class="banner_title">
+                <div class="banner_text">
+                    <h1>Services</h1>
+                    <span class="line"><em></em></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<section class="services-listing" data-aos="fade-up" data-aos-duration="2000">
+
+    {% for service in services %}
+    <div class="single-service" id="{{service.slug}}" data-aos="fade-up" data-aos-duration="3000">
+        <div class="services-title">
+            <div class="main_title_2">
+                <h2>{{service.title}}</h2>
+                <span><em></em></span>
+            </div>
+        </div>
+        {% if(service.banner.path) %}
+        <div class="service-img">
+            <img src="{{service.banner.path}}">
+        </div>
+        {% endif %}
+        <div class="service-desc" data-title="{{service.title | capitalize }}">
+            {{service.content | raw}}
+
+            {% if 'FLIGHTS' in service.button_title %}
+
+            <a href="{{url('/')}}?type=flight" class="hotel enquire homelink"><img src="{{service.button_icon.path}}">
+                {{service.button_title}}</a>
+
+            {% elseif 'HOTELS' in service.button_title %}
+
+            <a href="{{url('/')}}?type=hotel" class=" enquire homelink"><img src="{{service.button_icon.path}}">
+                {{service.button_title}}</a>
+
+
+            {% elseif 'GROUND TRANSPORTATION' in service.button_title %}
+
+            <a href="{{url('/')}}?type=hotel" class=" enquire homelink"><img src="{{service.button_icon.path}}">
+                {{service.button_title}}</a>
+
+            {% else %}
+
+            <a href="#transportation-popup" class="open-popup-link enquire"><img src="{{service.button_icon.path}}">
+                {{service.button_title}}</a>
+            {% endif %}
+
+
+
+        </div>
+    </div>
+    {% endfor %}
+
+</section>
+
+<div id="transportation-popup" class="white-popup mfp-hide">
+    {% partial 'site/transportationform' %}
+</div>
+
+<div id="enquiry-popup" class="white-popup mfp-hide">
+    {% partial 'site/servicesenquiryform' %}
+</div>
+<div id="after-submit-popup" class="white-popup mfp-hide">
+    <div id="sign-in-dialog" class="zoom-anim-dialog">
+        <div class="modalbody">
+            <div class="small-dialog-header">
+                <h3><img src="/themes/SAN/assets/images/mail.svg" class="img-fluid mail"
+                        alt="">Successfully sent</h3>
+            </div>
+        </div>
+        <div style="padding: 80px 10px;">
+            <h4>Form has been submitted successfully!</h4>
+        </div>
+        <button title="Close (Esc)" type="button" class="mfp-close"></button>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('.enquire').click(function() {
+            var dataValue = $(this).parent().data('title');
+            setTimeout(function() {
+                $('#area_of_interest').val(dataValue);
+                if(dataValue == "Ground transportation"){
+                    $('.onlyforgp').show();
+                    $('.onlyforcity').hide();
+                }else{
+                    $('.onlyforgp').hide();
+                    $('.onlyforcity').show();
+                }
+                // alert(dataValue);
+            }, 100);
+        });
+        $('#area_of_interest').on('change', function() {
+            var dataValue = $(this).find(":selected").val();
+            if(dataValue == "Ground transportation"){
+                $('.onlyforgp').show();
+                $('.onlyforcity').hide();
+            }else{
+                $('.onlyforgp').hide();
+                $('.onlyforcity').show();
+            }
+        });
+    });
+
+    $('.open-popup-link').magnificPopup({
+        type: 'inline',
+        showCloseBtn: true,
+        callbacks: {
+            open: function () {
+                $('#sign-in-dialog').append($('.mfp-close'))
+            },
+        },
+        midClick: true // Allow opening popup on middle mouse click. Always set it to true if you don't provide alternative source in href.
+    });
+</script>

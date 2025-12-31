@@ -1,0 +1,255 @@
+div#holiday_experience .owl-item {
+    text-align: left;
+}
+.e-box-content p {
+    color: #102838;
+    font-size: 18px;
+    font-weight: 600;
+}
+.e-box-content h3 a {
+    color: #00C3C3;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+div.holiday .information p {
+    color: #102838;
+    font-size: 22px;
+    font-family: 'UniSansLight';
+}
+div.holiday .information {
+    padding: 30px 0;
+}
+div.holiday .main_title_2 h2 {
+    color: #102838 !important;
+    font-size: 44px !important;
+}
+section.curated-experience .main_title_2 {
+    margin-bottom: 60px !important;
+}
+div#holiday_experience p {
+    text-transform: capitalize;
+overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+.e-box-content .info {
+    padding-top: 15px;
+    height: 82px;
+    overflow: hidden;
+}
+.cur-experience-box .info em {
+    width: 62px;
+    height: 2px;
+    background: #E30613;
+    display: block;
+}
+section.experience{
+    position: relative;
+}
+section.experience .owl-nav {
+    top: unset; 
+    bottom: 30px;
+    right: 40px;
+}
+.e-box-content h3 {
+    padding-top: 12px;
+}
+
+section.experience .owl-nav .hs_owl-prev {
+    left: unset;
+    right: 0px;
+}
+section.experience .owl-nav .hs_owl-next {
+    right: -20px;
+    text-align: right;
+}
+div#experience_inner {
+    padding-bottom: 50px;
+}
+.ce-box-img img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+}
+.e-box-img {
+height: 180px;
+overflow: hidden;
+}
+.experience-box a.draw:hover img {
+    transform: scale(1.1);
+}
+
+.ce-box-img img {
+    transition-duration: .5s;
+}
+.cur-experience-box:hover .ce-box-img img {
+    transform: scale(1.1);
+}
+.e-box-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+transition-duration: .5s;
+}
+.ce-box-content h2 {
+    font-size: 28px;
+    color: #004C7A;
+    height: 34px;
+    font-weight: 600;
+}
+.ce-box-content h2 {
+    font-size: 36px;
+    color: #004C7A;
+    height: 40px;
+    font-weight: 600;
+    font-family: 'dincondensedBold';
+}
+.ce-box-content h3 {
+    font-size: 20px;
+    color: #004C7A;
+}
+.p_info {
+    height: 110px;
+    overflow: hidden;
+}
+.p_info p:empty {
+    display: none !important;
+}
+
+.p_info {
+    padding-top: 15px;
+}
+.ce-box-content p {
+    font-size: 18px;
+    color: #102838;
+}
+.ce-box-content h4 a {
+    font-size: 18px;
+    color: #00C3C3;
+}
+.experience-box {
+    margin-bottom: 20px;
+}
+.cur-experience-box {
+    background: #bcbcbc16;
+    margin-bottom: 20px;
+}
+.cur-experience-box .info {
+    padding: 20px;
+}
+.cur-experience-box .info h4 {
+    text-align: right;
+}
+section.curated-experience {
+    position: relative;
+    padding-bottom: 60px;
+    margin-bottom: 60px;
+}
+section.curated-experience .owl-nav {
+    top: unset;
+}
+section.curated-experience .owl-nav .hs_owl-next {
+    right: 30px;
+    text-align: right;
+}
+section.curated-experience .owl-nav .hs_owl-prev {
+    left: unset;
+    right: 55px;
+}
+div#holiday_experience div#experience_inner .row, div#holiday_experience div#cur-experience_inner .row {
+    padding-left: 0.7rem !important;
+    padding-right: 0.7rem !important;
+}
+.carousel-indicators{
+   top: 86vh;
+   bottom: unset; 
+   margin-right: auto;
+    margin-left: auto;
+    list-style: none;
+    background: #00000099;
+    width: 10%;
+}
+.carousel-indicators li{
+   width: 6px;
+    height: 6px;
+    border-radius: 100%;
+}
+.ce-box-img {
+    position: relative;
+    overflow: hidden;
+}
+.fixed-departure p:after{
+ content: "FIXED DEPARTURE";
+}
+.flight-inclusive p:after{
+    content: "NATIONAL DAY SPECIALS";
+}
+.flight-green p:after{
+    content: "FLIGHT INCLUSIVE";
+}
+.flight-yellow p:after{
+    content: "ALL INCLUSIVE";
+    color: #000;
+}
+
+.general-angle p{
+    color: #fff;
+    font-weight: 600;
+    transform: rotate(-45deg);
+    padding: 0px 85px 0 0px;
+    text-align: center;
+    text-transform: uppercase !important;
+    font-size: 13px;
+}
+
+.flight-inclusive p{
+    padding: 7px 64px 4px 0px !important;
+}
+.general-angle {
+    width: 145px;
+    height: 145px;
+    clip-path: polygon(0 0, 0% 100%, 100% 0);
+    position: absolute;
+    left: -13px;
+    top: -13px;
+    z-index: 1;
+}
+.fixed-departure {
+    background: linear-gradient(45deg, #C300A5, #542555);
+}
+.flight-inclusive{
+    background: linear-gradient(45deg, #102838, #0A66A5);
+}
+.flight-green{
+    background: linear-gradient(45deg, #00C3C3, #006262);
+}
+.flight-yellow{
+    background: linear-gradient(45deg, #FFEA00, #F9B233);
+}
+
+@media (max-width: 1440px) {
+div.holiday .information p {
+    font-size: 18px;
+}
+
+.ce-box-content h2 {
+    font-size: 26px;
+}
+
+
+}
+
+@media (max-width: 768px) {
+div#experience_inner, section.curated-experience {
+    padding-bottom: 0px;
+}
+.ce-box-content h2 {
+    font-size: 22px;
+}
+
+}

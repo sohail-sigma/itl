@@ -1,0 +1,16 @@
+title: Enquiry
+modelClass: san\San\Models\Enquiry
+list: $/san/san/models/enquiry/columns.yaml
+recordUrl: 'san/san/enquiry/preview/:id'
+noRecordsMessage: 'backend::lang.list.no_records'
+recordsPerPage: 20
+showSetup: true
+showCheckboxes: true
+showSorting: 0
+defaultSort:
+    column: created_at
+    direction: desc
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: 'backend::lang.list.search_prompt'

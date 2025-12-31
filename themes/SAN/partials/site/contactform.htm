@@ -1,0 +1,334 @@
+[viewBag]
+==
+{% framework extras %}
+
+<div id="contact-dialog" class="pb-5 pt-5">
+    <!-- Flash Message -->
+    <div data-control="flash-message" class="flash-message fade {{ type }}" data-interval="5">
+        {{ message }}
+    </div>
+
+    <form data-request="onSubmitContactForm" 
+          data-request-validate 
+          data-request-flash 
+          class="form-str"
+          data-request-files="true" 
+          data-request-success="document.getElementById('aboutform').reset(); $.magnificPopup.open({
+                items: { src: '#after-submit-popup' },
+                type: 'inline',
+                showCloseBtn: true,
+                callbacks: {
+                    open: function () {
+                        $('#contact').append($('.mfp-close'))
+                    },
+                },
+                midClick: true
+            });" 
+          id="aboutform">
+        
+        <!-- Contact Type -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group field-group">
+                    <div class="form-select">
+                        <select name="type" class="custom-select form-control" style="appearance: none; -webkit-appearance: none;" required>
+                            <option>Contact Type (required)</option>
+                            <option value="Business Travel">Business Travel</option>
+                            <option value="Partnerships">Partnerships</option>
+                            <option value="Leisure Travel">Leisure Travel</option>
+                            <option value="MICE">MICE</option>
+                            <option value="Educational Travel">Educational Travel</option>
+                            <option value="Destination Management">Destination Management</option>
+                            <option value="Travel Technology">Travel Technology</option>
+                            <option value="General Enquiries">General Enquiries</option>
+                            <option value="Customer Feedback">Customer Feedback</option>
+                        </select>
+                        <span data-validate-for="type" class="text-danger pt-1 font-size-small visible"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email, Name, Company, Designation -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group field-group">
+                    <input class="form-control" type="email" name="email" placeholder="Your email address" value="" required>
+                    <span data-validate-for="email" class="text-danger pt-1 font-size-small"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group field-group">
+                    <input class="form-control" type="text" name="f_name" placeholder="First Name" value="" required pattern="[A-Za-z\s]+" title="Only alphabets are allowed" oninput="validateAlphabets(this, 'f_name')">
+                    <span data-validate-for="f_name" class="text-danger pt-1 font-size-small"></span>
+                    <small id="f_name-message" class="form-text text-danger" style="display: none;">Only alphabets and spaces are allowed.</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group field-group">
+                    <input class="form-control" type="text" name="l_name" placeholder="Last Name" value="" required pattern="[A-Za-z\s]+" title="Only alphabets are allowed" oninput="validateAlphabets(this, 'l_name')">
+                    <span data-validate-for="l_name" class="text-danger pt-1 font-size-small"></span>
+                    <small id="l_name-message" class="form-text text-danger" style="display: none;">Only alphabets and spaces are allowed.</small> 
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group field-group">
+                    <input class="form-control" type="text" name="c_name" placeholder="Company Name" value="" required required pattern="[A-Za-z\s]+" title="Only alphabets are allowed" oninput="validateAlphabets(this, 'c_name')">
+                    <span data-validate-for="c_name" class="text-danger pt-1 font-size-small"></span>
+                    <small id="c_name-message" class="form-text text-danger" style="display: none;">Only alphabets and spaces are allowed.</small> 
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group field-group">
+                    <input class="form-control" type="text" name="designation" placeholder="Designation" value="" required pattern="[A-Za-z\s]+" title="Only alphabets are allowed" oninput="validateAlphabets(this, 'designation')">
+                    <span data-validate-for="designation" class="text-danger pt-1 font-size-small"></span>
+                    <small id="designation-message" class="form-text text-danger" style="display: none;">Only alphabets and spaces are allowed.</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Country, City, Phone -->
+        <div class="row">
+            <div class="col-md-6 <?php $error = form_error('country'); echo $error ? 'error' : ''; ?>">
+                <div class="form-group field-group">
+                    <select id="" class="form-control address-country" name="country" required></select>
+                    <span data-validate-for="country" class="text-danger pt-1 font-size-small"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group field-group">
+                    <input class="form-control" type="text" name="city" placeholder="City" value="" required pattern="[A-Za-z\s]+" title="Only alphabets are allowed" oninput="validateAlphabets(this, 'city')">
+                    <span data-validate-for="city" class="text-danger pt-1 font-size-small"></span>
+                    <small id="city-message" class="form-text text-danger" style="display: none;">Only alphabets and spaces are allowed.</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group field-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <select class="form-control custom-select" id="code" name="code" placeholder="+">
+                                <option value="">Area of Code</option>
+                                {% for record in apiFunction.countries() %}
+                                    <option value="{{record.number}}">{{record.code}}+{{record.number}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input type="number" class="form-control phone" name="phone" id="" placeholder="eg. 55333666" value="" required onKeyDown="if(this.value.length==13 && event.keyCode!=8) return false;">
+                    </div>
+                    <span data-validate-for="code" class="text-danger pt-1 font-size-small"></span>
+                    <br>
+                    <span data-validate-for="phone" class="text-danger pt-1 font-size-small"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message -->
+        <div class="form-group field-group <?php $error = form_error('message'); echo $error ? 'error' : ''; ?>">
+            <textarea class="form-control" name="message" placeholder="Comments" style="height:150px;"></textarea>
+            <?php echo $error; ?>
+        </div>
+
+        <!-- Newsletter Checkbox -->
+        <div class="clearfix add_bottom_15">
+            <div class="checkboxes float-left">
+                <label class="container_check">Subscribe to our newsletter
+                    <input type="checkbox" name="newsletter">
+                    <span class="checkmark"></span>
+                </label>
+            </div>
+        </div>
+
+        {{builderDetails.record.content_11 | raw}}
+
+        <p class="add_top_30">
+            <button data-attach-loading type="submit" value="SUBMIT FORM" class="btn_contact btn contact-submit" id="submit-contact">
+                <i class="icon"><img src="/themes/SAN/assets/img/send-arrow.svg"></i> Submit Form
+            </button>
+        </p>
+    </form>
+
+</div>
+
+<style>
+    .iti__flag-container {
+        width: 75px !important;
+    }
+
+    .form-data {
+        display: none;
+    }
+
+    .date-dropdowns {
+        display: flex;
+    }
+
+    .date-dropdowns {
+        display: flex;
+    }
+
+    .option-sel-left {
+        text-align: left !important;
+    }
+
+    .option-sel-left .r-container {
+        margin-right: 40px;
+    }
+    .flash-message {
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 9999;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.flash-message.show {
+    display: block;
+}
+
+.mfp-bg {
+    background: transparent !important;
+}
+
+.mfp-container {
+    z-index: 99999;
+}
+[data-request][data-request-validate] [data-validate-for]:not(.visible), [data-request][data-request-validate] [data-validate-error]:not(.visible) {
+    display: block;
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+
+<script>
+// Function to show success message
+$(document).ready(function() {
+    // Function to show success message
+    function showSuccessMessage() {
+        var toasterMessage = $('<div class="flash-message show">Form submitted successfully!</div>');
+        $('body').append(toasterMessage);
+        
+        // Hide toaster after 5 seconds
+        setTimeout(function() {
+            toasterMessage.fadeOut(function() {
+                $(this).remove(); // Remove from DOM after fading out
+            });
+        }, 5000);
+    }
+
+    // Function to clear validation error messages
+    function clearValidationErrors(field) {
+        field.siblings('.text-danger').text('');
+        // For phone and code fields, clear their specific validation spans
+        if (field.attr('name') === 'phone' || field.attr('name') === 'code') {
+            $('span[data-validate-for="phone"]').text('');
+            $('span[data-validate-for="code"]').text('');
+        }
+    }
+
+    // Validate and clear error messages on input change
+    $('#aboutform').find('[name]').on('input change', function() {
+        var field = $(this);
+        // Clear error for filled fields
+        if (field.val()) {
+            clearValidationErrors(field);
+        }
+
+        // Special check for select dropdown (Contact Type)
+        if (field.is('select') && field.val() !== "Contact Type (required)") {
+            clearValidationErrors(field);
+        }
+
+        // Special check for phone and code fields
+        if (field.attr('name') === 'phone' && field.val()) {
+            clearValidationErrors(field);
+        }
+        if (field.attr('name') === 'code' && field.val()) {
+            clearValidationErrors(field);
+        }
+    });
+
+    // Handle form submission
+    $(document).on('submit', '#aboutform', function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var isValid = true;
+
+        // Check required fields
+        form.find('[name]').each(function() {
+            var field = $(this);
+            if (field.prop('required') && !field.val()) {
+                isValid = false;
+                field.siblings('.text-danger').text('This field is required.');
+                // For phone and code, show error on their specific spans
+                if (field.attr('name') === 'phone') {
+                    $('span[data-validate-for="phone"]').text('Phone number is required.');
+                }
+                if (field.attr('name') === 'code') {
+                    $('span[data-validate-for="code"]').text('Area code is required.');
+                }
+                return false; // Break the loop
+            } else {
+                clearValidationErrors(field); // Clear error message if valid
+            }
+
+            // Special check for select with default option
+            if (field.is('select') && field.val() === "Contact Type (required)") {
+                isValid = false;
+                field.siblings('.text-danger').text('Please select a contact type.');
+                return false;
+            }
+        });
+
+        if (isValid) {
+            showSuccessMessage();
+            form[0].reset(); // Reset the form after submission
+            $.request('onSubmitContactForm', {
+                data: form.serialize(),
+                files: true,
+                success: function(response) {
+                    // Reset form and show success
+                    showSuccessMessage();
+                },
+                error: function(xhr, status, error) {
+                    console.log('Form submission failed', error);
+                }
+            });
+        }
+    });
+});
+
+</script>
+<script>
+// Function to block digits and only allow alphabets, and show the message if invalid input is detected
+function validateAlphabets(input, field) {
+    var value = input.value;
+    var messageElement = document.getElementById(field + '-message');
+
+    // Remove digits and special characters
+    input.value = value.replace(/[^a-zA-Z\s]/g, '');
+
+    // Show the message if digits or invalid characters were entered
+    if (/[^a-zA-Z\s]/g.test(value)) {
+        messageElement.style.display = 'block'; // Show the message
+    } else {
+        messageElement.style.display = 'none'; // Hide the message when input is valid
+    }
+}
+</script>

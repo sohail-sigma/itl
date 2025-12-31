@@ -1,0 +1,11 @@
+name: Booking
+modelClass: san\San\Models\Booking
+form: $/san/san/models/booking/fields.yaml
+defaultRedirect: san/san/booking
+create:
+    redirect: 'san/san/booking/update/:id'
+    redirectClose: san/san/booking
+update:
+    redirect: san/san/booking
+    redirectClose: san/san/booking
+preview: {  }

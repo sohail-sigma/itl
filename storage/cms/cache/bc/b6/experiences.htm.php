@@ -1,6 +1,6 @@
 <?php 
 use itlworld\Ipcountries\Models\CountryRule;
-class Cms69328bec49cae600130026_cd4e46e8d9b0c7cdebdba21b678d81beClass extends Cms\Classes\PageCode
+class Cms6956575463641405709301_ec3f2e9fe2650d1e8e568e526c446b86Class extends Cms\Classes\PageCode
 {
 public function getsortedMonth($monthList = [])
     {
@@ -277,20 +277,17 @@ public function onEnd(){
                 foreach($record->packages as $c_package){
                     $shouldShowPackage = false;
 
-                   
-
+                    // Check if package has countries tagged
+                    $packageCountrySelect = isset($c_package->package_country_select) ? $c_package->package_country_select : [];
                     
-                    
-                    $packageIdMatch = in_array($_SESSION['countryName'] ,isset($c_package->package_country_select) ? $c_package->package_country_select : [] );
-                     
-                    // echo "<pre>";
-                    // print_r($packageIdMatch);
-                    // print_r($_SESSION['countryName']);
-                    // print_r($c_package->package_country_select);
-                    // echo "</pre>";
-                    // exit;
-
-                   
+                    if(!empty($packageCountrySelect) && is_array($packageCountrySelect) && count($packageCountrySelect) > 0){
+                        // Package has countries tagged - only show if current country matches
+                        $packageIdMatch = in_array($_SESSION['countryName'], $packageCountrySelect);
+                    } else {
+                        // Package has no countries tagged - show for all countries
+                        $packageIdMatch = true;
+                    }
+                      
 
                     // Check if package matches any rule
                     // foreach($allRulesAttributes as $rule){

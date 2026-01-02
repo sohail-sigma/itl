@@ -45,7 +45,7 @@
 </style>
 <div class="">
     <a class="link-nav cvbtn" target="_blank" href="<?php echo url('storage/app/uploads/public/cv/'.$record->user_cv); ?>">View</a>
-    <a class="link-nav cvbtn" target="_blank" href="<?php echo url('storage/app/uploads/public/cv/'.$record->user_cv); ?>" download>Download</a>
+    <a class="link-nav cvbtn" href="<?php echo Backend::url('san/san/careers/download-cv/' . $record->id); ?>" title="Download CV">Download</a>
     <form action="<?= Backend::url('san/san/careers/export-record/' . $record->id) ?>" method="post" style="margin: 0;">
         <?= Form::token() ?>
         <button type="submit" class="exportbtn" style="border: none;">
